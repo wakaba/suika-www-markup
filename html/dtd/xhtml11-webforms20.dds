@@ -1,0 +1,206 @@
+#?SuikaWikiConfig/2.0
+
+DocumentType:
+  @Name: XHTML 1.1 + Web Forms 2.0
+  @Version: Web Forms 2.0 Call For Comments - 27 June 2004
+  @Description:
+    XHTML 1.1 + Web Forms proposal.
+  @ID: xhtml11-webforms20
+  
+  @BaseURI:
+    http://suika.fam.cx/www/markup/html/dtd/
+
+  @Namespace:
+    @@UsePrefix: 0
+
+  @Copyright:
+    Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2004/07/05 13:56:23 $
+
+Driver:
+  @ModuleSet:
+    @@Name: Extensible Hypertext Markup Language (XHTML)
+    @@Version: 1
+    @@ID: XHTML
+    
+    @@BaseURI:
+      http://www.w3.org/TR/xhtml-modularization/DTD/
+    @@Namespace:
+      @@@Name:
+        http://www.w3.org/1999/xhtml
+      @@@DefaultPrefix: xhtml1
+      @@@UsePrefix: -1
+    @@Default: 1
+  @ModuleSet:
+    @@Name: Web Forms
+    @@Version: 2.0 Call For Comments -- 27 June 2004
+    @@ID: webforms20
+
+    @@BaseURI: module/
+    @@Namespace:
+      @@@Name: 
+        http://www.w3.org/1999/xhtml
+      @@@DefaultPrefix: xhtml1
+      @@@UsePrefix: -1
+    @@Default: 1
+
+    @QNameModule:
+      @@ID:
+        webforms20:qname
+    @QNameModule:
+      @@ID:
+        :xhtml-qname
+      @@PUBLIC: -//W3C//ENTITIES XHTML Qualified Names 1.0//EN
+      @@SYSTEM:
+        xhtml-qname-1.mod
+
+    @DatatypeModule:
+      @@ID:
+        webforms20:datatype
+    @DatatypeModule:
+      @@ID:
+        :xhtml-datatypes
+      @@PUBLIC: -//W3C//ENTITIES XHTML Datatypes 1.0//EN
+      @@SYSTEM: xhtml-datatypes-1.mod
+
+    @AttributeModule:
+      @@ID:
+        webforms20:attribs
+    @AttributeModule:
+      @@ID:
+        :xhtml-attribs
+      @@PUBLIC: -//W3C//ENTITIES XHTML Common Attributes 1.0//EN
+      @@SYSTEM: xhtml-attribs-1.mod
+
+      @@ParameterEntity:
+        @@@Name: 
+          XHTML:bidi
+        @@@EntityValue: INCLUDE
+
+      @@IfModule:
+        @@@ID:
+          webforms20:attribs
+        @@@Attribute:
+          @@@@ElementType:
+            :br
+          @@@@ref: 
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :bdo
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :meta
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :base
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :script
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :style
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :param
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :title
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :head
+          @@@@ref:
+            webforms20:repeat
+        @@@Attribute:
+          @@@@ElementType:
+            :html
+          @@@@ref:
+            webforms20:repeat
+        @@@Switch:
+          @@@@Name:
+            :Ruby.common.attlists
+          @@@@Use: 1
+        @@@AttributeSet:
+          @@@@Name:
+            :Ruby.common.attrib
+          @@@@ref: 
+            webforms20:repeat
+
+    @Module:
+      @@ID:
+        :xhtml-model
+      @@PUBLIC: -//W3C//ENTITIES XHTML 1.1 Document Model 1.0//EN
+      @@SYSTEM:
+        <http://www.w3.org/TR/xhtml11/DTD/xhtml11-model-1.mod>
+      @@Class:
+        @@@Name: 
+          :InlForm
+        @@@Content:
+          | webforms20:input | webforms20:select | webforms20:textarea
+          | webforms20:output | webforms20:button | webforms20:label
+      @@Class:
+        @@@Name:
+          :Form
+        @@@Content:
+          | webforms20:form
+      @@Class:
+        @@@Name: 
+          :Fieldset
+        @@@Content:
+          | webforms20:fieldset
+
+    @Module:
+      @@ID:
+        webforms20:formext
+      @@Description: Web Forms 2.0 Form Extension
+
+    @ModuleSwitch:
+      @@Name:
+        :xhtml-events
+      @@Use: 1
+    @IfModule:
+      @@ID:
+        :xhtml-events
+      @@Description:
+        Additional attributes added when XHTML Intrinsic Events
+        module is selected
+      @@Module:
+        @@@ID:
+          webforms20:formevent
+
+    @DTD:
+      @@ID: XHTML
+      @@PUBLIC: -//W3C//DTD XHTML 1.1//EN
+      @@SYSTEM:
+        <http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd>
+    
+      @@ParameterEntity:
+        @@@Name: 
+          :xhtml-special
+        @@@PUBLIC: -//W3C//ENTITIES Special for XHTML//EN
+        @@@SYSTEM:
+          <http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent>
+        @@@Description: Avoid xhtml-m12n DTD bug
+  
+      @@ModuleSwitch:
+        @@@Name: 
+          :xhtml-form
+        @@@Use: -1
+
+
+

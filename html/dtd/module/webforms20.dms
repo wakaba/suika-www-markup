@@ -2,7 +2,7 @@
 
 ModuleSet:
   @Name: Web Forms
-  @Version: 2.0 Call For Comments -- 27 June 2004
+  @Version: 2.0 Call For Comments - 27 June 2004
   @ID: webforms20
   @Description:
     Web Forms 2.0, the next generation HTML form model.
@@ -19,7 +19,7 @@ ModuleSet:
   
   @Copyright: Wakaba <w@suika.fam.cx>
   @RCSDate:
-    $Date: 2004/07/05 03:57:10 $
+    $Date: 2004/07/05 13:56:23 $
 
 Datatype:
   @Type:
@@ -56,6 +56,12 @@ Datatype:
       :Number
     @@XMLType: NMTOKEN
     @@Description: A non-negative integer
+  
+  @Type:
+    @@Name:
+      :Script
+    @@XMLType: CDATA
+    @@Description: Script code
   
   @Type:
     @@Name:
@@ -229,15 +235,18 @@ Attribute:
       @@@Default: #IMPLIED
     @@Attribute:
       @@@Name: repeat-start
-      @@@Type: Number
+      @@@Type:
+        :Number
       @@@Default: #IMPLIED
     @@Attribute:
       @@@Name: repeat-min
-      @@@Type: Number
+      @@@Type:
+        :Number
       @@@Default: #IMPLIED
     @@Attribute:
       @@@Name: repeat-max
-      @@@Type: Number
+      @@@Type:
+        :Number
       @@@Default: #IMPLIED
     @@Description: For non-XHTML 1 namespace element types
   @Attribute:
@@ -248,38 +257,45 @@ Attribute:
       @@@Default: #IMPLIED
     @@Attribute:
       @@@Name: "repeat-start"
-      @@@Type: Number
+      @@@Type:
+        :Number
       @@@Default: #IMPLIED
     @@Attribute:
       @@@Name: "repeat-min"
-      @@@Type: Number
+      @@@Type:
+        :Number
       @@@Default: #IMPLIED
     @@Attribute:
       @@@Name: "repeat-max"
-      @@@Type: Number
+      @@@Type:
+        :Number
       @@@Default: #IMPLIED
     @@Description: For XHTML 1 namespace element types
   
   @AttributeSet:
     @@Name: control.extra
   @AttributeSet:
+    @@Name: control.events
+    @@Description:
+      Placeholder for additional events attributes
+  @AttributeSet:
     @@Name: control
     @@ref: control.extra
   
   @AttributeSet:
     @@Name:
-      XHTML:common.extra
+      :Common.extra
   @AttributeSet:
     @@Name: 
-      XHTML:common
+      :Common
     @@ref:
-      XHTML:common.extra
+      :Common.extra
     @@ref: repeat
   
   @AttributeSet:
     @@Name: common
     @@ref:
-      XHTML:common
+      :Common
 
 Module:
   @Name: Forms Extensions
@@ -501,6 +517,9 @@ Module:
       @@@Type:
         :Script
       @@@Default: #IMPLIED
+      @@@Description:
+            The oninput attribute is added to all the elements that
+            have an onchange attribute
   @AttributeSet:
     @@Name: onformchange
     @@Attribute:
@@ -522,15 +541,42 @@ Module:
       @@@Type:
         :Script
       @@@Default: #IMPLIED
+      @@@Description:
+            The oninvalid attribute is added to all the form control
+            elements other than output and fieldset
   
+  @Attribute:
+    @@ElementType: input
+    @@ref: oninput
+    @@ref: oninvalid
+  @Attribute:
+    @@ElementType: select
+    @@ref: oninput
+    @@ref: oninvalid
+  @Attribute:
+    @@ElementType: textarea
+    @@ref: oninput
+    @@ref: oninvalid
+
   @AttributeSet:
-    @@Name: control.extra
-  @AttributeSet:
-    @@Name: control
+    @@Name: control.events
     @@ref: onformchange
     @@ref: onforminput
+    @@Description:
+            The onformchange and onforminput attributes are added
+            to all form control elements
+  
+  @Attribute:
+    @@ElementType: button
     @@ref: oninvalid
-    @@ref: control.extra
+
+  @Attribute:
+    @@ElementType: output
+    @@Attribute:
+      @@@Name: "onchange"
+      @@@Type:
+        :Script
+      @@@Default: #IMPLIED
 
 Module:
   @Name: Frame Target
