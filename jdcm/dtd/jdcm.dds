@@ -1,0 +1,367 @@
+#?SuikaWikiConfig/2.0
+
+DocumentType:
+  @Name:
+    XML Representation of
+    "Exchange format for Japanese documents with composition markup
+    (JIS X 4052:2000)"
+  @Version:
+  @ID: jdcm
+  @BaseURI:
+    http://suika.fam.cx/gate/cvs/*checkout*/markup/jdcm/dtd/
+  
+  @Namespace:
+    @@UsePrefix: -1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2003/10/24 11:09:02 $
+
+Driver:
+  @ModuleSet:
+    @@Name:
+      XML Representation of
+      "Exchange format for Japanese documents with composition markup
+      (JIS X 4052:2000)"
+    @@ID: jdcm
+    @@BaseURI:
+      module/
+    @@Namespace:
+      @@@Name:
+        urn:x-suika-fam-cx:markup:jis:x:4052:2000:
+      @@@DefaultPrefix: jdcm
+      @@@UsePrefix: -1
+    @@Default: 1
+  
+  @QNameModule:
+    @@ID:
+      jdcm:qname
+  
+  @DatatypeModule:
+    @@ID:
+      jdcm:datatype
+  
+  @AttributeModule:
+    @@ID:
+      jdcm:attribs
+    
+    @@AttributeSet:
+      @@@Name:
+        jdcm:common.extra
+      @@@REF:
+        xml:base
+      @@@REF:
+        xml:lang
+      @@@REF:
+        xml:space
+  
+  @Module:
+    @@ID:
+      jdcm:inline
+    @@Description: Inline module
+  
+  @Module:
+    @@ID:
+      jdcm:text
+    @@Description: Text module
+  
+  @Module:
+    @@ID:
+      jdcm:compound
+    @@Description: Compound text module
+  
+  @Module:
+    @@ID:
+      jdcm:figure
+    @@Description: Figure module
+  
+  @Module:
+    @@ID:
+      jdcm:table
+    @@Description: Table module
+  
+  @Module:
+    @@ID:
+      jdcm:struct
+    @@Description: Document structure module
+
+Model:
+  @Class:
+    @@Name: head-optional.mix
+    @@Content:
+      style | link
+  @Class:
+    @@Name:
+      :HeadOpts.mix
+    @@Content:
+      (
+        $head-optional.mix
+      )*
+    @@Description: Optional Elements in head
+  
+  ## Inline or block
+  @Class:
+    @@Name:
+      :Edit
+    @@Content:
+  @Class:
+    @@Name:
+      :Script
+    @@Content:
+    @@Description:
+      scripts and alternative content
+      
+  @Class:
+    @@Name:
+      :Misc.extra
+    @@Content: 
+  @Class:
+    @@Name:
+      :Misc.class
+    @@Content:
+      $:Edit
+      $:Script
+      $:Misc.extra
+    @@Description:
+      neither block nor inline, and can
+      essentially be used anywhere in the document body
+  
+  ## Inline
+  @Class:
+    @@Name:
+      :InlStruct
+    @@Content:
+        span
+      | br
+  
+  @Class:
+    @@Name: emphasis
+    @@Content:
+        em
+      | strong
+      | u
+      | strike
+  @Class:
+    @@Name:
+      :InlPhras
+    @@Content:
+      | $emphasis
+  
+  @Class:
+    @@Name: vertical-align
+    @@Content: sup | sub
+  @Class:
+    @@Name:
+      :InlPres
+    @@Content:
+      | $vertical-align
+  
+  @Class:
+    @@Name: writing-mode
+    @@Content:
+      yoko | tate
+  @Class:
+    @@Name:
+      :I18n
+    @@Content:
+      | $writing-mode
+  @Class:
+    @@Name:
+      :Anchor
+    @@Content:
+  
+  @Class:
+    @@Name: character
+    @@Content:
+        ch
+    @@Description: Character level structure
+  
+  @Class:
+    @@Name:
+      :InlSpecial
+    @@Content:
+      | tabset
+  
+  @Class:
+    @@Name:
+      :InlForm
+    @@Content:
+  
+  @Class:
+    @@Name:
+      :Ruby
+    @@Content:
+      | ruby
+      | mlg
+  
+  @Class:
+    @@Name:
+      :Inline.extra
+    @@Content: 
+  
+  @Class:
+    @@Name:
+      :InlNoRuby
+    @@Content:
+      $:InlStruct
+      $:InlPhras
+      $:InlPres
+      $:I18n
+      $:Anchor
+      $:InlSpecial
+      $:InlForm
+      $:Inline.extra
+  @Class:
+    @@Name:
+      :Inline.class
+    @@Content:
+      $:InlNoRuby $:Ruby
+    @@Description: includes all inline elements
+  @Class:
+    @@Name: 
+      :Inline.mix
+    @@Content:
+      $:Inline.class
+      $:Misc.class
+    @@Description: all inline elements, including %Misc.class;
+  @Class:
+    @@Name:
+      :InlNoAnchor
+    @@Content:
+      $:Inline
+  @Class:
+    @@Name:
+      :InlNoAnchor.mix
+    @@Content:
+      $:InlNoAnchor
+      $:Misc.class
+  @Class:
+    @@Name:
+      :NoRuby.content
+    @@Content:
+      (
+        \#PCDATA
+      | $:InlNoRuby
+        $:Misc.class
+      )*
+  
+  @Class:
+    @@Name: inline-onedir-noem
+    @@Content:
+        $vertical-align
+      | span
+      | $character
+  @Class:
+    @@Name: inoneline-noem
+    @@Content:
+        $inline-onedir-noem
+      | $writing-mode
+  @Class:
+    @@Name: inoneline
+    @@Content:
+        $inoneline-noem
+      | $emphasis
+  
+  ## Block
+  @Class:
+    @@Name:
+      :List
+    @@Content:
+        ul
+      | ol
+      | dl
+  
+  @Class:
+    @@Name:
+      :Heading
+    @@Content:
+        h1
+      | h2
+      | h3
+  
+  @Class:
+    @@Name:
+      :Table
+    @@Content:
+      | table
+  
+  @Class:
+    @@Name:
+      :Form
+    @@Content:
+  @Class:
+    @@Name:
+      :Fieldset
+    @@Content:
+  
+  @Class:
+    @@Name:
+      :BlkStruct
+    @@Content:
+        p
+      | div
+  
+  @Class:
+    @@Name:
+      :BlkPhras
+    @@Content:
+      | zu
+  
+  @Class:
+    @@Name:
+      :BlkPres
+  
+  @Class:
+    @@Name:
+      :BlkSpecial
+    @@Content:
+        $:Table
+        $:Form
+        $:Fieldset
+  
+  @Class:
+    @@Name:
+      :Block.extra
+    @@Content: 
+  @Class:
+    @@Name:
+      :Block.class
+    @@Content:
+        $:BlkStruct
+        $:BlkPhras
+        $:BlkPres
+        $:BlkSpecial
+        $:Block.extra
+    @@Description: includes all block elements
+  @Class:
+    @@Name: 
+      :Block.mix
+    @@Content:
+        $:Heading
+      | $:List
+      | $:Block.class
+        $:Misc.class
+    @@Description: includes all block elements plus %Misc.class;
+  
+  @Class:
+    @@Name:
+      :Flow.mix
+    @@Content:
+        $:List
+      | $:Block.class
+      | $:Inline.class
+        
+        $:Misc.class
+    @@Description: includes all text content, block and inline
+  
+  @Class:
+    @@Name: semiflow.extra
+    @@Content: 
+  @Class:
+    @@Name: semiflow.mix
+    @@Content:
+        $:Inline.mix
+      | $:List
+      | p
+        $:Misc.class
+    @@Description:
+      Content of dd, li

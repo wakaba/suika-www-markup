@@ -1,0 +1,728 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name:
+    XML Representation of
+    "Exchange format for Japanese documents with composition markup
+    (JIS X 4052:2000)"
+  @Version: 
+  @ID: jdcm
+  @BaseURI:
+    http://suika.fam.cx/gate/cvs/*checkout*/markup/jdcm/dtd/module/
+  
+  @Namespace:
+    @@Name:
+      urn:x-suika-fam-cx:markup:jis:x:4052:2000:
+    @@DefaultPrefix: jdcm
+    @@UsePrefix: 0
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2003/10/24 11:09:02 $
+
+Datatype:
+  @Type:
+    @@Name: angle
+    @@XMLType: CDATA
+    @@Description:
+      <angle> := <number> "deg" / "0" [JIS X 4052:2000, 5.3.4]
+  
+  @Type:
+    @@Name: borderlength
+    @@XMLType: CDATA
+    @@Description:
+      (<positive <number>> ("cm" / "mm" / "jpt" / "pt" / "q") / "0")
+  
+  @Type:
+    @@Name: characters
+    @@XMLType: CDATA
+    @@Description:
+      %Character.datatype; *(WSP %Character.datatype;)
+  
+  @Type:
+    @@Name: classes
+    @@XMLType: CDATA
+  
+  @Type:
+    @@Name:
+      :ContentType
+    @@XMLType: CDATA
+    @@Description:
+      Internet Media Type [RFC 2046]
+  
+  @Type:
+    @@Name: integer
+    @@XMLType: NMTOKEN
+    @@Description:
+      <integer> := 1*DIGIT [JIS X 4052:2000, 5.3.1]
+  
+  @Type:
+    @@Name: length
+    @@XMLType: CDATA
+    @@Description:
+      <length> := <number> <unit> / "0" [JIS X 4052:2000, 5.3.2]
+  
+  @Type:
+    @@Name:
+      :LanguageCode
+    @@XMLType: CDATA
+    @@Description: IETF Language Tag
+  
+  @Type:
+    @@Name: LinkType
+    @@XMLType: (stylesheet|prev|next)
+  
+  @Type:
+    @@Name: number
+    @@XMLType: CDATA
+    @@Description:
+      <number> := ["+" / "-"] *DIGIT ["." *DIGIT] [JIS X 4052:2000, 5.3.1]
+  
+  @Type:
+    @@Name: percentage
+    @@XMLType: CDATA
+    @@Description:
+      <percentage> := <number> "%" / "0" [JIS X 4052:2000, 5.3.3]
+  
+  @Type:
+    @@Name: position
+    @@XMLType: CDATA
+    @@Description:
+      isSubClassOf <length>;
+      position := <positive <integer>> "px" / "0";
+      [JIS X 4052:2000, 6.2 b) 1.2.3)]
+  
+  @Type:
+    @@Name: positiveinteger
+    @@XMLType: CDATA
+    @@Description:
+      <positive <integer>>
+  
+  @Type:
+    @@Name: StyleSheet
+    @@XMLType: CDATA
+    @@Description:
+      JIS X 4052:2000 style language (text/jss)
+  
+  @Type:
+    @@Name: tablelength
+    @@XMLType: CDATA
+    @@Description:
+      tablelength := tablelengthnozero / "0"
+      [JIS X 4052:2000, 6.6 b) 2)]
+  
+  @Type:
+    @@Name: tablelengthnozero
+    @@XMLType: CDATA
+    @@Description:
+      isSubClassOf <length>;
+      tablelengthnozero := <positive <number>>
+                           ("字" / "em" / "en" / "cm" / "mm" / "jpt" / "pt" / "q");
+      [JIS X 4052:2000, 6.6 b) 2)]
+  
+  @Type:
+    @@Name: tablelengths
+    @@XMLType: CDATA
+    @@Description:
+      tablelength *(WSP tablelength) [JIS X 4052:2000, 6.11 b) 1)]
+  
+  @Type:
+    @@Name:
+      :URI
+    @@XMLType: CDATA
+    @@Description: A URI Reference
+  
+  @Type:
+    @@Name: 長さ
+    @@XMLType: CDATA
+    @@Description:
+      <長さ{横幅,縦幅}> := 幅 "," 幅
+      幅 := <positive <number>> ("mm" / "cm") [JIS X 4052:2000, 5.3.2]
+
+Attribute:
+  @AttributeSet:
+    @@Name: subsetelement
+    @@Attribute:
+      @@@Name: "class"
+      @@@Type: classes
+    @@Attribute:
+      @@@Name: "id"
+      @@@Type: "ID"
+    @@Description:
+      Attributes for "文書中の要素の部分集合要素"
+  
+  @AttributeSet:
+    @@Name: subbody
+    @@ref: subsetelement
+    @@Attribute:
+      @@@Name: "style"
+      @@@Type: StyleSheet
+    @@Description:
+      Attributes for body and its subset elements
+  
+  @AttributeSet:
+    @@Name: align
+    @@Attribute:
+      @@@Name: "align"
+      @@@Type: "(行頭|行末|center|均等)"
+      @@@Default: "行頭"
+  
+  @AttributeSet:
+    @@Name: cellpadding
+    @@Attribute:
+      @@@Name: "cellpadding"
+      @@@Type: tablelength
+  
+  @AttributeSet:
+    @@Name: em
+    @@ref: subbody
+  
+  @AttributeSet:
+    @@Name: hn
+    @@ref: subbody
+  
+  @AttributeSet:
+    @@Name: 行そろえ
+    @@Attribute:
+      @@@Name: "行そろえ"
+      @@@Type: "(こま頭|こま中央|こま末|行均等)"
+      @@@Default: "こま中央"
+  
+  @AttributeSet:
+    @@Name: td
+    @@ref: align
+    @@ref: cellpadding
+    @@Attribute:
+      @@@Name: "height"
+      @@@Type: tablelength
+    @@Attribute:
+      @@@Name: "width"
+      @@@Type: tablelength
+    @@Attribute:
+      @@@Name: "行こま合成"
+      @@@Type: positiveinteger
+      @@@Default: "1"
+    @@ref: 行そろえ
+    @@Attribute:
+      @@@Name: "列こま合成"
+      @@@Type: positiveinteger
+      @@@Default: "1"
+    @@ref: subbody
+
+Module:
+  @Name: Compound
+  @ID: compound
+  
+  @Element:
+    @@Name: sub
+    @@Content:
+      (
+        \#PCDATA
+      | $vertical-align
+      | span
+      | $character
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  @Element:
+    @@Name: sup
+    @@Content:
+      (
+        \#PCDATA
+      | $vertical-align
+      | span
+      | $character
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: mlg
+    @@Content:
+      (
+        \#PCDATA
+      | $inoneline-noem
+      )*
+    @@Attribute:
+      @@@ref: subbody
+    @@Description:
+      Multiline gloss (割注), [JIS X 4052:2000, 6.16]
+  
+  @Element:
+    @@Name: yoko
+    @@Content:
+      (
+        \#PCDATA
+      | $inline-onedir-noem
+      )*
+    @@Attribute:
+      @@@ref: subbody
+    @@Description:
+      縦中横 [JIS X 4052:2000, 6.17]
+  
+  @Element:
+    @@Name: tate
+    @@Content:
+      (
+        \#PCDATA
+      | tabset
+        $:Ruby 
+      | $emphasis
+      | span
+      | br
+      | $character
+      )*
+    @@Attribute:
+      @@@ref: subbody
+    @@Description:
+      欧文用文字の和字扱い [JIS X 4052:2000, 6.18]
+  
+  @Element:
+    @@Name: ruby
+    @@Content:
+      (
+        (
+          rbc,
+          rtc,
+          rtc?
+        )
+      | (
+          rb,
+          rt
+        )
+      )
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: rbc
+    @@Content:
+      (
+        rb
+      )+
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: rtc
+    @@Content:
+      (
+        rt
+      )+
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: rb
+    @@Content:
+      (
+        \#PCDATA
+      | $inoneline
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: rt
+    @@Content:
+      (
+        \#PCDATA
+      | $inoneline
+      )*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "rbspan"
+        @@@@Type: positiveinteger
+        @@@Default: "1"
+      @@@ref: subbody
+
+Module:
+  @Name: Figure
+  @ID: figure
+  
+  @Element:
+    @@Name: zu
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "src"
+        @@@@Type:
+          :URI
+        @@@@Default: #REQUIRED
+      @@@ref: subbody
+    @@Description:
+      Figure, photo, etc. with its margin, caption, note, etc.
+      [JIS X 4052:2000, 6.7]
+
+Module:
+  @Name: Inline
+  @ID: inline
+  
+  @Content:
+    @@ElementType: emphasis
+    @@Content:
+      (
+        \#PCDATA
+      | tabset
+        $:Ruby
+      | tate
+      | $inline-onedir-noem
+      | $emphasis
+      | br
+      )*
+  
+  @Element:
+    @@Name: em
+    @@Content: $emphasis.content
+    @@Attribute:
+      @@@ref: em
+  
+  @Element:
+    @@Name: strong
+    @@Content: $emphasis.content
+    @@Attribute:
+      @@@ref: em
+  
+  @Element:
+    @@Name: u
+    @@Content: $emphasis.content
+    @@Attribute:
+      @@@ref: em
+  
+  @Element:
+    @@Name: strike
+    @@Content: $emphasis.content
+    @@Attribute:
+      @@@ref: em
+  
+  @Element:
+    @@Name: span
+    @@Content:
+      (
+        \#PCDATA
+      | $:Inline.mix
+      )*
+    @@Attribute:
+      @@@ref: subbody
+
+Module:
+  @Name: Listing
+  @ID: list
+  
+  @Element:
+    @@Name: dt
+    @@Content:
+      (
+        \#PCDATA
+      | $:Inline.mix
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: dd
+    @@Content:
+      (
+        \#PCDATA
+      | $semiflow.mix
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: dl
+    @@Content:
+      (
+        dt
+      | dd
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: li
+    @@Content:
+      (
+        \#PCDATA
+      | $semiflow.mix
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: ol
+    @@Content:
+      (
+        li
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: ul
+    @@Content:
+      (
+        li
+      )*
+    @@Attribute:
+      @@@ref: subbody
+
+Module:
+  @ID: struct
+  
+  @Element:
+    @@Name: jdcm
+    @@Content:
+      (
+        head,
+        body
+      )
+  
+  @Element:
+    @@Name: body
+    @@Content:
+      (
+        $:Block.mix
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: style
+    @@Content:
+      (
+        \#PCDATA
+      )*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "type"
+        @@@@Type:
+          :ContentType
+        @@@@Default: #FIXED "text/jss"
+        @@@@Description: Required.
+      @@@ref: subsetelement
+  
+  @Element:
+    @@Name: link
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "href"
+        @@@@Type:
+          :URI
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "rel"
+        @@@@Type: LinkType
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "type"
+        @@@@Type:
+          :ContentType
+        @@@@Description:
+          Required if @rel=stylesheet.
+      @@@ref: subsetelement
+  
+  @Element:
+    @@Name: head
+    @@Content:
+      $:HeadOpts.mix
+    @@Attribute:
+      @@@ref: subsetelement
+  
+  @Element:
+    @@Name: p
+    @@Content:
+      (
+        \#PCDATA
+      | $:Inline.mix
+      | zu
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: div
+    @@Content:
+      (
+        \#PCDATA
+      | $:Flow.mix
+      )*
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: br
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Content:
+    @@ElementType: hn
+    @@Content:
+      (
+        \#PCDATA
+      | $:Inline.mix
+      )*
+  
+  @Element:
+    @@Name: h1
+    @@Content: $hn.content
+    @@Attribute:
+      @@@ref: hn
+  
+  @Element:
+    @@Name: h2
+    @@Content: $hn.content
+    @@Attribute:
+      @@@ref: hn
+  
+  @Element:
+    @@Name: h3
+    @@Content: $hn.content
+    @@Attribute:
+      @@@ref: hn
+
+Module:
+  @Name: Table
+  @ID: table
+  
+  @Element:
+    @@Name: th
+    @@Content:
+      (
+        \#PCDATA
+      | $semiflow.mix
+      )*
+    @@Attribute:
+      @@@ref: td
+  
+  @Element:
+    @@Name: td
+    @@Content:
+      (
+        \#PCDATA
+      | $semiflow.mix
+      )*
+    @@Attribute:
+      @@@ref: td
+  
+  @Element:
+    @@Name: tr
+    @@Content:
+      (
+        th
+      | td
+      )+
+    @@Attribute:
+      @@@ref: align
+      @@@ref: cellpadding
+      @@@ref: 行そろえ
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: table
+    @@Content:
+      (
+        tr
+      )+
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "border"
+        @@@@Type: "CDATA"
+        @@@@Default: "表けい"
+        @@@@Description:
+          border	(表けい|中細けい|裏けい|<borderlength>)	表けい
+      @@@ref: cellpadding
+      @@@Attribute:
+        @@@@Name: "frame"
+        @@@@Type: "(void|行頭|行末|行頭行末|前|後|前後|box)"
+        @@@@Default: "box"
+      @@@Attribute:
+        @@@@Name: "height"
+        @@@@Type: tablelengthnozero
+        @@@@Description: applied to vertical table
+      @@@Attribute:
+        @@@@Name: "rules"
+        @@@@Type: "(なし|行間|列間|行列間)"
+        @@@@Default: "行列間"
+      @@@Attribute:
+        @@@@Name: "width"
+        @@@@Type: tablelengthnozero
+        @@@@Description: applied to horizontal table
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: tab
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@ref: subbody
+  
+  @Element:
+    @@Name: tabset
+    @@Content:
+      (
+        \#PCDATA
+      | tab
+        $:Ruby
+      | br
+      | $inoneline
+      )*
+    @@Description:
+      br cannot be here by definition of content model table,
+      but example in [JIS X 4052:2000, 6.11] includes br as a child of tabset.
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "char"
+        @@@@Type: characters
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "タブ位置"
+        @@@@Type: tablelengths
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "タブ種"
+        @@@@Type: "CDATA"
+        @@@@Description:
+          タブ種 := tabType *(WSP tabType)
+          tabType := (左|上|右|下|中央|指定文字)
+          Default :
+            vertical : 左
+            horizontal : 上
+      @@@ref: subbody
+
+Module:
+  @Name: Text
+  @ID: text
+  
+  @Element:
+    @@Name: ch
+    @@Content:
+      (
+        \#PCDATA
+      )*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "height"
+        @@@@Type: position
+      @@@Attribute:
+        @@@@Name: "left"
+        @@@@Type: position
+        @@@@Default: "0"
+      @@@Attribute:
+        @@@@Name: "src"
+        @@@@Type:
+          :URI
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "top"
+        @@@@Type: position
+        @@@@Default: "0"
+      @@@Attribute:
+        @@@@Name: "width"
+        @@@@Type: position
+      @@@ref: subbody
+    @@Description:
+      Specific glyph of character [JIS X 4052:2000, 6.2 b) 1.2)]
+      
+      Content shall be an alternative text.
+  

@@ -1,0 +1,5 @@
+2003-10-24  Wakaba  <w@suika.fam.cx>
+
+	* module/: New directory.
+	* Makefile, ChangeLog: New file.
+	* jdcm.dds: New.
