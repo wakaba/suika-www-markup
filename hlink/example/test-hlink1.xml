@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<hlinks xmlns="http://www.w3.org/2002/06/hlink">
+  <hlink namespace="http://foo.example/markup" element="anchor"
+         locator="@uri" effect="replace" actuate="onRequest"/>
+</hlinks>
