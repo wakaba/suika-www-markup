@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!DOCTYPE foo:root [
+  <!ENTITY links 'h|div[ll|type="links"]'>
+  <!--ENTITY linksCloseBox 'h|div[ll|type="links"] h|div[ll|type="closeBox"]'-->
+  <!ENTITY linksCloseBox 'h|div[ll|type="links"] h|div[type="closeBox"]'>
+]>
+<foo:root xmlns:foo="http://foo.example/markup"
+          xmlns:bar="http://bar.example/markup"
+          xmlns:h="http://www.w3.org/1999/xhtml">
+  <h:link rel="stylesheet" href="test-hlink1.xml" type="application/x-hlink+xml"/>
+  <h:link rel="stylesheet" href="test-hlink2.xml" type="application/x-hlink+xml"/>
+  
+  <h:style type="text/css"><![CDATA[
+    @namespace h 'http://www.w3.org/1999/xhtml';
+    h|link:first-child {
+      -moz-binding: url(hlink-xbl.xml#link-hlink);
+    }
+  ]]></h:style>
+  <h:style type="text/css">
+    @namespace h 'http://www.w3.org/1999/xhtml';
+    @namespace ll 'urn:x-suika-fam-cx:markup:temporary:hlink';
+    &links; {
+      position: absolute;
+      display: block;
+      margin: 0;
+      border: WindowFrame solid 1px;
+      padding: 4px;
+      -moz-border-radius: 0.6em;
+      overflow: hidden;
+      background-color: InfoBackground;
+      color: InfoText;
+      -moz-binding: url(hlink-xbl.xml#ll-links);
+    }
+    &links;[ll|display='no'] {
+      display: none;
+    }
+    
+    &linksCloseBox; {
+      display: block;
+      position: absolute;
+      top: 5px; right: 5px;
+      margin: 0;
+      border-width: 1px;
+      border-color: InfoBackground;
+      border-style: solid;
+      padding: 0;
+      line-height: 100%;
+      background-color: ButtonFace;
+      color: ButtonText;
+      text-align: right;
+    }
+    &linksCloseBox;:hover {
+      border-color: ButtonHighlight ButtonShadow ButtonShadow ButtonHighlight;
+    }
+    &linksCloseBox;:active {
+      border-color: ButtonShadow ButtonHighlight ButtonHighlight ButtonShadow;
+    }
+    
+    &links; ll|link {
+      display: block;
+      min-width: 10em;
+    }
+    &links; ll|link:before {
+      content: "&lt;";
+    }
+    &links; ll|link[attributeName]:before {
+      content: attr(attributeName) ": &lt;";
+    }
+    &links; ll|link:after {
+      content: "&gt;";
+    }
+    &links; ll|link:hover {
+      background-color: InfoText;
+      color: InfoBackground;
+    }
+  </h:style>
+  
+  <foo:anchor uri="http://www.w3.org/">World Wide Web Consortium</foo:anchor>
+  <foo:home/>
+  <bar:URIs
+    xhtml="http://www.w3.org/1999/xhtml"
+    xlink="http://www.w3.org/1999/xlink"
+    svg="http://www.w3.org/2000/svg"/>
+  <bar:a href="../css2_syndata/v_length.xhtml"><![CDATA[<length>]]></bar:a>
+</foo:root>
