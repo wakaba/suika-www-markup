@@ -1,0 +1,60 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: aavocab
+  @Version: 
+  @Description:
+    This is the "aavocab", as defined by 16
+    <http://pc5.2ch.net/test/read.cgi/hp/1096723178/16>.
+  @ID: aavocab
+  @BaseURI:
+    http://suika.fam.cx/www/markup/2004/aavocab/schema/
+  
+  @Namespace:
+    @@Name:
+      http://pc5.2ch.net/test/read.cgi/hp/1096723178/aavocab#
+    @@DefaultPrefix: aa
+    @@UsePrefix: 0
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2004/10/09 02:00:50 $
+  
+  @ImplNote:
+    @@lang:en
+    @@@:
+      There is no official DTD.
+      \
+      For the definition of the element, see 
+      <http://pc5.2ch.net/test/read.cgi/hp/1096723178/16-18>.
+
+Module:
+  @Name: AAs and Face Marks
+  @ID: aa
+  
+  @Element:
+    @@Name: aa
+    @@Content:
+      (#PCDATA | $:Inline.mix)*
+    @@Description:
+      aa要素の内容は文字列であるが、それは経験に現れた現象としての物でなくて、
+      そうした現象と独立にそれ自体としてあると考えられた物としてインスタンス化される。
+      これは我々の感官を触発して、直観の形式の助けを借りてレンダリングを生じさせるが、
+      それ自体がどんなものであるかは我々には不可知であるとする。
+      \
+      <http://pc5.2ch.net/test/read.cgi/hp/1096723178/19>
+    @@Attribute:
+      @@@REF:
+        xml:lang
+      @@@REF:
+        xml:base
+      @@@REF:
+        xml:space
+      @@@REF:
+        xsi:schemaLocation
+      @@@REF:
+        xsi:type
+      @@@REF:
+        xsi:nil
+
+## aavocab.dms ends here
