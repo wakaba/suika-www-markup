@@ -27,6 +27,7 @@ for (@{$src->child_nodes}) {
     submodule ($_, $Info);
   } elsif ($_->local_name eq 'Model') {
     model_module ($_, $Info);
+    $Info->{has_model} = 1;
   } elsif ($_->local_name eq 'Driver') {
     dtd_driver ($_, $Info);
   }
@@ -51,9 +52,18 @@ sub xml_datatype_of ($$;%) {
   $type =~ s/\s+//g;
   $type;
 }
+sub system_id_of ($$;%) {
+  my ($src, $Info, %opt) = @_;
+  my $sysid = $src->get_attribute_value ('SYSTEM');
+  if ($sysid =~ /<([^>]+)>/) {
+    return $1;
+  } else {
+    return $opt{base}.($sysid || $opt{default});
+  }
+}
 sub external_id_of ($$;%) {
   my ($src, $Info, %opt) = @_;
-  my $sysid = $opt{base}.($src->get_attribute_value ('SYSTEM') || $opt{default});
+  my $sysid = system_id_of ($src, $Info, %opt);
   my $pubid = $src->get_attribute_value ('PUBLIC');
   if ($pubid) {
     if ($sysid) {
@@ -115,6 +125,12 @@ sub convert_content_model ($$;%) {
   $model =~ s/(?<![%#.])((?:\$|\b)$nonsymbol+(?::$nonsymbol+)?|\$?:$nonsymbol+|"[^"]+")/get_model_token ($1, $Info)/ge;
   $model;
 }
+sub sparalit ($) {
+  my $s = paralit (shift);
+  $s =~ s/&/&#x26;/g;
+  $s =~ s/%/&#x25;/g;
+  $s;
+}
 sub paralit ($) {
   my $s = shift;
   if ($s =~ /"/) {
@@ -146,6 +162,24 @@ sub description ($$;%) {
   $desc;
 }
 
+sub entity_declaration ($$;%) {
+  my ($src, $Info, %opt) = @_;
+  my $val;
+  if ($src->get_attribute_value ('ID')
+   || $src->get_attribute_value ('SYSTEM')
+   || $src->get_attribute_value ('PUBLIC')) {
+    $val = "\n\t".external_id_of ($src, $Info, default => $src->get_attribute_value ('ID'));
+  } elsif (ref $src->get_attribute ('Declaration')) {
+    $val = "\n\t".sparalit submodule_declarations ($src->get_attribute ('Declaration'), $Info);
+  } else {
+    $val = paralit $src->get_attribute_value ('EntityValue');
+  }
+  my $s = <<EOH;
+@{[description ($src, $Info)]}<!ENTITY @{[$opt{param}?'% ':'']}@{[$src->get_attribute_value ('Name')]} $val>
+
+EOH
+  $s;
+}
 
 sub dtd_driver ($$) {
   my ($src, $Info) = @_;
@@ -155,6 +189,8 @@ sub dtd_driver ($$) {
   for my $src (@{$src->child_nodes}) {
     if ($src->local_name eq 'Module') {
       $s .= dtd_driver_load_module ($src, $Info);
+    } elsif ($src->local_name eq 'DTD') {
+      $s .= dtd_driver_load_dtd ($src, $Info);
     } elsif ($src->local_name eq 'ModuleSet') {
       push @module_set, $src;
     } elsif ($src->local_name =~ /^(?:QName|Attribute|Datatype|Notation)Module/) {
@@ -164,13 +200,14 @@ sub dtd_driver ($$) {
       $s .= submodule_declarations ($src, $Info);
       $s .= qq(]]>\n);
     } elsif ($src->local_name eq 'GeneralEntity') {
-      $s .= qq(@{[description ($src, $Info)]}<!ENTITY @{[$src->get_attribute_value ('Name')]} @{[paralit $src->get_attribute_value ('EntityValue')]}>\n\n);
+      $s .= entity_declaration ($src, $Info, param => 0);
     } elsif ($src->local_name eq 'ParameterEntity') {
-      $s .= qq(@{[description ($src, $Info)]}<!ENTITY % @{[$src->get_attribute_value ('Name')]} @{[paralit $src->get_attribute_value ('EntityValue')]}>\n\n);
+      $s .= entity_declaration ($src, $Info, param => 1);
     }
   }
   
-  $s{ModelModule} = <<EOH;
+  $s{ModelModule} = $src->get_attribute_value ('NoModelModule') ? '' :
+    $Info->{has_model} ? <<EOH : '';
 <!-- Document Model module -->
 <!ENTITY % $Info->{ID}-model.module "INCLUDE">
 <![%$Info->{ID}-model.module;[
@@ -248,7 +285,7 @@ sub dtd_driver_load_module ($$) {
   
   my $s .= <<EOH;
 @{[description ($src, $Info, context => 'load_module', id => $src->local_name)]}<![%$module_set_name.module;[
-<!ENTITY % $module_name.module "INCLUDE">
+<!ENTITY % $module_name.module "@{[$src->get_attribute_value ('Default') >= 0 ? 'INCLUDE' : 'IGNORE']}">
 <![%$module_name.module;[
 @{[submodule_declarations ($src, $Info)]}<!ENTITY % $module_name.decl
 	@{[paralit external_id_of ($src, $Info, default => qq($module_hyphen_name.mod), base => qq(%$module_set_name.sysid.base;))]}>
@@ -259,12 +296,42 @@ sub dtd_driver_load_module ($$) {
 EOH
   $s;
 }
+
+sub dtd_driver_load_dtd ($$) {
+  my ($src, $Info) = @_;
+  my $module_set_name = $src->get_attribute_value ('ID');
+  
+  my $s .= <<EOH;
+@{[description ($src, $Info)]}<![%$module_set_name.module;[
+@{[submodule_declarations ($src, $Info)]}<!ENTITY % $module_set_name.dtd.sysid "@{[system_id_of ($src, $Info, default => $src->get_attribute_value ('ID').'.dtd', base => qq(%$module_set_name.sysid.base;))]}">
+@{[do{
+  my $pubid = $src->get_attribute_value ('PUBLIC');
+  if ($pubid) {
+    qq(<!ENTITY % $module_set_name.dtd.fpi "$pubid">\n<!ENTITY % $module_set_name.dtd.fpi.defined "INCLUDE">\n);
+  } else {
+    qq(<!ENTITY % $module_set_name.dtd.fpi "">\n<!ENTITY % $module_set_name.dtd.fpi.defined "IGNORE">\n);
+  }
+}]}
+<![%$module_set_name.dtd.fpi.defined;[
+<!ENTITY % $module_set_name.dtd.decl
+	'PUBLIC "%$module_set_name.dtd.fpi;"
+	       "%$module_set_name.dtd.sysid;"'>
+]]>
+<!ENTITY % $module_set_name.dtd.decl
+	'SYSTEM "%$module_set_name.dtd.sysid;"'>
+<!ENTITY % $module_set_name.dtd %$module_set_name.dtd.decl;>
+%$module_set_name.dtd;]]>
+
+EOH
+  $s;
+}
+
 sub model_module ($$) {
   my ($src, $Info) = @_;
     my $s = '';
     for my $src (@{$src->child_nodes}) {
       if ($src->local_name eq 'Class') {
-        $s .= qq(@{[get_desc ($src, $Info)]}<!ENTITY % @{[class_name_of ($src, $Info)]} @{[paralit convert_content_model ($src, $Info)]}>\n\n);
+        $s .= qq(@{[description ($src, $Info)]}<!ENTITY % @{[class_name_of ($src, $Info)]} @{[paralit convert_content_model ($src, $Info)]}>\n\n);
       } elsif ($src->local_name eq 'Content') {
         $s .= element_content_def ($src, $Info);
       }
@@ -301,17 +368,34 @@ sub qname_module ($$) {
   my $s = <<EOH;
 <!ENTITY % NS.prefixed "@{[$ns->get_attribute_value ('UsePrefix')==1?
                             q(INCLUDE):q(IGNORE)]}">
+
+<!-- 1. Declare conditional section keyword, used to activate namespace prefixing. -->
 <!ENTITY % $ID.prefixed "@{[$ns->get_attribute_value ('UsePrefix')==1?
                             q(INCLUDE):
                             $ns->get_attribute_value ('UsePrefix')==-1?
                             q(IGNORE):
                             q(%NS.prefixed;)]}">
+
+<!-- 2. Declare a parameter entity containing the namespace name. -->
 <!ENTITY % $ID.xmlns "@{[$ns->get_attribute_value ('Name')]}">
+
+<!-- 3. Declare parameter entities containing the default namespace prefix
+        string to use when prefixing is enabled. -->
 <!ENTITY % $ID.prefix "@{[$ns->get_attribute_value ('DefaultPrefix')]}">
+
+<!-- 4. Declare parameter entities containing the colonized prefix
+        used when prefixing is active, an empty string when it is not. -->
 <![%$ID.prefixed;[
 <!ENTITY % $ID.pfx "%$ID.prefix;:">
 ]]>
 <!ENTITY % $ID.pfx "">
+
+<!-- declare qualified name extensions here -->
+<!ENTITY % ${ID}-qname-extra.mod "">
+%${ID}-qname-extra.mod;
+
+<!-- 5. May be redeclared to contain any foreign namespace declaration
+        attributes for namespaces embedded in XML. -->
 <!ENTITY % $ID.xmlns.extra.attrib "">
 
 <![%$ID.prefixed;[
@@ -329,6 +413,9 @@ sub qname_module ($$) {
 <!ENTITY % NS.decl.attrib
 	"%$ID.xmlns.extra.attrib;">
 
+<!-- Declare a parameter entity containing all XML namespace declaration
+     attributes used, including a default xmlns declaration when prefixing
+     is inactive. -->
 <![%$ID.prefixed;[
 <!ENTITY % $ID.xmlns.attrib
 	"%NS.decl.attrib;">
@@ -337,6 +424,8 @@ sub qname_module ($$) {
 	"%$ID.xmlns.decl.attrib;
 	%NS.decl.attrib;">
 
+<!-- 6. Declare parameter entities used to provide namespace-qualified
+        names for all element types and global attribute names. -->
 EOH
   for my $lname (keys %{$Info->{QName}}) {
     $s .= qq(<!ENTITY % $Info->{ID}.$lname.qname "%$Info->{ID}.pfx;$lname">\n);
@@ -511,6 +600,8 @@ sub submodule_declarations ($$) {
       $s .= attlist_def ($src, $Info);
     } elsif ($src->local_name eq 'AttributeSet') {
       $s .= attset_def ($src, $Info);
+    } elsif ($src->local_name eq 'Class') {
+      $s .= qq(@{[description ($src, $Info)]}<!ENTITY % @{[class_name_of ($src, $Info)]} @{[paralit convert_content_model ($src, $Info)]}>\n\n);
     } elsif ($src->local_name eq 'Content') {
       $s .= element_content_def ($src, $Info);
     } elsif ($src->local_name eq 'IfModuleSet') {
@@ -521,8 +612,12 @@ sub submodule_declarations ($$) {
       $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.element "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
     } elsif ($src->local_name eq 'AttributeSwitch') {
       $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.attlist "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
+    } elsif ($src->local_name eq 'ModuleSwitch') {
+      $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.module "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
+    } elsif ($src->local_name eq 'GeneralEntity') {
+      $s .= entity_declaration ($src, $Info, param => 0);
     } elsif ($src->local_name eq 'ParameterEntity') {
-      $s .= qq(@{[description ($src, $Info)]}<!ENTITY % @{[$src->get_attribute_value ('Name')]} @{[paralit $src->get_attribute_value ('EntityValue')]}>\n);
+      $s .= entity_declaration ($src, $Info, param => 1);
     }
   }
   $s;
@@ -608,6 +703,7 @@ sub make_module ($$$$) {
               struct   => q/Structual/,
              }->{$id}
           || $id;
+  return unless $s;
   
   my $r = <<EOH;
 <!-- $Info->{Name} : $name Module
