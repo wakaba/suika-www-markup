@@ -1,18 +1,21 @@
+#!/usr/bin/perl
 use strict;
-{require SuikaWiki::Markup::SuikaWikiConfig20::Parser;
+our $SCRIPT_NAME = 'mkdtds';
+our $VERSION = do{my @r=(q$Revision: 1.3 $=~/\d+/g);sprintf "%d."."%02d" x $#r,@r};
+{require Message::Markup::SuikaWikiConfig20::Parser;
 
-my $parser = new SuikaWiki::Markup::SuikaWikiConfig20::Parser;
+my $parser = new Message::Markup::SuikaWikiConfig20::Parser;
 local $/ = undef;
 my $src = $parser->parse_text (scalar <>);
 my $Info = {};
 
 for my $src ($src->get_attribute ('ModuleSet')
           || $src->get_attribute ('DocumentType')) {
-  for (qw/ID Copyright BaseURI/) {
+  for (qw/ID Copyright BaseURI Description Version/) {
     $Info->{$_} = $src->get_attribute_value ($_);
   }
-  $Info->{Name} = $src->get_attribute_value ('Name')
-             .' '.$src->get_attribute_value ('Version');
+  $Info->{Name} = $src->get_attribute_value ('Name');
+  $Info->{Name} .= ' ' . $Info->{Version} if length $Info->{Version};
   $Info->{ns} = $src->get_attribute ('Namespace');
 }
 
@@ -37,6 +40,26 @@ if (ref $src->get_attribute ('ModuleSet')) {
   qname_module ($src->get_attribute ('ModuleSet'), $Info);
 }
 exit}
+
+
+sub make_paragraphs ($;%) {
+  my ($para, %opt) = @_;
+  join "\n\n", map {
+    my $s = $_;
+    $s =~ s/\n+$//g;
+    $s =~ s/\n/\n$opt{indent}/g;
+    $opt{indent}.$s;
+  } grep {length} @$para;
+}
+
+sub dot_padding ($%) {
+  my ($s, %opt) = @_;
+  if ($opt{length} - length $s > 0) {
+    return $s . ( ($opt{dot} or q(.)) x ($opt{length} - length $s) );
+  } else {
+    return $s;
+  }
+}
 
 sub submodule_id_of ($$;%) {
   my ($src, $Info, %opt) = @_;
@@ -160,6 +183,16 @@ sub description ($$;%) {
   }
   $desc = qq(<!-- $desc -->\n) if $desc;
   $desc;
+}
+sub xml_condition_section ($$;%) {
+  my ($condition, $content, %opt) = @_;
+    qq(<![%$condition;[\n)
+  . $content
+  . qq(<!-- end of $condition -->]]>\n);
+}
+sub xml_parameter_ENTITY ($%) {
+  my ($name, %opt) = @_;
+  qq(<!ENTITY % $name @{[paralit $opt{value}]}>\n);
 }
 
 sub entity_declaration ($$;%) {
@@ -369,7 +402,10 @@ sub qname_module ($$) {
 <!ENTITY % NS.prefixed "@{[$ns->get_attribute_value ('UsePrefix')==1?
                             q(INCLUDE):q(IGNORE)]}">
 
-<!-- 1. Declare conditional section keyword, used to activate namespace prefixing. -->
+<!-- Section A: XML Namespace Framework :::::::::::::::::::::::::: -->
+
+<!-- 1. Declare conditional section keyword, used to activate namespace
+        prefixing. -->
 <!ENTITY % $ID.prefixed "@{[$ns->get_attribute_value ('UsePrefix')==1?
                             q(INCLUDE):
                             $ns->get_attribute_value ('UsePrefix')==-1?
@@ -394,8 +430,8 @@ sub qname_module ($$) {
 <!ENTITY % ${ID}-qname-extra.mod "">
 %${ID}-qname-extra.mod;
 
-<!-- 5. May be redeclared to contain any foreign namespace declaration
-        attributes for namespaces embedded in XML. -->
+<!-- 5. This parameter entity may be redeclared to contain any foreign
+        namespace declaration attributes for namespaces embedded. -->
 <!ENTITY % $ID.xmlns.extra.attrib "">
 
 <![%$ID.prefixed;[
@@ -424,21 +460,36 @@ sub qname_module ($$) {
 	"%$ID.xmlns.decl.attrib;
 	%NS.decl.attrib;">
 
+<!-- Section B: Qualified Names :::::::::::::::::::::::::::::::::: -->
+
+<!-- placeholder for qualified name redeclarations -->
+<!ENTITY % ${ID}-qname-extra.mod "">
+%${ID}-qname-extra.mod;
+
 <!-- 6. Declare parameter entities used to provide namespace-qualified
         names for all element types and global attribute names. -->
 EOH
-  for my $lname (keys %{$Info->{QName}}) {
-    $s .= qq(<!ENTITY % $Info->{ID}.$lname.qname "%$Info->{ID}.pfx;$lname">\n);
+  for my $lname (sort keys %{$Info->{QName}}) {
+    $s .= qq(<!ENTITY % )
+       .  (dot_padding qq($Info->{ID}.$lname.qname),
+                       length => 15 + length ($Info->{ID}), dot => ' ')
+       .  qq( "%$Info->{ID}.pfx;$lname">\n);
   }
   $s .= qq(\n);
-  for my $lname (keys %{$Info->{QNameA}}) {
-    $s .= qq(<!ENTITY % $Info->{ID}.$lname.attrib.qname "%$Info->{ID}.prefix;:$lname">\n);
+  for my $lname (sort keys %{$Info->{QNameA}}) {
+    $s .= qq(<!ENTITY % )
+       .  (dot_padding qq($Info->{ID}.$lname.attrib.qname),
+                       length => 15 + length ($Info->{ID}), dot => ' ')
+       .  qq( "%$Info->{ID}.prefix;:$lname">\n);
   }
   $s .= qq(\n);
-  for my $lname (keys %{$Info->{QNameB}}) {
-    $s .= qq(<!ENTITY % $Info->{ID}.$lname.attribute.qname "%$Info->{ID}.pfx;$lname">\n);
+  for my $lname (sort keys %{$Info->{QNameB}}) {
+    $s .= qq(<!ENTITY % )
+       .  (dot_padding qq($Info->{ID}.$lname.attribute.qname),
+                       length => 15 + length ($Info->{ID}), dot => ' ')
+       .  qq( "%$Info->{ID}.pfx;$lname">\n);
   }
-  make_module ($src, $Info, 'qname', $s);
+  make_module ($src->get_attribute ('QName', make_new_node => 1), $Info, 'qname', $s);
 }
 
 sub get_name ($$;$) {
@@ -498,11 +549,16 @@ sub get_adefault ($$) {
   $name;
 }
 
-sub get_desc ($$) {
-  my ($src, $Info) = @_;
+sub get_desc ($$;%) {
+  my ($src, $Info, %opt) = @_;
       my $desc = $src->get_attribute_value ('Description');
       $desc =~ s/\n/\n     /g;
-      $desc = qq(<!-- $desc -->\n) if $desc;
+  if (length $desc) {
+    $desc = qq($opt{prefix}$desc);
+    $desc .= q( ) if $opt{padding_length};
+    $desc = q(<!-- ).(dot_padding $desc, length => $opt{padding_length},
+                                         dot => $opt{padding_dot}).qq( -->\n);
+  }
   $desc;
 }
 
@@ -586,6 +642,7 @@ sub attrib_REF ($$) {
 
 sub submodule ($$) {
   my ($src, $Info) = @_;
+  local $Info->{elements} = [];
   my $s = submodule_declarations ($src, $Info);
   make_module ($src, $Info, $src->get_attribute_value ('ID'), $s);
 }
@@ -607,7 +664,7 @@ sub submodule_declarations ($$) {
     } elsif ($src->local_name eq 'IfModuleSet') {
       $s .= qq(<![%@{[$src->get_attribute_value ('ModuleSet')]}.module;[\n);
       $s .= submodule_declarations ($src, $Info);
-      $s .= qq(]]>\n);
+      $s .= qq(<!-- end of  -->]]>\n);
     } elsif ($src->local_name eq 'ElementSwitch') {
       $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.element "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
     } elsif ($src->local_name eq 'AttributeSwitch') {
@@ -632,14 +689,23 @@ sub element_def ($$) {
   my ($src, $Info) = @_;
   my $name = get_name ($src, $Info);
   my $mname = $name =~ /^\Q$Info->{ID}.\E/ ? $name : qq($Info->{ID}.$name);
-  $Info->{QName}->{$1} = 1 if $name =~ /^\Q$Info->{ID}\E\.(.+)/;
-  my $s = <<EOH;
-@{[get_desc ($src, $Info)]}<!ENTITY % $mname.element "INCLUDE">
-<![%$mname.element;[
-<!ENTITY % $name.content @{[paralit convert_content_model ($src, $Info, default => 'EMPTY')]}>
-<!ELEMENT %$name.qname; %$name.content;>
-]]>
-EOH
+  my $short_name = $name;
+  if ($name =~ /^\Q$Info->{ID}\E\.(.+)/) {
+    $Info->{QName}->{$1} = 1;
+    push @{$Info->{elements}}, $1;
+    $short_name = $1;
+  }
+  my $s = get_desc $src, $Info, prefix => qq($short_name: ),
+                   padding_length => 51, padding_dot => q(.);
+  $s .= "\n";
+  $s .= xml_parameter_ENTITY qq($mname.element), value => 'INCLUDE';
+  $s .= xml_condition_section (qq($mname.element) =>
+            xml_parameter_ENTITY
+              (qq($name.content),
+               value => convert_content_model ($src, $Info, default => 'EMPTY'))
+          . xml_parameter_ENTITY (qq($name.qname), value => $short_name)
+          . qq(<!ELEMENT %$name.qname; %$name.content;>\n));
+  $s .= "\n";
   $s .= attlist_def (scalar $src->get_attribute ('Attribute', make_new_node => 1), $Info, $mname);
   $s;
 }
@@ -669,9 +735,7 @@ sub attlist_def ($$;$) {
   $mname = ($name =~ /^\Q$Info->{ID}.\E/ ? $name : qq($Info->{ID}.$name))
     if $mname eq "$Info->{ID}.";
   $Info->{QName}->{$1} = 1 if $name =~ /^\Q$Info->{ID}\E\.(.+)/;
-  my $s = qq(@{[description ($src, $Info)]}<!ENTITY % $mname.attlist "INCLUDE">
-<![%$mname.attlist;[
-<!ATTLIST %$name.qname;);
+  my $s = qq(<!ATTLIST %$name.qname;);
   for my $src (@{$src->child_nodes}) {
     ## Attribute Definition
     if ($src->local_name eq 'Attribute') {
@@ -686,36 +750,123 @@ sub attlist_def ($$;$) {
   if ($_[2]) {
     $s .= qq(\n\t%$Info->{ID}.common.attrib;);
   }
-  $s .= qq(>
-]]>
-
-);
-  $s;
+  $s .= qq(>\n);
+    qq(@{[description ($src, $Info)]}<!ENTITY % $mname.attlist "INCLUDE">\n)
+  . xml_condition_section (qq($mname.attlist) => $s)
+  . "\n";
 }
 
-sub make_module ($$$$) {
-  my ($src, $Info, $id, $s) = @_;
+sub make_module ($$$$;%) {
+  my ($src, $Info, $id, $s, %opt) = @_;
   my $name = $src->get_attribute_value ('Name')
-          || {attribs  => q/Common Attributes/,
+          || {arch     => q/Base Architecture/,
+              attribs  => q/Common Attributes/,
+              blkphras => q/Block Phrasal/,
+              blkpres  => q/Block Presentation/,
+              blkstruct => q/Block Structural/,
+              charent  => q/Character Entities/,
               datatype => q/Datatypes/,
+              framework => q/Modular Framework/,
+              inlphras => q/Inline Phrasal/,
+              inlpres  => q/Inline Presentation/,
+              inlstruct => q/Inline Structural/,
+              legacy   => q/Legacy Markup/,
+              list     => q/Lists/,
+              meta     => q/Metainformation/,
               model    => q/Document Model/,
-              qname    => q/QName/,
-              struct   => q/Structual/,
+              notations => q/Notations/,
+              pres     => q/Presentation/,
+              qname    => q/QName (Qualified Name)/,
+              struct   => q/Document Structure/,
+              text     => q/Text/,
              }->{$id}
           || $id;
   return unless $s;
   
   my $r = <<EOH;
-<!-- $Info->{Name} : $name Module
+<!-- ...................................................................... -->
+<!-- @{[do{
+       my $s = qq($Info->{Name} $name Module );
+       if (70 - length $s > 0) {
+         $s = dot_padding $s, length => 70, dot => q(.);
+       } else {
+         $s = qq(        $name Module );
+         $s = qq($Info->{Name}\n     ) . dot_padding $s, length => 70, dot => q(.);
+       }
+       $s;
+     }]} -->
+<!-- file: $Info->{ID}-$id.mod
      
-     Copyright @{[(gmtime)[5]+1900]} $Info->{Copyright}
+     $Info->{Description}
+     Copyright @{[(gmtime)[5]+1900]} $Info->{Copyright}, All Rights Reserved.
      Revision: @{[sprintf '%04d-%02d-%02dT%02d:%02d:%02d+00:00',
-                          (gmtime)[5]+1900, (gmtime)[4]+1, (gmtime)[3,2,1,0]]}
+                          (gmtime)[5]+1900, (gmtime)[4]+1, (gmtime)[3,2,1,0]
+               ]} (Generated by $SCRIPT_NAME/$VERSION)
      
-     SYSTEM "$Info->{BaseURI}$Info->{ID}-$id.mod"
-  -->
-  
+     This DTD module is identified by the SYSTEM identifier:
+     
+       SYSTEM "$Info->{BaseURI}$Info->{ID}-$id.mod"
+     
+     ...................................................................... -->
+
 EOH
+  ## TODO: Support PUBLIC identifier.
+  
+  ## Module description
+  my @para = ({
+              arch     => (join "\n",
+                q!This optional module includes declarations that enable to be used!,
+                q!as a base architecture according to the 'Architectural Forms Definition!,
+                q!Requirements' (Annex A.3, ISO/IEC 10744, 2nd edition). For more!,
+                q!information on use of architectural forms, see the HyTime web site at!,
+                q!<http://www.hytime.org/>.!),
+              attribs  => q/This module declares many of the common attributes./,
+              blkphras => qq/This module declares the element types and their attributes used\n/.
+                          q/to support block-level phrasal markup./,
+              blkpres  => qq/This module declares the element types and their attributes used\n/.
+                          q/to support block-level presentational markup./,
+              blkstruct => qq/This module declares the element types and their attributes used\n/.
+                          q/to support block-level structural markup./,
+              charent  => q/This module declares the set of character entities./,
+              datatype => q/This module defines containers for the datatypes./,
+              framework => qq/This module imstantiates the modules needed to support\n/.
+                           q/the modularization model./,
+              inlphras => qq/This module declares the element types and their attributes used\n/.
+                          q/to support inline phrasal markup./,
+              inlpres  => qq/This module declares the element types and their attributes used\n/.
+                          q/to support inline presentational markup./,
+              inlstruct => qq/This module declares the element types and their attributes used\n/.
+                          q/to support inline structural markup./,
+              legacy   => q/This module declares additional markup that is considered obsolete./,
+              list     => qq/This module declares the list-oriented element types\n/.
+                          q/and their attributes./,
+              meta     => qq/This module declares the element types and their attributes\n/.
+                          q/to support metainformation markup./,
+              model    => qq/This model describes the groupings of element types that\n/.
+                          q/make up common content models./,
+              pres     => qq/This module declares the element types and their attributes used\n/.
+                          q/to support presentational markup./,
+              qname    => (join "\n",
+                q!This module is contained in two parts, labeled Section 'A' and 'B':!,
+                q!!,
+                q!  Section A declares parameter entities to support namespace-qualified!,
+                q!  names, namespace declarations, and name prefixing.!,
+                q!!,
+                q!  Section B declares parameter entities used to provide namespace-qualified!,
+                q!  names for all element types and global attribute names.!),
+              struct   => qq/This module defines the major structural element types and\n/.
+                          q/their attributes./,
+              }->{$id}, $src->get_attribute_value ('Description'));
+  unshift @para, '  '.join ', ', sort @{$Info->{elements}||[]} if @{$Info->{elements}||[]};
+  if (@para) {
+    $r .= <<EOH;
+<!-- $name
+
+@{[make_paragraphs \@para, indent => '     ']}
+-->
+
+EOH
+  }
   
   $r .= $s;
   
@@ -733,15 +884,36 @@ sub make_dtd ($$$$) {
   $id = "-$id" if $id;
   
   my $r = <<EOH;
-<!-- $Info->{Name} : Document Type Definition
-     
-     Copyright @{[(gmtime)[5]+1900]} $Info->{Copyright}
-     Revision: @{[sprintf '%04d-%02d-%02dT%02d:%02d:%02d+00:00',
-                          (gmtime)[5]+1900, (gmtime)[4]+1, (gmtime)[3,2,1,0]]}
-     
+<!-- ....................................................................... -->
+<!-- @{[ dot_padding "$Info->{Name} DTD ", length => 71, dot => q(.) ]} -->
+<!-- file: $Info->{ID}.dtd
+-->
+
+<!-- $Info->{Name} DTD
+
+     $Info->{Description}
+
+     Copyright @{[(gmtime)[5]+1900]} $Info->{Copyright}, All Rights Reserved.
+
+     Permission to use, copy, modify and distribute this DTD and its
+     accompanying documentation for any purpose and without fee is hereby
+     granted in perpetuity, provided that the above copyright notice and
+     this paragraph appear in all copies.  The copyright holders make no
+     representation about the suitability of the DTD for any purpose.
+
+     It is provided "as is" without expressed or implied warranty.
+
+       Revision: @{[sprintf '%04d-%02d-%02dT%02d:%02d:%02d+00:00',
+                            (gmtime)[5]+1900, (gmtime)[4]+1, (gmtime)[3,2,1,0]]}
+
+-->
+<!-- This is the driver file for the $Info->{Name} DTD.
+
+     This DTD is identified by the SYSTEM identifier:
+
      SYSTEM "$Info->{BaseURI}$Info->{ID}$id.dtd"
-  -->
-  
+-->
+
 EOH
   
   $r .= $s;
@@ -758,12 +930,12 @@ EOH
 
 =head1 NAME
 
-mkdtds.pl --- Moduralized XML Document Type Definition Generator
+mkdtds.pl - Modularized XML Document Type Definition (DTD) Generator
 
 =head1 DESCRIPTION
 
-This script can be used to generate XML DTD modules and driver
-which is interoperable with XHTML DTD modules.
+This script generates XML DTD module implementations and/or DTD drivers,
+that can be used with modularized XHTML DTDs.
 
 =head1 USAGE
 
@@ -780,12 +952,12 @@ which is interoperable with XHTML DTD modules.
 
 (((See examples on <http://suika.fam.cx/gate/cvs/markup/>)))
 
-=head1 REQUIRED MODULE
+=head1 REQUIRED MODULES
 
-This script uses SuikaWiki::Markup::SuikaWikiConfig20 and
-SuikaWiki::Markup::SuikaWikiConfig20::Parser.
-Please get it from <http://suika.fam.cx/gate/cvs/suikawiki/script/lib/> 
-and put into your lib directory.
+This script uses C<Message::Markup::SuikaWikiConfig20::Node> and
+C<Message::Markup::SuikaWikiConfig20::Parser>.  Please retrive it from
+<http://suika.fam.cx/gate/cvs/messaging/manakai/lib/Message/Markup/SuikaWikiConfig20/> 
+and put into your C<lib> directory.
 
 =head1 AUTHOR
 
@@ -793,12 +965,13 @@ Wakaba <w@suika.fam.cx>
 
 =head1 LICENSE
 
-Copyright 2003 Wakaba <w@suika.fam.cx>
+Copyright 2003-2004 Wakaba <w@suika.fam.cx>
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
-Note that author claims no right about DTD modules generated by this script.
-Author(s) of DTD modules should be explicily state their license terms.
+Note that author claims no copyright with regard to DTD modules/drivers generated
+by this script.  Author(s) of DTD modules/drivers should explicily state their
+license terms in them and their documentation (if any).
 
 =cut

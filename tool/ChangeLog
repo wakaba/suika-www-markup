@@ -1,3 +1,11 @@
+2004-01-13  Wakaba  <w@suika.fam.cx>
+
+	* mkdtds.pl: Use new version of SuikaWikiConfig/2.0 parser.
+	($SCRIPT_NAME, $VERSION): New constant variables.
+	(make_paragraphs, dot_padding, xml_condition_section, xml_parameter_ENTITY): New functions.
+	(qname_module, make_module, make_dtd): Generates comments more similar to XHTML m12n DTDs.
+	(get_desc): New options 'padding_length', 'padding_dot'.
+
 2003-10-24  Wakaba  <w@suika.fam.cx>
 
 	* ChangeLog: New file.
