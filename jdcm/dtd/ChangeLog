@@ -3,3 +3,5 @@
 	* module/: New directory.
 	* Makefile, ChangeLog: New file.
 	* jdcm.dds: New.
+	
+	* *.mod. jdcm.dtd: Removed.

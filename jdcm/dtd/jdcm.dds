@@ -1,11 +1,12 @@
 #?SuikaWikiConfig/2.0
 
 DocumentType:
-  @Name:
-    XML Representation of
-    "Exchange format for Japanese documents with composition markup
-    (JIS X 4052:2000)"
-  @Version:
+  @Name: XJDCM
+  @Version: 
+    (Based on JIS X 4052:2000)
+  @Description:
+    This is XJDCM, an XML representation of JDCM
+    ("Exchange format for Japanese documents with composition markup").
   @ID: jdcm
   @BaseURI:
     http://suika.fam.cx/gate/cvs/*checkout*/markup/jdcm/dtd/
@@ -14,14 +15,14 @@ DocumentType:
     @@UsePrefix: -1
   
   @Copyright: Wakaba <w@suika.fam.cx>
-  @RCSDate: $Date: 2003/10/24 11:09:02 $
+  @RCSDate:
+    $Date: 2004/06/20 05:17:02 $
 
 Driver:
   @ModuleSet:
-    @@Name:
-      XML Representation of
-      "Exchange format for Japanese documents with composition markup
-      (JIS X 4052:2000)"
+    @@Name: XJDCM
+    @@Version: 
+      (Based on JIS X 4052:2000)
     @@ID: jdcm
     @@BaseURI:
       module/
@@ -53,6 +54,12 @@ Driver:
         xml:lang
       @@@REF:
         xml:space
+      @@@REF:
+        xsi:type
+      @@@REF:
+        xsi:schemaLocation
+      @@@REF:
+        xsi:noNamespaceSchemaLocation
   
   @Module:
     @@ID:
