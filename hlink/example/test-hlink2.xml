@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<hlinks xmlns="http://www.w3.org/2002/06/hlink">
+      <hlink namespace="http://foo.example/markup" element="home"
+             locator="/" effect="replace" actuate="onRequest"/>
+      <hlink namespace="http://foo.example/markup" element="home"
+             locator="internal-gopher-menu" effect="embed" actuate="onLoad"
+             mediaType="image/png"/>
+</hlinks>
