@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl">
+  <binding id="link-hlink">
+    <implementation>
+      <method name="linkizeHTML" type="application/x-javascript">
+        <parameter name="doc" />
+        <body><![CDATA[
+          const XHTML1NS = 'http://www.w3.org/1999/xhtml';
+          const HLinkNS = 'http://www.w3.org/2002/06/hlink';
+          const XLinkNS = 'http://www.w3.org/1999/xlink';
+          const tempNS = 'urn:x-suika-fam-cx:markup:temporary';
+          
+          var eLinks = doc.getElementsByTagNameNS (XHTML1NS, 'link');
+          for (var i = 0; i < eLinks.length; i++)
+            if (eLinks[i].getAttribute ('type').toLowerCase () == 'application/x-hlink+xml'
+             && eLinks[i].getAttribute ('rel') == 'stylesheet' //.match (/stylesheet/i)
+            ) linkizeByHTMLLinkElement (eLinks[i]);
+        
+        function linkizeByHTMLLinkElement (eLink) {
+          var oHLink = eLink.ownerDocument.createElementNS (XHTML1NS, 'object');
+          oHLink.setAttributeNS (tempNS, 'HLinkStatus', 100);
+          oHLink.setAttribute ('data', eLink.getAttribute ('href'));
+          //oHLink.setAttribute ('type', 'application/xml');
+          oHLink.style.display = 'inline';
+          oHLink.style.width = 0;
+          oHLink.style.height = 0;
+          oHLink.addEventListener ('load', function () {
+            var hlink = oHLink.contentDocument.getElementsByTagNameNS
+                          (HLinkNS, 'hlink');
+            for (var k = 0; k < hlink.length; k++) linkizeElement (hlink[k]);
+          }, false);
+          eLink.ownerDocument.documentElement.appendChild (oHLink);
+        }
+        
+        function linkizeElement (e) {
+          var elementNS = e.getAttribute ('namespace');
+          var elementType = e.getAttribute ('element');
+          var linkAttr = [];
+          var linkAttrList = new Array ('locator', 'effect', 'actuate', 'mediaType');
+          for (var k = 0; k < linkAttrList.length; k++) {
+            linkAttr[linkAttrList[k]] = [];
+            linkAttr[linkAttrList[k]].value = e.getAttribute (linkAttrList[k]);
+            if (linkAttr[linkAttrList[k]].value
+             && linkAttr[linkAttrList[k]].value.substr (0,1) == '@') {
+              linkAttr[linkAttrList[k]].attrName = linkAttr[linkAttrList[k]].value.substr (1);
+              linkAttr[linkAttrList[k]].value = undefined;
+            }
+          }
+          var linkElements = document.getElementsByTagNameNS (elementNS, elementType);
+          for (var i = 0; i < linkElements.length; i++) {
+            var elFlag = 1*linkElements[i].getAttributeNS (tempNS, 'HLinkStatus');
+            if (elFlag < 20) {
+              var myLinkAttr = [];
+              for (var j = 0; j < linkAttrList.length; j++) {
+                myLinkAttr[linkAttrList[j]] = linkAttr[linkAttrList[j]].value;
+                if (linkAttr[linkAttrList[j]].attrName
+                 && linkElements[i].hasAttribute
+                      (linkAttr[linkAttrList[j]].attrName)) {
+                  myLinkAttr[linkAttrList[j]] = linkElements[i].getAttribute
+                                                (linkAttr[linkAttrList[j]].attrName);
+                }
+              }
+              if (myLinkAttr.locator != undefined) {
+                if (myLinkAttr.effect == 'embed' && myLinkAttr.actuate == 'onLoad'
+                 && myLinkAttr.locator != '' && myLinkAttr.locator.substr (0,1) != '#') {
+                  var oEl = linkElements[i].ownerDocument.createElementNS (XHTML1NS, 'object');
+                  linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
+                  oEl.setAttributeNS (tempNS, 'HLinkStatus', 100);
+                  oEl.setAttribute ('data', myLinkAttr.locator);
+                  oEl.setAttribute ('type', myLinkAttr.mediaType);
+                  while (linkElements[i].childNodes.length) {
+                    oEl.appendChild (linkElements[i].firstChild);
+                    //linkElements[i].removeChild (linkElements[i].firstChild);
+                  }
+                  linkElements[i].appendChild(oEl);
+                } else {
+                  linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
+                  linkElements[i].setAttributeNS (XLinkNS, 'type', 'simple');
+                  if (myLinkAttr.effect == 'submit' || myLinkAttr.effect == 'map')
+                    myLinkAttr.effect = 'other';
+                  linkElements[i].setAttributeNS (XLinkNS, 'show', myLinkAttr.effect);
+                  if (myLinkAttr.actuate == 'onRequestSecondary')
+                    myLinkAttr.actuate = 'other';
+                  linkElements[i].setAttributeNS (XLinkNS, 'actuate', myLinkAttr.actuate);
+                  if (!myLinkAttr.locator) myLinkAttr.locator = '#';
+                  linkElements[i].setAttributeNS (XLinkNS, 'href', myLinkAttr.locator);
+                }
+              }
+            }
+          }
+        }
+        ]]></body>
+      </method>
+      <constructor type="application/x-javascript"><![CDATA[
+        var myThis = this;
+        window.addEventListener ('load', function () {myThis.linkizeHTML(document)}, false);
+      ]]></constructor>
+    </implementation>
+  </binding>
+  <binding id="style-hlink">
+    <implementation>
+      <method name="linkize" type="application/x-javascript">
+        <parameter name="e" />
+        <body>
+        <![CDATA[
+          const tempNS = 'urn:x-suika-fam-cx:markup:temporary';
+          const XLinkNS = 'http://www.w3.org/1999/xlink';
+          const XHTML1NS = 'http://www.w3.org/1999/xhtml';
+          var elementNS = e.getAttribute ('namespace');
+          var elementType = e.getAttribute ('element');
+          var linkAttr = [];
+          var linkAttrList = new Array ('locator', 'effect', 'actuate', 'mediaType');
+          for (var i = 0; i < linkAttrList.length; i++) {
+            linkAttr[linkAttrList[i]] = [];
+            linkAttr[linkAttrList[i]].value = e.getAttribute (linkAttrList[i]);
+            if (linkAttr[linkAttrList[i]].value
+             && linkAttr[linkAttrList[i]].value.substr (0,1) == '@') {
+              linkAttr[linkAttrList[i]].attrName = linkAttr[linkAttrList[i]].value.substr (1);
+              linkAttr[linkAttrList[i]].value = undefined;
+            }
+          }
+          var linkElements = document.getElementsByTagNameNS (elementNS, elementType);
+          for (var i = 0; i < linkElements.length; i++) {
+            var elFlag = linkElements[i].getAttributeNS (tempNS, 'HLinkStatus');
+            if (elFlag < 20) {
+              var myLinkAttr = [];
+              for (var j = 0; j < linkAttrList.length; j++) {
+                myLinkAttr[linkAttrList[j]] = linkAttr[linkAttrList[j]].value;
+                if (linkAttr[linkAttrList[j]].attrName
+                 && linkElements[i].hasAttribute
+                      (linkAttr[linkAttrList[j]].attrName)) {
+                  myLinkAttr[linkAttrList[j]] = linkElements[i].getAttribute
+                                                (linkAttr[linkAttrList[j]].attrName);
+                }
+              }
+              if (myLinkAttr.locator != undefined) {
+                if (myLinkAttr.effect == 'embed' && myLinkAttr.actuate == 'onLoad'
+                 && myLinkAttr.locator != '' && myLinkAttr.locator.substr (0,1) != '#') {
+                  var oEl = linkElements[i].ownerDocument.createElementNS (XHTML1NS, 'object');
+                  oEl.setAttributeNS (tempNS, 'HLinkStatus', 100);
+                  oEl.setAttribute ('data', myLinkAttr.locator);
+                  oEl.setAttribute ('type', myLinkAttr.mediaType);
+                  while (linkElements[i].childNodes.length) {
+                    oEl.appendChild (linkElements[i].firstChild);
+                    //linkElements[i].removeChild (linkElements[i].firstChild);
+                  }
+                  linkElements[i].appendChild(oEl);
+                } else {
+                  linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
+                  linkElements[i].setAttributeNS (XLinkNS, 'type', 'simple');
+                  if (myLinkAttr.effect == 'submit' || myLinkAttr.effect == 'map')
+                    myLinkAttr.effect = 'other';
+                  linkElements[i].setAttributeNS (XLinkNS, 'show', myLinkAttr.effect);
+                  if (myLinkAttr.actuate == 'onRequestSecondary')
+                    myLinkAttr.actuate = 'other';
+                  linkElements[i].setAttributeNS (XLinkNS, 'actuate', myLinkAttr.actuate);
+                  if (!myLinkAttr.locator) myLinkAttr.locator = '#';
+                  linkElements[i].setAttributeNS (XLinkNS, 'href', myLinkAttr.locator);
+                }
+              }
+            }
+          }
+        ]]>
+        </body>
+      </method>
+      <constructor type="application/x-javascript">
+        <![CDATA[
+          var myThis = this;
+          window.addEventListener ('load', function () {myThis.linkize(myThis)}, false);
+        ]]>
+      </constructor>
+    </implementation>
+  </binding>
+</bindings>
+<!-- ***** BEGIN LICENSE BLOCK *****
+   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
+   -
+   - The contents of this file are subject to the Mozilla Public License Version
+   - 1.1 (the "License"); you may not use this file except in compliance with
+   - the License. You may obtain a copy of the License at
+   - <http://www.mozilla.org/MPL/>
+   -
+   - Software distributed under the License is distributed on an "AS IS" basis,
+   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+   - for the specific language governing rights and limitations under the
+   - License.
+   -
+   - The Original Code is SuikaWiki code.
+   -
+   - The Initial Developer of the Original Code is Wakaba.
+   - Portions created by the Initial Developer are Copyright (C) 2003
+   - the Initial Developer. All Rights Reserved.
+   -
+   - Contributor(s):
+   -   Wakaba <w@suika.fam.cx>
+   -
+   - Alternatively, the contents of this file may be used under the terms of
+   - either the GNU General Public License Version 2 or later (the "GPL"), or
+   - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+   - in which case the provisions of the GPL or the LGPL are applicable instead
+   - of those above. If you wish to allow use of your version of this file only
+   - under the terms of either the GPL or the LGPL, and not to allow others to
+   - use your version of this file under the terms of the MPL, indicate your
+   - decision by deleting the provisions above and replace them with the notice
+   - and other provisions required by the LGPL or the GPL. If you do not delete
+   - the provisions above, a recipient may use your version of this file under
+   - the terms of any one of the MPL, the GPL or the LGPL.
+   -
+   - ***** END LICENSE BLOCK ***** -->
