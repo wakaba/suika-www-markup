@@ -1,0 +1,70 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: Handbill
+  @Version: 
+  @Description:
+    This is a markup vocabulary for "chirashi no ura" (reversed side of 
+    handbills), as defined by 894
+    <http://pc5.2ch.net/test/read.cgi/hp/1101043958/894>.
+  @ID: handbill
+  @BaseURI:
+    http://suika.fam.cx/www/markup/2004/handbill/schema/
+  
+  @Namespace:
+    @@Name:
+      http://pc5.2ch.net/test/read.cgi/hp/1101043958/894
+    @@DefaultPrefix: my
+    @@UsePrefix: 1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2004/12/21 07:26:01 $
+  
+  @ImplNote:
+    @@lang:en
+    @@@:
+      There is no official DTD.
+      \
+      For the definition of the vocabulary, see 
+      <http://pc5.2ch.net/test/read.cgi/hp/1101043958/894>.
+
+Attribute:
+  @AttributeSet:
+    @@Name: common
+    @@REF:
+        xml:lang
+    @@REF:
+        xml:base
+    @@REF:
+        xml:space
+    @@REF:
+        xsi:schemaLocation
+    @@REF:
+        xsi:type
+    @@REF:
+        xsi:nil
+
+Module:
+  @Name: Structure
+  @ID: struct
+  
+  @Element:
+    @@Name: handbill
+    @@Content:
+      @@@@:
+        (#PCDATA | $:Flow.mix)*
+      @@@ImplNote:
+        The minimal content model is officially not defined.
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "field"
+        @@@@Type: (reverse)
+        @@@@Default: #REQUIRED
+        @@@@ImplNote:
+          @@@@@lang:en
+          @@@@@@:
+            Whether this attribute is optional or not and what other 
+            kind of values available are not known.
+
+## handbill.dms ends here
