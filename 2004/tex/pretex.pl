@@ -16,6 +16,7 @@ sub c{
     my $source = '';
     my $line = 1;
     for (<$file>) {
+      s/\x0C//g;
       s/\t/        /g and warn "$0: $filename\[$line]: TAB found";
       $source .= sprintf '%3d %s', $line++, $_;
     }
@@ -75,4 +76,4 @@ modify it under the same terms as Perl itself.
 
 =cut
 
-# $Date: 2004/07/31 07:39:00 $
+# $Date: 2004/12/11 08:33:57 $
