@@ -1,0 +1,50 @@
+#?SuikaWikiConfig/2.0
+
+DocumentType:
+  @Name: HLink
+  @Version: First Working Draft - Non-Official DTD Implementation
+  @ID: hlink
+  @BaseURI:
+    http://suika.fam.cx/gate/cvs/*checkout*/markup/hlink/schema/
+  
+  @Namespace:
+    @@UsePrefix: -1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2003/10/24 13:31:34 $
+
+Driver:
+  @ModuleSet:
+    @@Name: HLink
+    @@ID: hlink
+    @@BaseURI:
+      module/
+    @@Namespace:
+      @@@Name:
+        http://www.w3.org/2002/06/hlink
+      @@@DefaultPrefix: hlink
+      @@@UsePrefix: 0
+    @@Default: 1
+  
+  @QNameModule:
+    @@ID:
+      hlink:qname
+  
+  @DatatypeModule:
+    @@ID:
+      hlink:datatype
+  
+  @AttributeModule:
+    @@ID:
+      hlink:attribs
+  
+  @Module:
+    @@ID:
+      hlink:core
+    @@Description: Core module
+  
+  @Module:
+    @@ID:
+      hlink:refer
+    @@Description: Referring module
+    @@Default: -1

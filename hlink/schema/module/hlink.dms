@@ -1,0 +1,136 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: HLink
+  @Version: First Working Draft
+  @ID: hlink
+  @BaseURI:
+    http://suika.fam.cx/gate/cvs/*checkout*/markup/hlink/schema/module/
+  
+  @Namespace:
+    @@Name:
+      http://www.w3.org/2002/06/hlink
+    @@DefaultPrefix: hlink
+    @@UsePrefix: -1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2003/10/24 13:31:34 $
+
+Datatype:
+  @Type:
+    @@Name:
+      :ContentType
+    @@XMLType: CDATA
+    @@Description: Internet Media Type [RFC 2046]
+  
+  @Type:
+    @@Name:
+      :Coords
+    @@XMLType: CDATA
+    @@Description: coordinate *("," coordinate)
+  
+  @Type:
+    @@Name:
+      :LinkTypes
+    @@XMLType: CDATA
+    @@Description: linktype *(WSP linktype)
+  
+  @Type:
+    @@Name:
+      :Shape
+    @@XMLType: (default|rect|circle|poly)
+  
+  @Type:
+    @@Name:
+      :URI
+    @@XMLType: CDATA
+    @@Description: A URI Reference
+  
+  @Type:
+    @@Name: local-name
+    @@XMLType: NMTOKEN
+
+Attribute:
+  @Attribute:
+    @@Name: common
+
+Module:
+  @Name: Core
+  @ID: core
+  
+  @Element:
+    @@Name: hlinks
+    @@Content:
+      (
+        hlink
+      )+
+  
+  @Element:
+    @@Name: hlink
+    @@Content: "EMPTY"
+    
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "namespace"
+        @@@@Type:
+          :URI
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "element"
+        @@@@Type: local-name
+      @@@Attribute:
+        @@@@Name: "locator"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "effect"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "actuate"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "replacement"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "role"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "reverseRole"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "shape"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "coords"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "arcrole"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "label"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "from"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "to"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "mediaType"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "onSuccess"
+        @@@@Type: "CDATA"
+      @@@Attribute:
+        @@@@Name: "onFailure"
+        @@@@Type: "CDATA"
+
+Module:
+  @Name: Referring
+  @ID: refer
+  
+  @AttributeSet:
+    @@Name: definition
+    @@Attribute:
+      @@@Name: definition
+      @@@Type:
+        :URI

@@ -1,0 +1,97 @@
+#?SuikaWikiConfig/2.0
+
+DocumentType:
+  @Name: XHTML 1.1 + HLink
+  @Version: 
+  @ID: xhtml11-hlink
+  @BaseURI:
+    http://suika.fam.cx/gate/cvs/*checkout*/markup/hlink/schema/
+  
+  @Namespace:
+    @@UsePrefix: 1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2003/10/24 13:31:34 $
+
+Driver:
+  @ModuleSet:
+    @@Name: Extensible Hypertext Markup Language, Version 1
+    @@ID: XHTML
+    @@BaseURI:
+      http://www.w3.org/TR/xhtml-modularization/DTD/
+    @@Namespace:
+      @@@Name:
+        http://www.w3.org/1999/xhtml
+      @@@DefaultPrefix: xhtml1
+      @@@UsePrefix: -1
+    @@Default: 1
+  @ModuleSet:
+    @@Name: HLink
+    @@ID: hlink
+    @@BaseURI:
+      module/
+    @@Namespace:
+      @@@Name:
+        http://www.w3.org/2002/06/hlink
+      @@@DefaultPrefix: hlink
+      @@@UsePrefix: 1
+    @@Default: 1
+  
+  @NoModelModule: 1
+  
+  @DTD:
+    @@ID: hlink
+    @@SYSTEM: <hlink.dtd>
+    
+    @@ModuleSwitch:
+      @@@Name:
+        hlink:refer
+      @@@Use: 1
+  
+  @DTD:
+    @@ID: XHTML
+    @@PUBLIC: -//W3C//DTD XHTML 1.1//EN
+    @@SYSTEM:
+      <http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd>
+    
+    @@ParameterEntity:
+      @@@Name: xhtml-special
+      @@@PUBLIC: -//W3C//ENTITIES Special for XHTML//EN
+      @@@SYSTEM:
+        <http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent>
+      @@@Description: Avoid xhtml-m12n DTD bug
+    
+    @@ParameterEntity:
+      @@@Name: xhtml-model.redecl
+      @@@Declaration:
+        @@@@Class:
+          @@@@@Name:
+            :HeadOpts.mix
+          @@@@@Content:
+            (
+              :script
+            | :style
+            | :meta
+            | :link
+            | :object
+            | hlink:hlink
+            )*
+    
+    @@ModuleSwitch:
+      @@@Name:
+        :xhtml-postfw-redecl
+      @@@Use: 1
+    @@ParameterEntity:
+      @@@Name: xhtml-postfw-redecl.mod
+      @@@Declaration:
+        @@@@IfModuleSet:
+          @@@@@ModuleSet: hlink
+          @@@@@Attribute:
+            @@@@@@Name:
+              hlink:head-definition
+            @@@@@@ElementType:
+              :head
+            @@@@@@ref:
+              hlink:definition
+
+  

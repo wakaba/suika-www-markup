@@ -1,0 +1,6 @@
+2003-10-24  Wakaba  <w@suika.fam.cx>
+
+	* hlink.dtd, xhtml11-hlink.dtd: Removed.
+	* ChangeLog, Makefile: New file.
+	* hlink.dds, xhtml11-hlink.dds: New.
+	* module/: New directory.
