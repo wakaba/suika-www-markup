@@ -2,4 +2,15 @@
 <hlinks xmlns="http://www.w3.org/2002/06/hlink">
   <hlink namespace="http://foo.example/markup" element="anchor"
          locator="@uri" effect="replace" actuate="onRequest"/>
+  <hlink namespace="http://bar.example/markup" element="a"
+         locator="@href" effect="replace" actuate="onRequest"/>
+  <hlink namespace="http://bar.example/markup" element="URIs"
+         locator="@xhtml" effect="replace" actuate="onRequestSecondary"/>
+  <hlink namespace="http://bar.example/markup" element="URIs"
+         locator="@xlink" effect="replace" actuate="onRequestSecondary"/>
+  <hlink namespace="http://bar.example/markup" element="URIs"
+         locator="@svg" effect="replace" actuate="onRequestSecondary"/>
+  <hlink namespace="http://bar.example/markup" element="URIs"
+         locator="internal-gopher-telnet" effect="embed" actuate="onLoad"
+         mediaType="image/png"/>
 </hlinks>
