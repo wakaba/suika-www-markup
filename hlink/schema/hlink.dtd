@@ -1,97 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- ...................................................................... -->
-<!-- HLink DTD ............................................................ -->
-<!-- URI: http://www.w3.org/2002/06/hlink.dtd
+<?xml version="1.0" encoding="iso-2022-jp"?>
+<!-- HLink : Document Type Definition
+     
+     Copyright 2003 Wakaba <w@suika.fam.cx>.
+     Revision: $Date: 2003/09/13 09:45:04 $
+     
+     SYSTEM "http://suika.fam.cx/gate/cvs/*checkout*/markup/hlink/schama/hlink.dtd"
+  -->
 
-     This is HLink - a link recongnition mechanism for the XHTML Family.
+<!-- Switchers to include/ignore each vocabulary -->
+<!ENTITY % HLINK.module "INCLUDE">
 
-     Copyright ©2002 W3C (MIT, INRIA, Keio), All Rights Reserved.
+<!-- Namespace names -->
+<!ENTITY % HLINK.xmlns "http://www.w3.org/2002/06/hlink">
 
-       Editor:   Masayasu Ishikawa <mimasa@w3.org>
-       Revision: Id: hlink.dtd,v 1.3 2002/09/06 20:04:18 mimasa Exp 
+<!-- Base URIs for the relavant DTD modules -->
+<!ENTITY % HLINK.sysid.base "">
 
-     Permission to use, copy, modify and distribute the HLink DTD and its 
-     accompanying documentation for any purpose and without fee is hereby 
-     granted in perpetuity, provided that the above copyright notice and 
-     this paragraph appear in all copies.  The copyright holders make no 
-     representation about the suitability of this DTD for any purpose.
+<!-- Namespace prefix -->
+<!ENTITY % HLINK.prefix "hlink">
+<!ENTITY % HLINK.prefixed "IGNORE">
 
-     It is provided "as is" without expressed or implied warranty.
+<!-- Datatype modules -->
+<!ENTITY % HLINK.datatype.module "INCLUDE">
+<![%HLINK.datatype.module;[
+<!ENTITY % HLINK.datatype.decl
+     'SYSTEM "%HLINK.sysid.base;datatype.mod"'>
+<!ENTITY % HLINK.datatype.mod %HLINK.datatype.decl;>
+%HLINK.datatype.mod;]]>
 
-     This DTD module is identified by the PUBLIC and SYSTEM identifiers:
+<!-- Placefolders for foreign namespace declarations -->
+<!ENTITY % HLINK.xmlns.extra.attrib "">
 
-       PUBLIC "-//W3C//DTD HLink 1.0//EN"
-       SYSTEM "http://www.w3.org/2002/06/hlink.dtd"
+<![%HLINK.prefixed;[
+<!ENTITY % HLINK.xmlns.decl.attrib
+	"xmlns:%HLINK.prefix;	%URI.datatype;	#FIXED '%HLINK.xmlns;'">
+]]>
+<!ENTITY % HLINK.xmlns.decl.attrib
+	"xmlns	%URI.datatype;	#FIXED '%HLINK.xmlns;'">
+<!ENTITY % HLINK.xmlns.decl.attrib "">
 
-     Revisions:
-     (none)
-     ....................................................................... -->
+<!ENTITY % NS.decl.attrib
+	"%HLINK.xmlns.decl.attrib;
+	%HLINK.xmlns.extra.attrib;">
 
-<!-- HLink
+<!ENTITY % HLINK.xmlns.attrib "%NS.decl.attrib;">
 
-     hlinks, hlink
+<!-- QName module -->
+<!ENTITY % HLINK.qname.module "INCLUDE">
+<![%HLINK.qname.module;[
+<!ENTITY % HLINK.qname.decl 'SYSTEM "%HLINK.sysid.base;hlink-qname.mod"'>
+<!ENTITY % HLINK.qname.mod %HLINK.qname.decl;>
+%HLINK.qname.mod;]]>
 
-     This HLink DTD declares elements and attributes defining
-     HLink, a link recongnition mechanism for the XHTML Family.
--->
+<!-- Common attributes module -->
+<!ENTITY % HLINK.attribs.module "INCLUDE">
+<![%HLINK.attribs.module;[
+<!ENTITY % HLINK.attribs.decl 'SYSTEM "%HLINK.sysid.base;attribs.mod"'>
+<!ENTITY % HLINK.attribs.mod %HLINK.attribs.decl;>
+%HLINK.attribs.mod;]]>
 
-<!-- Datatypes
-
-     defines containers for the following datatypes, many of
-     these imported from other specifications and standards -
-     not quite used at the moment.
--->
-
-<!-- media type, as per [RFC2045] -->
-<!ENTITY % ContentType.datatype "CDATA" >
-
-<!-- comma separated list of coordinates to use in defining areas -->
-<!ENTITY % Coords.datatype "CDATA" >
-
-<!-- space-separated list of link types -->
-<!ENTITY % LinkTypes.datatype "NMTOKENS" >
-
-<!-- the shape of a region -->
-<!ENTITY % Shape.datatype "( default | rect | circle | poly )">
-
-<!-- a Uniform Resource Identifier reference, as per anyURI in
-     XML Schema Part 2 [SCHEMA]
--->
-<!ENTITY % URI.datatype "CDATA" >
-
-<!-- HLink Qname (Qualified Name) Module -->
-<!ENTITY % hlink-qname.mod
-    PUBLIC "-//W3C//ENTITIES HLink Qualified Names 1.0//EN"
-           "hlink-qname.mod" >
-%hlink-qname.mod;
-
-<!-- hlinks element .................................... -->
-<!ELEMENT %HLINK.hlinks.qname; ( %HLINK.hlink.qname; )+ >
-<!ATTLIST %HLINK.hlinks.qname;
-    %HLINK.xmlns.attrib;
->
-
-<!-- hlink element ..................................... -->
-<!ELEMENT %HLINK.hlink.qname; EMPTY >
-<!ATTLIST %HLINK.hlink.qname;
-    %HLINK.xmlns.attrib;
-    namespace   %URI.datatype; #REQUIRED
-    element     NMTOKEN        #IMPLIED
-    locator     CDATA          #IMPLIED
-    effect      CDATA          #IMPLIED
-    actuate     CDATA          #IMPLIED
-    replacement CDATA          #IMPLIED
-    role        CDATA          #IMPLIED
-    reverseRole CDATA          #IMPLIED
-    shape       CDATA          #IMPLIED
-    coords      CDATA          #IMPLIED
-    arcrole     CDATA          #IMPLIED
-    label       CDATA          #IMPLIED
-    from        CDATA          #IMPLIED
-    to          CDATA          #IMPLIED
-    mediaType   CDATA          #IMPLIED
-    onSuccess   CDATA          #IMPLIED
-    onFailure   CDATA          #IMPLIED
->
+<!-- Core elements module -->
+<!ENTITY % HLINK.core.module "INCLUDE">
+<![%HLINK.core.module;[
+<!ENTITY % HLINK.core.decl 'SYSTEM "%HLINK.sysid.base;core.mod"'>
+<!ENTITY % HLINK.core.mod %HLINK.core.decl;>
+%HLINK.core.mod;]]>
 
 <!-- end of hlink.dtd -->
