@@ -1,0 +1,144 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: Web Forms XML Submission
+  @Version: 2.0 Call For Comments -- 27 June 2004
+  @ID: webforms20-submission
+  @Description:
+    Web Forms 2.0 XML Submission Format (application/x-www-form+xml).
+  @BaseURI:
+    
+  @Description:
+    Web Forms 2.0 proposal <http://www.hixie.ch/specs/html/forms/web-forms>.
+  
+  @Namespace:
+    @@Name:
+      uuid:d10e4fd6-2c01-49e8-8f9d-0ab964387e32
+    @@DefaultPrefix: form
+    @@UsePrefix: -1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2004/07/05 03:57:10 $
+
+Datatype:
+  @Type:
+    @@Name:
+      :ContentType
+    @@XMLType: CDATA
+    @@Description:
+      An Internet Media Type (with optional parameters)
+  
+  @Type:
+    @@Name: filename
+    @@XMLType: CDATA
+    @@Description: A file name
+  
+  @Type:
+    @@Name: name
+    @@XMLType: CDATA
+    @@Description: A form control name
+  
+  @Type:
+    @@Name: idref
+    @@XMLType: NMTOKEN
+    @@Description: An ID in form
+  
+  @Type:
+    @@Name: index
+    @@XMLType: NMTOKEN
+  
+  @Class:
+    @@Name: Base64binary.content
+    @@Content: (#PCDATA)*
+    @@Description:
+      Base 64 encoded data with optional (meaningless) white spaces.
+
+Module:
+  @Name: Submission
+  @ID: submission
+  
+  @Element:
+    @@Name: submission
+    @@Content:
+      (
+        repeat*,
+        (field | file)*
+      )
+  
+  @Element:
+    @@Name: repeat
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "template"
+        @@@@Type: idref
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The ID of the template
+      @@@Attribute:
+        @@@@Name: "index"
+        @@@@Type: index
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The index of the repetition block.
+    @@Description:
+      For each repetition block in the form data set
+  
+  @Element:
+    @@Name: field
+    @@Content: (#PCDATA)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: name
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The name of the form control
+      @@@Attribute:
+        @@@@Name: "index"
+        @@@@Type: index
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The control index in the definition of form data set
+      @@@Attribute:
+        @@@@Name:
+          "xml:space"
+        @@@@Type: "(preserve)"
+        @@@@Default: #FIXED "preserve"
+        @@@@Description:
+          White spaces are significant
+    @@Description:
+      Successful form control other than a file upload control
+  
+  @Element:
+    @@Name: file
+    @@Content: $Base64binary.content
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: name
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The name of the file control
+      @@@Attribute:
+        @@@@Name: "index"
+        @@@@Type: index
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The control index in the form data set
+      @@@Attribute:
+        @@@@Name: "filename"
+        @@@@Type: filename
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          The name of the file
+      @@@Attribute:
+        @@@@Name: "type"
+        @@@@Type: 
+          :ContentType
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          The MIME media type (with parameters if appropriate)
+          of the file if known
+    @@Description: A file upload

@@ -1,9 +1,11 @@
 #?SuikaWikiConfig/2.0
 
 ModuleSet:
-  @Name: Web Forms 2.0
-  @Version: Working Draft 9 March 2004
+  @Name: Web Forms
+  @Version: 2.0 Call For Comments -- 27 June 2004
   @ID: webforms20
+  @Description:
+    Web Forms 2.0, the next generation HTML form model.
   @BaseURI:
     
   @Description:
@@ -16,21 +18,247 @@ ModuleSet:
     @@UsePrefix: 0
   
   @Copyright: Wakaba <w@suika.fam.cx>
-  @RCSDate: $Date: 2004/05/25 08:47:21 $
+  @RCSDate:
+    $Date: 2004/07/05 03:57:10 $
+
+Datatype:
+  @Type:
+    @@Name: 
+      :Character
+    @@XMLType: CDATA
+    @@Description: An XML Char
+  
+  @Type:
+    @@Name: 
+      :Charsets
+    @@XMLType: CDATA
+    @@Description: A white space separated list of IANA charset names
+  
+  @Type:
+    @@Name:
+      :ContentType
+    @@XMLType: CDATA
+    @@Description: An Internet Media Type
+  
+  @Type:
+    @@Name:
+      :ContentTypes
+    @@XMLType: CDATA
+  
+  @Type:
+    @@Name:
+      :FrameTarget
+    @@XMLType: NMTOKEN
+    @@Description: Target frame or window name
+  
+  @Type:
+    @@Name: 
+      :Number
+    @@XMLType: NMTOKEN
+    @@Description: A non-negative integer
+  
+  @Type:
+    @@Name:
+      :Text
+    @@XMLType: CDATA
+    @@Description: A human readable text
+  
+  @Type:
+    @@Name:
+      :URI
+    @@XMLType: CDATA
+    @@Description: A URI reference
 
 Attribute:
+  @AttributeSet:
+    @@Name: accept
+    @@Attribute:
+      @@@Name: "accept"
+      @@@Type:
+       :ContentTypes
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: accesskey
+    @@Attribute:
+      @@@Name: "accesskey"
+      @@@Type:
+       :Character
+      @@@Default: #IMPLIED
+  
+  
+  @AttributeSet:
+    @@Name: action
+    @@Attribute:
+      @@@Name: "action"
+      @@@Type:
+       :URI
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "enctype"
+      @@@Type:
+       :ContentType
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "method"
+      @@@Type: "(get|post|put|delete)"
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "replace"
+      @@@Type: "(document|values)"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: autocomplete
+    @@Attribute:
+      @@@Name: "autocomplete"
+      @@@Type: "(on|off)"
+      @@@Default: "on"
+  
+  @AttributeSet:
+    @@Name: autofocus
+    @@Attribute:
+      @@@Name: "autofocus"
+      @@@Type: "(autofocus)"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: disabled
+    @@Attribute:
+      @@@Name: "disabled"
+      @@@Type: "(disabled)"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: form
+    @@Attribute:
+      @@@Name: "form"
+      @@@Type: "IDREF"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: help
+    @@Attribute:
+      @@@Name: "help"
+      @@@Type:
+       :URI
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: img
+    @@Attribute:
+      @@@Name: "alt"
+      @@@Type:
+       :Text
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "src"
+      @@@Type:
+       :URI
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: name
+    @@Attribute:
+      @@@Name: "name"
+      @@@Type: "CDATA"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: size
+    @@Attribute:
+      @@@Name: "size"
+      @@@Type:
+       :Number
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: tabindex
+    @@Attribute:
+      @@@Name: "tabindex"
+      @@@Type:
+       :Number
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: template
+    @@Attribute:
+      @@@Name: "template"
+      @@@Type: "IDREF"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: text
+    @@ref: autocomplete
+    @@Attribute:
+      @@@Name: "inputmode"
+      @@@Type: "CDATA"
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "maxlength"
+      @@@Type:
+       :Number
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "readonly"
+      @@@Type: "(readonly)"
+      @@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "required"
+        @@@@Type: "(required)"
+        @@@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: value
+    @@Attribute:
+      @@@Name: "value"
+      @@@Type: "CDATA"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: focus
+    @@ref: accesskey
+    @@ref: autofocus
+    @@ref: tabindex
+  
   @Attribute:
     @@Name: repeat.global
     @@Attribute:
       @@@Name: repeat
       @@@Type: "CDATA"
       @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: repeat-start
+      @@@Type: Number
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: repeat-min
+      @@@Type: Number
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: repeat-max
+      @@@Type: Number
+      @@@Default: #IMPLIED
+    @@Description: For non-XHTML 1 namespace element types
   @Attribute:
     @@Name: repeat
     @@Attribute:
       @@@Name: "repeat"
       @@@Type: "CDATA"
       @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "repeat-start"
+      @@@Type: Number
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "repeat-min"
+      @@@Type: Number
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: "repeat-max"
+      @@@Type: Number
+      @@@Default: #IMPLIED
+    @@Description: For XHTML 1 namespace element types
   
   @AttributeSet:
     @@Name: control.extra
@@ -40,18 +268,18 @@ Attribute:
   
   @AttributeSet:
     @@Name:
-      :XHTML.common.extra
+      XHTML:common.extra
   @AttributeSet:
     @@Name: 
-      :XHTML.common
+      XHTML:common
     @@ref:
-      :XHTML.common.extra
+      XHTML:common.extra
     @@ref: repeat
   
   @AttributeSet:
     @@Name: common
     @@ref:
-      :XHTML.common
+      XHTML:common
 
 Module:
   @Name: Forms Extensions
@@ -62,11 +290,7 @@ Module:
     @@Content: 
       ($:Heading.class | $:List.class | $:Block.mix)*
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "accept"
-        @@@@Type:
-          :ContentTypes
-        @@@@Default: #IMPLIED
+      @@@ref: accept
       @@@Attribute:
         @@@@Name: "accept-charset"
         @@@@Type:
@@ -95,65 +319,17 @@ Module:
     @@Name: input
     @@Content: "EMPTY"
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "accept"
-        @@@@Type:
-          :ContentTypes
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "accesskey"
-        @@@@Type:
-          :Character
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "action"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "alt"
-        @@@@Type:
-          :Text
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "autocomplete"
-        @@@@Type: "(on|off)"
-        @@@@Default: "on"
+      @@@ref: accept
+      @@@ref: action
       @@@Attribute:
         @@@@Name: "checked"
         @@@@Type: "(checked)"
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "disabled"
-        @@@@Type: "(disabled)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "enctype"
-        @@@@Type:
-          :ContentType
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "form"
-        @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "help"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "inputmode"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "maxlength"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "method"
-        @@@@Type: "(get|post|put|delete)"
-        @@@@Default: #IMPLIED
+      @@@ref: disabled
+      @@@ref: form
+      @@@ref: focus
+      @@@ref: help
+      @@@ref: img
       @@@Attribute:
         @@@@Name: "min"
         @@@@Type: "CDATA"
@@ -162,125 +338,48 @@ Module:
         @@@@Name: "max"
         @@@@Type: "CDATA"
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "name"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
+      @@@ref: name
       @@@Attribute:
         @@@@Name: "pattern"
         @@@@Type: "CDATA"
         @@@@Default: #IMPLIED
       @@@Attribute:
-        @@@@Name: "precision"
+        @@@@Name: "step"
         @@@@Type: "CDATA"
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "readonly"
-        @@@@Type: "(readonly)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "replace"
-        @@@@Type: "(document|values)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "required"
-        @@@@Type: "(required)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "size"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "src"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "tabindex"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "template"
-        @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
+      @@@ref: size
+      @@@ref: template
+      @@@ref: text
       @@@Attribute:
         @@@@Name: "type"
-        @@@@Type: "(text|password|checkbox|radio|button|submit|reset|add|remove|file|hidden|image|datetime|date|expdate|week|time|number|email|tel|uri)"
+        @@@@Type: "(text|password|checkbox|radio|button|submit|reset|add|remove|file|hidden|image|datetime|local-datetime|date|month|week|time|number|range|email|uri)"
         @@@@Default: "text"
-      @@@Attribute:
-        @@@@Name: "value"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
+      @@@ref: value
       @@@ref: control
   
   @Element:
     @@Name: select
     @@Content: (optgroup|option)*
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "autocomplete"
-        @@@@Type: "(on|off)"
-        @@@@Default: "on"
-      @@@Attribute:
-        @@@@Name: "disabled"
-        @@@@Type: "(disabled)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "form"
-        @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "help"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "inputmode"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "maxlength"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
+      @@@ref: autocomplete
+      @@@ref: autofocus
+      @@@ref: disabled
+      @@@ref: form
+      @@@ref: help
       @@@Attribute:
         @@@@Name: "multiple"
         @@@@Type: "(multiple)"
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "name"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "pattern"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "required"
-        @@@@Type: "(required)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "size"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "tabindex"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
+      @@@ref: name
+      @@@ref: size
+      @@@ref: tabindex
       @@@ref: control
   
   @Element:
     @@Name: optgroup
     @@Content: (option)*
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "disabled"
-        @@@@Type: "(disabled)"
-        @@@@Default: #IMPLIED
+      @@@ref: disabled
       @@@Attribute:
         @@@@Name: "label"
         @@@@Type:
@@ -291,10 +390,7 @@ Module:
     @@Name: option
     @@Content: (#PCDATA)*
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "disabled"
-        @@@@Type: "(disabled)"
-        @@@@Default: #IMPLIED
+      @@@ref: disabled
       @@@Attribute:
         @@@@Name: "label"
         @@@@Type:
@@ -304,73 +400,28 @@ Module:
         @@@@Name: "selected"
         @@@@Type: "(selected)"
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "value"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
+      @@@ref: value
   
   @Element:
     @@Name: textarea
     @@Content: (#PCDATA)*
     @@Attribute:
       @@@Attribute:
-        @@@@Name: "accesskey"
-        @@@@Type:
-          :Character
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "autocomplete"
-        @@@@Type: "(on|off)"
-        @@@@Default: "on"
-      @@@Attribute:
         @@@@Name: "cols"
         @@@@Type:
           :Number
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "disabled"
-        @@@@Type: "(disabled)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "form"
-        @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "help"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "inputmode"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "maxlength"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "name"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "readonly"
-        @@@@Type: "(readonly)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "required"
-        @@@@Type: "(required)"
-        @@@@Default: #IMPLIED
+      @@@ref: disabled
+      @@@ref: form
+      @@@ref: focus
+      @@@ref: help
+      @@@ref: name
       @@@Attribute:
         @@@@Name: "rows"
         @@@@Type:
           :Number
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "tabindex"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
+      @@@ref: text
       @@@Attribute:
         @@@@Name: "wrap"
         @@@@Type: "(soft|hard)"
@@ -382,13 +433,11 @@ Module:
     @@Content: (#PCDATA)*
     @@Attribute:
       @@@Attribute:
-        @@@@Name: "form"
-        @@@@Type: "IDREF"
+        @@@@Name: "for"
+        @@@@Type: "IDREFS"
         @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "name"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
+      @@@ref: form
+      @@@ref: name
       @@@ref: control
   
   @Element:
@@ -397,63 +446,19 @@ Module:
       (#PCDATA|$:Heading.class|$:List.class|$:Block.mix|$:Inline.mix)*
     @@Description: Content cannot include Form and Formctrl.
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "accesskey"
-        @@@@Type:
-          :Character
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "action"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "disabled"
-        @@@@Type: "(disabled)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "enctype"
-        @@@@Type:
-          :ContentType
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "form"
-        @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "help"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "method"
-        @@@@Type: "(get|post|put|delete)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "name"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "replace"
-        @@@@Type: "(document|values)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "tabindex"
-        @@@@Type:
-          :Number
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "template"
-        @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
+      @@@ref: accesskey
+      @@@ref: action
+      @@@ref: disabled
+      @@@ref: form
+      @@@ref: help
+      @@@ref: name
+      @@@ref: tabindex
+      @@@ref: template
       @@@Attribute:
         @@@@Name: "type"
         @@@@Type: "(button|submit|reset|add|remove)"
         @@@@Default: "submit"
-      @@@Attribute:
-        @@@@Name: "value"
-        @@@@Type: "CDATA"
-        @@@@Default: #IMPLIED
+      @@@ref: value
       @@@ref: control
   
   @Element:
@@ -461,19 +466,9 @@ Module:
     @@Content:
       (#PCDATA|legend|$:Flow.mix)*
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "disabled"
-        @@@@Type: "(disabled)"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "form"
-        @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
-      @@@Attribute:
-        @@@@Name: "help"
-        @@@@Type:
-          :URI
-        @@@@Default: #IMPLIED
+      @@@ref: disabled
+      @@@ref: form
+      @@@ref: help
       @@@ref: control
   
   @Element:
@@ -481,11 +476,7 @@ Module:
     @@Content:
       (#PCDATA|$:Inline.mix)*
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "accesskey"
-        @@@@Type:
-          :Character
-        @@@@Default: #IMPLIED
+      @@@ref: accesskey
   
   @Element:
     @@Name: label
@@ -493,24 +484,10 @@ Module:
       (#PCDATA|$:Inline.mix)*
     @@Description: Cannot nest label itself.
     @@Attribute:
-      @@@Attribute:
-        @@@@Name: "accesskey"
-        @@@@Type:
-          :Character
-        @@@@Default: #IMPLIED
+      @@@ref: accesskey
       @@@Attribute:
         @@@@Name: "for"
         @@@@Type: "IDREF"
-        @@@@Default: #IMPLIED
-  
-  
-  @Element:
-    @@Name: repeat
-    @@Content: "EMPTY"
-    @@Attribute:
-      @@@Attribute:
-        @@@@Name: "index"
-        @@@@Type: "CDATA"
         @@@@Default: #IMPLIED
 
 Module:
@@ -554,3 +531,14 @@ Module:
     @@ref: onforminput
     @@ref: oninvalid
     @@ref: control.extra
+
+Module:
+  @Name: Frame Target
+  @ID: target
+  
+  @AttributeSet:
+    @@Attribute:
+      @@@Name: "target"
+      @@@Type:
+        :FrameTarget
+      @@@Default: #IMPLIED
