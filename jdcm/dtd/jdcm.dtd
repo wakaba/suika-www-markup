@@ -6,13 +6,13 @@
      Document Type Definition
      
      Copyright 2003 Wakaba <w@suika.fam.cx>.
-     Revision: $Date: 2003/09/11 08:15:42 $
+     Revision: $Date: 2003/10/01 01:29:00 $
      
      SYSTEM "http://suika.fam.cx/gate/cvs/*checkout*/markup/jdcm/dtd/jdcm.dtd"
   -->
 
-<!ENTITY % NS.prefixed "IGNORE" >
-<!ENTITY % jdcm.prefix "" >
+<!ENTITY % NS.prefixed "IGNORE">
+<!ENTITY % jdcm.prefix "">
 
 <!-- Datatype modules -->
 <!ENTITY % xhtml-datatypes.module "INCLUDE">
@@ -40,8 +40,8 @@
 %jdcm.attribs.mod;]]>
 
 <!-- Document Model module -->
-<!ENTITY % jdcm-model.mod SYSTEM "model.mod">
-%jdcm-model.mod;
+<!ENTITY % jdcm.model.mod SYSTEM "model.mod">
+%jdcm.model.mod;
 
 <!-- Inline module -->
 <!ENTITY % jdcm.inline.module "INCLUDE">
