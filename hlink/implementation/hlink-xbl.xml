@@ -36,7 +36,7 @@
           var elementNS = e.getAttribute ('namespace');
           var elementType = e.getAttribute ('element');
           var linkAttr = [];
-          var linkAttrList = new Array ('locator', 'effect', 'actuate', 'mediaType');
+          var linkAttrList = new Array ('locator', 'effect', 'actuate', 'mediaType', 'replacement');
           for (var k = 0; k < linkAttrList.length; k++) {
             linkAttr[linkAttrList[k]] = [];
             linkAttr[linkAttrList[k]].value = e.getAttribute (linkAttrList[k]);
@@ -73,6 +73,19 @@
                     //linkElements[i].removeChild (linkElements[i].firstChild);
                   }
                   linkElements[i].appendChild(oEl);
+                } else if (myLinkAttr.effect == 'replace' && myLinkAttr.replacement
+                       && myLinkAttr.actuate == 'onRequest') {
+                  var aEl = linkElements[i].ownerDocument.createElementNS (XHTML1NS, 'a');
+                  linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
+                  aEl.setAttributeNS (tempNS, 'HLinkStatus', 100);
+                  aEl.setAttribute ('href', myLinkAttr.locator);
+                  if (myLinkAttr.mediaType)
+                    aEl.setAttribute ('type', myLinkAttr.mediaType);
+                  aEl.setAttribute ('target', myLinkAttr.replacement);
+                  while (linkElements[i].childNodes.length) {
+                    aEl.appendChild (linkElements[i].firstChild);
+                  }
+                  linkElements[i].appendChild(aEl);
                 } else {
                   linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
                   linkElements[i].setAttributeNS (XLinkNS, 'type', 'simple');
@@ -185,7 +198,7 @@
    - for the specific language governing rights and limitations under the
    - License.
    -
-   - The Original Code is SuikaWiki code.
+   - The Original Code is "HLink Memo" code.
    -
    - The Initial Developer of the Original Code is Wakaba.
    - Portions created by the Initial Developer are Copyright (C) 2003
