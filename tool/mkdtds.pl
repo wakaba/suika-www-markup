@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 our $SCRIPT_NAME = 'mkdtds';
-our $VERSION = do{my @r=(q$Revision: 1.3 $=~/\d+/g);sprintf "%d."."%02d" x $#r,@r};
+our $VERSION = do{my @r=(q$Revision: 1.4 $=~/\d+/g);sprintf "%d."."%02d" x $#r,@r};
 {require Message::Markup::SuikaWikiConfig20::Parser;
 
 my $parser = new Message::Markup::SuikaWikiConfig20::Parser;
@@ -11,10 +11,13 @@ my $Info = {};
 
 for my $src ($src->get_attribute ('ModuleSet')
           || $src->get_attribute ('DocumentType')) {
-  for (qw/ID Copyright BaseURI Description Version/) {
+  for (qw/Description/) {
     $Info->{$_} = $src->get_attribute_value ($_);
   }
-  $Info->{Name} = $src->get_attribute_value ('Name');
+  for (qw/Name ID Copyright BaseURI Version/) {
+    $Info->{$_} = normalize_wsp ($src->get_attribute_value ($_));
+  }
+  $Info->{realname} = $Info->{Name};
   $Info->{Name} .= ' ' . $Info->{Version} if length $Info->{Version};
   $Info->{ns} = $src->get_attribute ('Namespace');
 }
@@ -41,7 +44,13 @@ if (ref $src->get_attribute ('ModuleSet')) {
 }
 exit}
 
-
+sub normalize_wsp ($;%) {
+  my $s = shift;
+  $s =~ s/\s+/ /g;
+  $s =~ s/^ +//;
+  $s =~ s/ +$//;
+  $s;
+}
 sub make_paragraphs ($;%) {
   my ($para, %opt) = @_;
   join "\n\n", map {
@@ -298,9 +307,24 @@ sub dtd_driver_module_sets ($$) {
 ]]>
 <!ENTITY % $module_set->{ID}.xmlns.decl.attrib "">\n\n);
   }
+  $s .= <<EOH;
+<!-- Declare a parameter entity %XSI.prefix as a prefix to use for
+     XML Schema Instance attributes. -->
+<!ENTITY % XSI.prefix "xsi">
+
+<!ENTITY % XSI.pfx "%XSI.prefix;:">
+
+<!ENTITY % XSI.xmlns "http://www.w3.org/2001/XMLSchema-instance">
+
+<!-- Declare a parameter entity %XSI.xmlns.attrib as support for
+     the schemaLocation attribute. -->
+<!ENTITY % XSI.xmlns.attrib
+	"xmlns:%XSI.prefix;	%URI.datatype;	#FIXED '%XSI.xmlns;'">
+EOH
   $s .= qq(\n<!ENTITY % NS.decl.attrib
 	").join ("\n\t", (map {qq(%$_->{ID}.xmlns.decl.attrib;)} @src),
-	                 map {qq(%$_->{ID}.xmlns.extra.attrib;)} @src).qq(">\n);
+	                 map {qq(%$_->{ID}.xmlns.extra.attrib;)} @src)
+	  .qq(\n\t%XSI.xmlns.attrib;">\n);
   $s .= qq(\n);
   for my $module_set (@src) {
     $s .= qq(<!ENTITY % $module_set->{ID}.xmlns.attrib "%NS.decl.attrib;">\n);
@@ -404,35 +428,57 @@ sub qname_module ($$) {
 
 <!-- Section A: XML Namespace Framework :::::::::::::::::::::::::: -->
 
-<!-- 1. Declare conditional section keyword, used to activate namespace
-        prefixing. -->
+<!-- 1. Declare a %$ID.prefixed; conditional section keyword, used
+        to activate namespace prefixing. -->
 <!ENTITY % $ID.prefixed "@{[$ns->get_attribute_value ('UsePrefix')==1?
                             q(INCLUDE):
                             $ns->get_attribute_value ('UsePrefix')==-1?
                             q(IGNORE):
                             q(%NS.prefixed;)]}">
 
-<!-- 2. Declare a parameter entity containing the namespace name. -->
+<!ENTITY % $ID.global.attrs.prefixed "@{[$ns->get_attribute_value ('UsePrefix')==1?
+                            q(INCLUDE):
+                            $ns->get_attribute_value ('UsePrefix')==-1?
+                            q(IGNORE):
+                            q(%NS.prefixed;)]}">
+
+<!ENTITY % $ID.xsi.attrs "INCLUDE">
+
+<!-- 2. Declare a parameter entity %$ID.xmlns; containing
+        the URI reference used to identity the namespace. -->
 <!ENTITY % $ID.xmlns "@{[$ns->get_attribute_value ('Name')]}">
 
-<!-- 3. Declare parameter entities containing the default namespace prefix
-        string to use when prefixing is enabled. -->
+<!-- 3. Declare parameter entity %$ID.prefix; containing
+        the default namespace prefix string to use when prefixing
+        is enabled. This may be overridden in the DTD driver or the
+        internal subset of a document instance.
+        
+        NOTE: As specified in XML Namespace speficications, the namespace
+        prefix serves as a proxy for the URI reference, and is not in itself
+        significant. -->
 <!ENTITY % $ID.prefix "@{[$ns->get_attribute_value ('DefaultPrefix')]}">
 
-<!-- 4. Declare parameter entities containing the colonized prefix
-        used when prefixing is active, an empty string when it is not. -->
+<!-- 4. Declare parameter entity %$ID.pfx; containing the
+        colonized prefix (e.g, '%$ID.prefix;:') used when
+        prefixing is active, an empty string when it is not. -->
 <![%$ID.prefixed;[
 <!ENTITY % $ID.pfx "%$ID.prefix;:">
 ]]>
 <!ENTITY % $ID.pfx "">
 
-<!-- declare qualified name extensions here -->
+<!-- declare qualified name extensions here ............ -->
 <!ENTITY % ${ID}-qname-extra.mod "">
 %${ID}-qname-extra.mod;
 
-<!-- 5. This parameter entity may be redeclared to contain any foreign
-        namespace declaration attributes for namespaces embedded. -->
+<!-- 5. The parameter entity %$ID.xmlns.extra.attrib; may be
+        redeclared to contain any foreign namespace declaration
+        attributes for namespaces embedded.  The default
+        is an empty string. -->
 <!ENTITY % $ID.xmlns.extra.attrib "">
+
+<!-- The parameter entity %URI.datatype; should already be defined in
+     Datatype module. -->
+<!ENTITY % URI.datatype; "CDATA">
 
 <![%$ID.prefixed;[
 <!ENTITY % $ID.xmlns.decl.attrib
@@ -441,13 +487,28 @@ sub qname_module ($$) {
 <!ENTITY % $ID.xmlns.decl.attrib
 	"xmlns	%URI.datatype;	#FIXED '%$ID.xmlns;'">
 
+<!-- Declare a parameter entity %XSI.prefix as a prefix to use for
+     XML Schema Instance attributes. -->
+<!ENTITY % XSI.prefix "xsi">
+
+<!ENTITY % XSI.pfx "%XSI.prefix;:">
+
+<!ENTITY % XSI.xmlns "http://www.w3.org/2001/XMLSchema-instance">
+
+<!-- Declare a parameter entity %XSI.xmlns.attrib as support for
+     the schemaLocation attribute. -->
+<!ENTITY % XSI.xmlns.attrib
+	"xmlns:%XSI.prefix;	%URI.datatype;	#FIXED '%XSI.xmlns;'">
+
 <![%$ID.prefixed;[
 <!ENTITY % NS.decl.attrib
 	"%$ID.xmlns.decl.attrib;
-	%$ID.xmlns.extra.attrib;">
+	%$ID.xmlns.extra.attrib;
+	%XSI.xmlns.attrib;">
 ]]>
 <!ENTITY % NS.decl.attrib
-	"%$ID.xmlns.extra.attrib;">
+	"%$ID.xmlns.extra.attrib;
+	%XSI.xmlns.attrib;">
 
 <!-- Declare a parameter entity containing all XML namespace declaration
      attributes used, including a default xmlns declaration when prefixing
@@ -460,14 +521,16 @@ sub qname_module ($$) {
 	"%$ID.xmlns.decl.attrib;
 	%NS.decl.attrib;">
 
-<!-- Section B: Qualified Names :::::::::::::::::::::::::::::::::: -->
+<!-- @{[dot_padding qq(Section B: $Info->{realname} Qualified Names ),
+               length => 71-9, dot => q(:)]} -->
 
 <!-- placeholder for qualified name redeclarations -->
-<!ENTITY % ${ID}-qname-extra.mod "">
-%${ID}-qname-extra.mod;
+<!ENTITY % ${ID}-qname.redecl "">
+%${ID}-qname.redecl;
 
-<!-- 6. Declare parameter entities used to provide namespace-qualified
-        names for all element types and global attribute names. -->
+<!-- 6. This section declare parameter entities used to provide
+        namespace-qualified names for all element types and global
+        attribute names. -->
 EOH
   for my $lname (sort keys %{$Info->{QName}}) {
     $s .= qq(<!ENTITY % )
@@ -551,10 +614,15 @@ sub get_adefault ($$) {
 
 sub get_desc ($$;%) {
   my ($src, $Info, %opt) = @_;
-      my $desc = $src->get_attribute_value ('Description');
-      $desc =~ s/\n/\n     /g;
+  my $desc = $src->get_attribute_value ('Description');
+  $desc =~ s/\n/\n     /g;
   if (length $desc) {
     $desc = qq($opt{prefix}$desc);
+    $desc .= q( ) if $opt{padding_length};
+    $desc = q(<!-- ).(dot_padding $desc, length => $opt{padding_length},
+                                         dot => $opt{padding_dot}).qq( -->\n);
+  } elsif (length $opt{default}) {
+    $desc = $opt{default};
     $desc .= q( ) if $opt{padding_length};
     $desc = q(<!-- ).(dot_padding $desc, length => $opt{padding_length},
                                          dot => $opt{padding_dot}).qq( -->\n);
@@ -637,6 +705,10 @@ sub attrib_REF ($$) {
     'xml:base'	=> q<xml:base	%URI.datatype;	#IMPLIED>,
     'xml:lang'	=> q<xml:lang	%LanguageCode.datatype;	#IMPLIED>,
     'xml:space'	=> q<xml:space	(default|preserve)	#IMPLIED>,
+    'xsi:nil'	=> q<%XSI.prefix;:nil (true|false|1|0) #IMPLIED>,
+    'xsi:noNamespaceSchemaLocation'	=> q<%XSI.prefix;:noNamespaceSchemaLocation CDATA #IMPLIED>,
+    'xsi:schemaLocation'	=> q<%XSI.prefix;:schemaLocation CDATA #IMPLIED>,
+    'xsi:type'	=> q<%XSI.prefix;:type NMTOKEN #IMPLIED>,
   }->{$src->value};
 }
 
@@ -696,7 +768,8 @@ sub element_def ($$) {
     $short_name = $1;
   }
   my $s = get_desc $src, $Info, prefix => qq($short_name: ),
-                   padding_length => 51, padding_dot => q(.);
+                   padding_length => 51, padding_dot => q(.),
+                   default => qq($short_name);
   $s .= "\n";
   $s .= xml_parameter_ENTITY qq($mname.element), value => 'INCLUDE';
   $s .= xml_condition_section (qq($mname.element) =>
@@ -797,8 +870,18 @@ sub make_module ($$$$;%) {
      }]} -->
 <!-- file: $Info->{ID}-$id.mod
      
-     $Info->{Description}
+@{[make_paragraphs [$Info->{Description}], indent => q<     >]}
+     
      Copyright @{[(gmtime)[5]+1900]} $Info->{Copyright}, All Rights Reserved.
+     
+     Permission to use, copy, modify and distribute this DTD and its
+     accompanying documentation for any purpose and without fee is hereby
+     granted in perpetuity, provided that the above copyright notice and
+     this paragraph appear in all copies.  The copyright holders make no
+     representation about the suitability of the DTD for any purpose.
+     
+     It is provided "as is" without expressed or implied warranty.
+     
      Revision: @{[sprintf '%04d-%02d-%02dT%02d:%02d:%02d+00:00',
                           (gmtime)[5]+1900, (gmtime)[4]+1, (gmtime)[3,2,1,0]
                ]} (Generated by $SCRIPT_NAME/$VERSION)
@@ -859,6 +942,8 @@ EOH
               }->{$id}, $src->get_attribute_value ('Description'));
   unshift @para, '  '.join ', ', sort @{$Info->{elements}||[]} if @{$Info->{elements}||[]};
   if (@para) {
+    $name = qq($Info->{realname} QName (Qualified Name) Module)
+      if $id eq 'qname';
     $r .= <<EOH;
 <!-- $name
 
@@ -891,7 +976,7 @@ sub make_dtd ($$$$) {
 
 <!-- $Info->{Name} DTD
 
-     $Info->{Description}
+@{[make_paragraphs [$Info->{Description}], indent => q<     >]}
 
      Copyright @{[(gmtime)[5]+1900]} $Info->{Copyright}, All Rights Reserved.
 

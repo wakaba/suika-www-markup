@@ -1,3 +1,7 @@
+2004-06-20  Wakaba  <w@suika.fam.cx>
+
+	* mkdtd.pl: Some typo fixed.  XML Schema Instance (xsi) namespace support.
+
 2004-01-13  Wakaba  <w@suika.fam.cx>
 
 	* mkdtds.pl: Use new version of SuikaWikiConfig/2.0 parser.
