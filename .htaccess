@@ -1,4 +1,4 @@
 ## DTD modules
-AddType application/xml-dtd .mod
-AddCharset iso-2022-jp .mod
+AddType application/xml-dtd .dtd .mod
+AddCharset iso-2022-jp .dtd .mod
 
