@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="iso-2022-jp"?>
 <bindings xmlns="http://www.mozilla.org/xbl">
   <binding id="link-hlink">
     <implementation>
@@ -8,17 +8,42 @@
           const XHTML1NS = 'http://www.w3.org/1999/xhtml';
           const HLinkNS = 'http://www.w3.org/2002/06/hlink';
           const XLinkNS = 'http://www.w3.org/1999/xlink';
-          const tempNS = 'urn:x-suika-fam-cx:markup:temporary';
+          const tempNS = 'urn:x-suika-fam-cx:markup:temporary:hlink';
+          const XLinkPfx = '';
+          const tempPfx = '';
+          
+          var hObject = doc.createElementNS (tempNS, 'objects');
+          doc.documentElement.appendChild (hObject);
           
           var eLinks = doc.getElementsByTagNameNS (XHTML1NS, 'link');
           for (var i = 0; i < eLinks.length; i++)
             if (eLinks[i].getAttribute ('type').toLowerCase () == 'application/x-hlink+xml'
              && eLinks[i].getAttribute ('rel') == 'stylesheet' //.match (/stylesheet/i)
-            ) linkizeByHTMLLinkElement (eLinks[i]);
-        
-        function linkizeByHTMLLinkElement (eLink) {
-          var oHLink = eLink.ownerDocument.createElementNS (XHTML1NS, 'object');
-          oHLink.setAttributeNS (tempNS, 'HLinkStatus', 100);
+            ) this.linkizeByHTMLLinkElement (eLinks[i], hObject);
+        ]]></body>
+      </method>
+      <field name="tempNS">'urn:x-suika-fam-cx:markup:temporary:hlink'</field>
+      <field name="tempPfx">''</field>
+      <field name="tempLinksNS">'http://www.w3.org/1999/xhtml'</field>
+      <field name="tempLinksElementTypeName">'div'</field>
+      <field name="XLinkNS">'http://www.w3.org/1999/xlink'</field>
+      <field name="XLinkPfx">''</field>
+      <field name="XHTML1NS">'http://www.w3.org/1999/xhtml'</field>
+      <field name="HLinkNS">'http://www.w3.org/2002/06/hlink'</field>
+      <field name="HLinkPfx">''</field>
+      <field name="hLinkAttrList">
+        new Array ('locator', 'effect', 'actuate', 'mediaType', 'role', 'reverseRole', 'replace');
+      </field>
+      <method name="linkizeByHTMLLinkElement" type="application/x-javascript">
+        <parameter name="eLink" />
+        <parameter name="hObject" />
+        <body><![CDATA[
+          var xT = this;
+          
+          //var oHLink = eLink.ownerDocument.createElementNS (xT.XHTML1NS, 'object');
+          var oHLink = hObject.ownerDocument.createElementNS (xT.XHTML1NS, 'object');
+          oHLink.setAttributeNS (xT.tempNS, 'HLinkStatus', 100);
+          oHLink.setAttributeNS (xT.tempNS, 'HLinkType', 'HLinkDocument');
           oHLink.setAttribute ('data', eLink.getAttribute ('href'));
           //oHLink.setAttribute ('type', 'application/xml');
           oHLink.style.display = 'inline';
@@ -26,17 +51,22 @@
           oHLink.style.height = 0;
           oHLink.addEventListener ('load', function () {
             var hlink = oHLink.contentDocument.getElementsByTagNameNS
-                          (HLinkNS, 'hlink');
-            for (var k = 0; k < hlink.length; k++) linkizeElement (hlink[k]);
+                          (xT.HLinkNS, 'hlink');
+            for (var k = 0; k < hlink.length; k++) xT.linkizeElement (hlink[k], hObject);
           }, false);
-          eLink.ownerDocument.documentElement.appendChild (oHLink);
-        }
-        
-        function linkizeElement (e) {
+          //eLink.ownerDocument.documentElement.appendChild (oHLink);
+          hObject.appendChild (oHLink);
+        ]]></body>
+      </method>
+      <method name="linkizeElement" type="application/x-javascript">
+        <parameter name="e" />
+        <parameter name="hObject" />
+        <body><![CDATA[
+          var xT = this;
           var elementNS = e.getAttribute ('namespace');
           var elementType = e.getAttribute ('element');
           var linkAttr = [];
-          var linkAttrList = new Array ('locator', 'effect', 'actuate', 'mediaType', 'replacement');
+          var linkAttrList = xT.hLinkAttrList;
           for (var k = 0; k < linkAttrList.length; k++) {
             linkAttr[linkAttrList[k]] = [];
             linkAttr[linkAttrList[k]].value = e.getAttribute (linkAttrList[k]);
@@ -48,7 +78,7 @@
           }
           var linkElements = document.getElementsByTagNameNS (elementNS, elementType);
           for (var i = 0; i < linkElements.length; i++) {
-            var elFlag = 1*linkElements[i].getAttributeNS (tempNS, 'HLinkStatus');
+            var elFlag = 1*linkElements[i].getAttributeNS (xT.tempNS, xT.tempPfx+'HLinkStatus');
             if (elFlag < 20) {
               var myLinkAttr = [];
               for (var j = 0; j < linkAttrList.length; j++) {
@@ -63,9 +93,10 @@
               if (myLinkAttr.locator != undefined) {
                 if (myLinkAttr.effect == 'embed' && myLinkAttr.actuate == 'onLoad'
                  && myLinkAttr.locator != '' && myLinkAttr.locator.substr (0,1) != '#') {
-                  var oEl = linkElements[i].ownerDocument.createElementNS (XHTML1NS, 'object');
-                  linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
-                  oEl.setAttributeNS (tempNS, 'HLinkStatus', 100);
+                  var oEl = linkElements[i].ownerDocument.createElementNS (xT.XHTML1NS, 'object');
+                  linkElements[i].setAttributeNS (xT.tempNS, xT.tempPfx+'HLinkStatus', elFlag+1);
+                  linkElements[i].setAttributeNS (xT.tempNS, xT.tempPfx+'HLinkType', 'hyperLink');
+                  oEl.setAttributeNS (xT.tempNS, xT.tempPfx+'HLinkStatus', 100);
                   oEl.setAttribute ('data', myLinkAttr.locator);
                   oEl.setAttribute ('type', myLinkAttr.mediaType);
                   while (linkElements[i].childNodes.length) {
@@ -73,35 +104,142 @@
                     //linkElements[i].removeChild (linkElements[i].firstChild);
                   }
                   linkElements[i].appendChild(oEl);
-                } else if (myLinkAttr.effect == 'replace' && myLinkAttr.replacement
-                       && myLinkAttr.actuate == 'onRequest') {
-                  var aEl = linkElements[i].ownerDocument.createElementNS (XHTML1NS, 'a');
-                  linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
-                  aEl.setAttributeNS (tempNS, 'HLinkStatus', 100);
-                  aEl.setAttribute ('href', myLinkAttr.locator);
-                  if (myLinkAttr.mediaType)
-                    aEl.setAttribute ('type', myLinkAttr.mediaType);
-                  aEl.setAttribute ('target', myLinkAttr.replacement);
-                  while (linkElements[i].childNodes.length) {
-                    aEl.appendChild (linkElements[i].firstChild);
-                  }
-                  linkElements[i].appendChild(aEl);
                 } else {
-                  linkElements[i].setAttributeNS (tempNS, 'HLinkStatus', elFlag+1);
-                  linkElements[i].setAttributeNS (XLinkNS, 'type', 'simple');
+                  linkElements[i].setAttributeNS (xT.tempNS, xT.tempPfx+'HLinkStatus', elFlag+1);
+                  linkElements[i].setAttributeNS (xT.tempNS, xT.tempPfx+'HLinkType', 'hyperLink');
+                  linkElements[i].setAttributeNS (xT.XLinkNS, xT.XLinkPfx+'type', 'simple');
                   if (myLinkAttr.effect == 'submit' || myLinkAttr.effect == 'map')
                     myLinkAttr.effect = 'other';
-                  linkElements[i].setAttributeNS (XLinkNS, 'show', myLinkAttr.effect);
+                  linkElements[i].setAttributeNS (xT.XLinkNS, xT.XLinkPfx+'show', myLinkAttr.effect);
                   if (myLinkAttr.actuate == 'onRequestSecondary')
                     myLinkAttr.actuate = 'other';
-                  linkElements[i].setAttributeNS (XLinkNS, 'actuate', myLinkAttr.actuate);
+                  linkElements[i].setAttributeNS (xT.XLinkNS, xT.XLinkPfx+'actuate', myLinkAttr.actuate);
                   if (!myLinkAttr.locator) myLinkAttr.locator = '#';
-                  linkElements[i].setAttributeNS (XLinkNS, 'href', myLinkAttr.locator);
+                  linkElements[i].setAttributeNS (xT.XLinkNS, xT.XLinkPfx+'href', myLinkAttr.locator);
+                }
+              }
+              var eFlag = 1*linkElements[i].getAttributeNS (xT.tempNS, xT.tempPfx+'HLinkList');
+              if (!eFlag) {
+                var linkElement = linkElements[i];
+                var xThis = this;
+                linkElement.setAttributeNS (xT.tempNS, xT.tempPfx+'HLinkList', 1);
+                linkElement.addEventListener ('mouseover', function (e) {
+                  if (linkElement.getAttributeNS (xT.tempNS, xT.tempPfx+'HLinkType')
+                      == 'hyperLink') {
+                    var doc = hObject.ownerDocument; //== linkElement.ownerDocument;
+                    if (linkElement.__HLinkListElement) {	// LinkList exist
+                      if (linkElement.__HLinkListElement.getAttributeNS
+                          (xT.tempNS, xT.tempPfx+'display') != 'yes') {
+                      var eLinksElements = hObject.getElementsByTagNameNS
+                                             (xT.tempLinksNS,
+                                              xT.tempLinksElementTypeName);
+                        for (var i = 0; i < eLinksElements.length; i++) {
+                          eLinksElements[i].setAttributeNS
+                            (xT.tempNS, xT.tempPfx+'display', 'no');
+                        }
+                        with (linkElement.__HLinkListElement) {
+                          setAttributeNS (xT.tempNS, xT.tempPfx+'display', 'yes');
+                          style.left = (e.clientX + 10) + 'px';
+                          style.top = (e.clientY + 10) + 'px';
+                        }
+                      }
+                    } else {	// LinkList not exist
+                      var eLinksElements = hObject.getElementsByTagNameNS
+                                             (xT.tempLinksNS,
+                                              xT.tempLinksElementTypeName);
+                      for (var i = 0; i < eLinksElements.length; i++) {
+                        eLinksElements[i].setAttributeNS
+                          (xT.tempNS, xT.tempPfx+'display', 'no');
+                      }
+                      var eLinks = doc.createElementNS
+                                     (xT.tempLinksNS, xT.tempLinksElementTypeName);
+                        eLinks.setAttributeNS (xT.tempNS, xT.tempPfx+'type', 'links');
+                        eLinks.__HLinkTargetElement = linkElement;
+                        xT.createLinkList (linkElement, eLinks, hObject);
+                        eLinks.setAttributeNS
+                          (xT.tempNS, xT.tempPfx+'display', 'yes');
+                        eLinks.style.left = (e.clientX + 10) + 'px';
+                        eLinks.style.top = (e.clientY + 10) + 'px';
+                      hObject.appendChild (eLinks);
+                      linkElement.__HLinkListElement = eLinks;
+                    }
+                  }
+                },false);
+              }
+            }
+          }
+        ]]></body>
+      </method>
+      <method name="getHLinkAttrs" type="application/x-javascript">
+        <parameter name="hLink"/>
+        <body><![CDATA[
+          var linkAttr = [];
+          for (var i = 0; i < hLink.attributes.length; i++) {
+            linkAttr[hLink.attributes[i].nodeName] = [];
+            var lA = linkAttr[hLink.attributes[i].nodeName];
+            lA.value = hLink.attributes[i].nodeValue;
+            if (lA.value && lA.value.substr (0,1) == '@') {
+              lA.valueAttrName = lA.value.substr (1);
+              lA.value = undefined;
+            }
+          }
+          return linkAttr;
+        ]]></body>
+      </method>
+      <method name="getLinkAttr" type="application/x-javascript">
+        <parameter name="attrName"/>
+        <parameter name="hLinkAttr"/>
+        <parameter name="e"/>
+        <parameter name="eLink"/>
+        <body><![CDATA[
+          var xT = this;
+          if (eLink.hasAttributeNS (xT.HLinkNS, xT.HLinkPfx+attrName)) {
+            return eLink.getAttributeNS (xT.HLinkNS, xT.HLinkPfx+attrName);
+          } else if (hLinkAttr[attrName]) {
+            var attrValue = hLinkAttr[attrName].value;
+            if (!attrValue) {
+              if (hLinkAttr[attrName].valueAttrName) {
+                attrValue = e.getAttribute (hLinkAttr[attrName].valueAttrName);
+              }
+              eLink.setAttribute ('attributeName', hLinkAttr[attrName].valueAttrName);
+            }
+            if (attrValue) {
+              eLink.setAttributeNS (xT.HLinkNS, xT.HLinkPfx+attrName, attrValue);
+            }
+            return attrValue;
+          }
+          return undefined;
+        ]]></body>
+      </method>
+      <method name="createLinkList" type="application/x-javascript">
+        <parameter name="e"/>
+        <parameter name="eLinks"/>
+        <parameter name="hObject"/>
+        <body><![CDATA[
+          var xT = this;
+          var hObject = hObject.getElementsByTagNameNS (xT.XHTML1NS, 'object');
+          var doc = eLinks.ownerDocument;
+          for (var i = 0; i < hObject.length; i++) {
+            var hLink = hObject[i].contentDocument.getElementsByTagNameNS (xT.HLinkNS, 'hlink');
+            for (var j = 0; j < hLink.length; j++) {
+              if (hLink[j].getAttribute ('namespace') == e.namespaceURI
+               && hLink[j].getAttribute ('element') == e.localName) {
+                var eLink = doc.createElementNS (xT.tempNS, 'link');
+                var hLA = xT.getHLinkAttrs(hLink[j]);
+                var hRef = xT.getLinkAttr ('locator', hLA, e, eLink);
+                if (hRef) {
+                  eLink.appendChild (doc.createTextNode (hRef));
+                  eLink.setAttributeNS (xT.XLinkNS, xT.XLinkPfx+'href', hRef);
+                  eLink.setAttributeNS (xT.XLinkNS, xT.XLinkPfx+'type', 'simple');
+                  var lANL = xT.hLinkAttrList;
+                  for (var k = 0; k < lANL.length; k++) {
+                    xT.getLinkAttr (lANL[k], hLA, e, eLink);
+                  }
+                  eLinks.appendChild (eLink);
                 }
               }
             }
           }
-        }
         ]]></body>
       </method>
       <constructor type="application/x-javascript"><![CDATA[
@@ -184,6 +322,14 @@
       </constructor>
     </implementation>
   </binding>
+  <binding id="ll-links">
+    <content xmlns:t="urn:x-suika-fam-cx:markup:temporary:hlink">
+      <t:container xbl:inherits="" xmlns:xbl="http://www.mozilla.org/xbl">
+        <h:div t:type="closeBox" onclick="this.parentNode.parentNode.setAttributeNS('urn:x-suika-fam-cx:markup:temporary:hlink',''+'display','no')" xmlns:h="http://www.w3.org/1999/xhtml">×</h:div>
+        <children/>
+      </t:container>
+    </content>
+  </binding>
 </bindings>
 <!-- ***** BEGIN LICENSE BLOCK *****
    - Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -198,7 +344,7 @@
    - for the specific language governing rights and limitations under the
    - License.
    -
-   - The Original Code is "HLink Memo" code.
+   - The Original Code is SuikaWiki code.
    -
    - The Initial Developer of the Original Code is Wakaba.
    - Portions created by the Initial Developer are Copyright (C) 2003
