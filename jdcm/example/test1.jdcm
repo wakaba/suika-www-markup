@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-2022-jp"?>
+<!DOCTYPE jdcm SYSTEM "../dtd/jdcm.dtd">
+<jdcm>
+<head>
+<style type="text/jss">
+  @font-face  {
+    src: local("DNPsyuuei-LM");
+    character-set: kana;
+  }
+  p {
+    font-family: "DNPsyuuei-LM", min;
+  }
+  
+  div.h1h2 h1 {
+    行取り : 3行;
+  }
+</style>
+</head>
+
+<body>
+<div class="h1h2">
+<h1>大見出し文字列</h1>
+<h2>中見出し文字列</h2>
+</div>
+<p style="font-size: 14pt">
+和字正<ch src="ran.png" width="50px" height="50px" top="30px" left="20px">濫</ch>鈔
+</p>
+<h3 style="display: run-in">同行見出し</h3>
+<p style="font-size: 9pt">
+普通の大きさの字と<span style="height: 16pt">背の高い字</span>と<span style="width: 16pt">幅の広い字</span>, 
+<span style="スラント : +20deg">スラント</span>,
+<ruby><rb>五月雨</rb><rt>さみだれ</rt></ruby>,
+<ruby>
+<rbc><rb>親</rb><rb>文</rb><rb>字</rb><rb>列</rb></rbc>
+<rtc><rt>おや</rt><rt>も</rt><rt>じ</rt><rt>れつ</rt></rtc>
+</ruby>,
+<ruby>
+<rbc><rb>親</rb><rb>文</rb><rb>字</rb><rb>列</rb></rbc>
+<rtc><rt rbspan="4">ruby base</rt></rtc>
+</ruby>,
+<ruby>
+  <rbc>
+    <rb>時</rb> <rb>制</rb>
+  </rbc>
+  <rtc style="ruby-position : 上">
+    <rt>じ</rt><rt>せい</rt>
+  </rtc>
+  <rtc style="ruby-position : 下">
+    <rt rbspan="2">テンス</rt>
+  </rtc>
+</ruby>
+<ruby>
+  <rbc>
+    <rb>洗</rb> <rb>濯</rb>
+  </rbc>
+  <rtc style="ruby-position : 右">
+    <rt>せん</rt><rt>たく</rt>
+  </rtc>
+  <rtc style="ruby-position : 左">
+    <rt></rt><rt>だく</rt>
+  </rtc>
+</ruby>,
+C<sup><span style="font-family : 'Century Old Italic'">n</span>+1</sup>,
+H<sub>2</sub>O, <em style="圏点 : BULLSEYE">圏点処理</em>
+</p>
+
+<table width="100mm" cellpadding="2mm" border="0.3mm">
+  <tr>
+    <th width="20mm">日付</th>
+    <th width="20mm">項目</th>
+    <th width="30mm">金額</th>
+    <th width="30mm">備考</th>
+  </tr>
+  <tr>
+    <td>1999-01-10</td>
+    <td cellpadding="1mm">項目1</td>
+    <td 行こま合成="2">金額1</td>
+  </tr>
+</table>
+
+<zu style="width : 50mm; height: 30mm" src="fuji.png"></zu>
+
+<p>
+<tabset タブ位置="50mm 60mm 90mm" タブ種="指定文字 右 指定文字" char=": .">
+  <tab/>ABCDE:<tab/>710年<tab/>65.26<br/>
+  <tab/>XYZ:<tab/>1997年<tab/>147.3
+</tabset>
+</p>
+
+<p><u style="text-decoration : underline;
+	line-style: double; line-width : 表けい">下線処理</u>。
+チェンパロ<mlg>16〜18世紀ごろ用いられた鍵盤楽器</mlg>の奏者。</p>
+
+<p>大見出しは<yoko>H1</yoko>タグで表現する。</p>
+<p>略称としての<tate>JIS</tate>。</p>
+
+</body>
+</jdcm>
+
