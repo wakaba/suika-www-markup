@@ -1,0 +1,123 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: Hypertext Markup Language
+  @Version: 3.0 (draft 00)
+  @ID: html30-00
+  @BaseURI:
+    http://suika.fam.cx/gate/cvs/*checkout*/markup/html/dtd/
+  
+  @Namespace:
+    @@Name:
+      urn:x-suika-fam-cx:markup:ietf:html:3:draft:00:
+    @@DefaultPrefix: H3
+    @@UsePrefix: 0
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2003/10/23 23:49:27 $
+
+Datatype:
+  @Type:
+    @@Name: classes
+    @@XMLType: NMTOKENS
+    @@Description: HTML 3.0 classes (SGML NAMES)
+  
+  @Type:
+    @@Name: clear
+    @@XMLType: NMTOKENS
+    @@Description: (left|right|all|<number> <unit>)
+  
+  @Type:
+    @@Name: LanguageCode
+    @@XMLType: CDATA
+    @@Description: HTML 3.0 Language Code (lang.country)
+  @Type
+    @@Name:
+      :LanguageCode
+    @@XMLType: CDATA
+    @@Description: IETF Language Tag or empty string (See XML 1.0 SE Errata)
+  
+  @Type:
+    @@Name: md5
+    @@XMLType: CDATA
+    @@Description: MD5 checksum
+  
+  @Type:
+    @@Name:
+      :URI
+    @@XMLType: CDATA
+    @@Description: URI Reference
+
+Attribute:
+  @AttributeSet:
+    @@Name: common
+    @@REF:
+      xml:base
+    @@REF:
+      xml:lang
+    @@REF:
+      xml:space
+  
+  @AttributeSet:
+    @@Name: class
+    @@Attribute:
+      @@@Name: "class"
+      @@@Type: classes
+  
+  @AttributeSet:
+    @@Name: id
+    @@Attribute:
+      @@@Name: "id"
+      @@@Type: "ID"
+  
+  @AttributeSet:
+    @@Name: lang
+    @@Attribute:
+      @@@Name: "lang"
+      @@@Type: LanguageCode
+      @@@Default: "en.us"
+  
+  @AttributeSet:
+    @@Name: src
+    @@Attribute:
+      @@@Name: "src"
+      @@@Type:
+        :URI
+  
+  @AttributeSet:
+    @@Name: attrs
+    @@ref: id
+    @@ref: lang
+    @@ref: class
+  
+  @AttributeSet:
+    @@Name: needs
+    @@Attribute:
+      @@@Name: "clear"
+      @@@Type: clear
+    @@Description: Attributes for controlling text flow
+  
+  @AttributeSet:
+    @@Name: url.link
+    @@Attribute:
+      @@@Name: "md"
+      @@@Type: md5
+    @@Description: Attributes associated with URL based links
+
+Module:
+  @ID: struct
+  
+  @Element:
+    @@Name: note
+    @@Content:
+      (#PCDATA | $:Flow.mix)*
+    
+    @@Attribute:
+      @@@ref: attrs
+      @@@ref: src
+      @@@ref: url.link
+      @@@ref: needs
+    
+    @@Description:
+      note: admonishments such as notes,
+      cautions or warnings, as commonly used in technical documentation

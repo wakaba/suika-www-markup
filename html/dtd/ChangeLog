@@ -1,0 +1,10 @@
+2003-10-24  Wakaba  <w@suika.fam.cx>
+
+	* datatype.mod, xhtml-basic-au.mod, xhtml-basic-au-attrib.mod,
+	xhtml-basic-au-qname.mod: Removed.
+	* Makefile: New file.
+	* module/: New directory.
+
+2003-10-22  Wakaba  <w@suika.fam.cx>
+
+	* html30-00-attrib.mod, html30-00-qname.mod, html30-00-struct.mod: Removed.

@@ -1,0 +1,216 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: Hypertext Markup Language
+  @Version: Non-Standard Elements and Attributes
+  @ID: html-non-standard
+  @BaseURI:
+    http://suika.fam.cx/gate/cvs/*checkout*/markup/html/dtd/
+  
+  @Namespace:
+    @@Name:
+      http://suika.fam.cx/~wakaba/-temp/2003/10/22/html
+    @@DefaultPrefix: H
+    @@UsePrefix: 0
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2003/10/23 23:49:27 $
+
+Datatype:
+  @Type:
+    @@Name: au.format
+    @@XMLType: CDATA
+    @@Description:
+      Input format specification
+      <http://www.au.kddi.com/ezfactory/tec/spec/wap_tag1.html#tag2>
+  
+  @Type:
+    @@Name: au.iconname
+    @@XMLType: NMTOKEN
+    @@Description:
+      Icon name <http://www.au.kddi.com/ezfactory/tec/spec/3.html>
+  
+  @Type:
+    @@Name: istyle
+    @@XMLType: NMTOKEN
+    @@Description:
+      "1" / "2" / "3" / "4"
+  
+  @Type:
+    @@Name: loop
+    @@XMLType: CDATA
+    @@Description: 'infinite' / 1*DIGIT
+  
+  @Type:
+    @@Name:
+      :LanguageCode
+    @@XMLType: CDATA
+    @@Description: IETF Language Tag or empty string (See XML 1.0 SE Errata)
+  
+  @Type:
+    @@Name: truefalse
+    @@XMLType: (true|false)
+  
+  @Type:
+    @@Name:
+      :URI
+    @@XMLType: CDATA
+    @@Description: URI Reference
+  
+  @Type:
+    @@Name: yesno
+    @@XMLType: (yes|no)
+
+Attribute:
+  @AttributeSet:
+    @@Name: au.copyright
+    @@Attribute:
+      @@@Name: {copyright}
+      @@@Type: yesno
+      @@@Default: "no"
+      @@@Description:
+        Permission to save embeded data
+        <http://www.au.kddi.com/ezfactory/tec/spec/wap_tag1.html#tag4>
+  
+  @AttributeSet:
+    @@Name: common
+    @@REF:
+      xml:base
+    @@REF:
+      xml:lang
+    @@REF:
+      xml:space
+  
+  @AttributeSet:
+    @@Name: format
+    @@Attribute:
+      @@@Name: {format}
+      @@@Type: au.format
+    @@Description:
+      Input format specification
+      <http://www.au.kddi.com/ezfactory/tec/spec/wap_tag1.html#tag3>
+  
+  @AttributeSet:
+    @@Name: id
+    @@Attribute:
+      @@@Name: "id"
+      @@@Type: "ID"
+  
+  @AttributeSet:
+    @@Name: istyle
+    @@Attribute:
+      @@@Name: {istyle}
+      @@@Type: istyle
+    @@Description:
+      Input format specification
+      <http://www.au.kddi.com/ezfactory/tec/spec/wap_tag1.html#tag3>
+
+Module:
+  @Name: Block Structual
+  @ID: blockstruct
+  
+  @Element:
+    @@Name: plaintext
+    @@Content: plaintext
+  
+  @@Description:
+    Don't recognize markups (HTML 2, HTML 3.2, au)
+
+Module:
+  @ID: embed
+  
+  @Element:
+    @@Name: bgsound
+    @@Content: "EMPTY"
+    
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "loop"
+        @@@@Type: loop
+      @@@Attribute:
+        @@@@Name: "src"
+        @@@@Type:
+          :URI
+    
+    @@Description:
+      Background sound embedding (IE, au)
+  
+  @Attribute:
+    @@Name: img.copyright
+    @@ElementType:
+      :img
+    @@ref: au.copyright
+  
+  @Attribute:
+    @@Name: img.localsrc
+    @@ElementType:
+      :img
+    @@Attribute:
+      @@@Name: {localsrc}
+      @@@Type: au.iconname
+      @@@Description:
+        Built-in icon name
+        <http://www.au.kddi.com/ezfactory/tec/spec/wap_tag2.html#tag2>
+  
+  @Attribute:
+    @@Name: img.src.optional
+    @@ElementType:
+      :img
+    @@Attribute:
+      @@@Name: "src"
+      @@@Type: 
+        :URI
+      @@@Description:
+        Optional "src" attribute
+  
+  @Attribute:
+    @@Name: object.copyright
+    @@ElementType:
+      :object
+    @@ref: au.copyright
+
+Module:
+  @Name: Form
+  @ID: form
+  
+  @Attribute:
+    @@Name: input.au
+    @@ElementType:
+      :input
+    @@Attribute:
+      @@@Name: {emptyok}
+      @@@Type: truefalse
+      @@@Description:
+        Allowance of empty value
+        <http://www.au.kddi.com/ezfactory/tec/spec/wap_tag1.html#tag2>
+    @@ref: format
+  
+  @Attribute:
+    @@Name: input.istyle
+    @@ElementType:
+      :input
+    @@ref: istyle
+  
+  @Attribute:
+    @@Name: textarea.au
+    @@ElementType:
+      :textarea
+    @@ref: format
+  
+  @Attribute:
+    @@Name: textarea.istyle
+    @@ElementType:
+      :textarea
+    @@ref: istyle
+
+Module:
+  @Name: Inline Formatting
+  @ID: formatting
+  
+  @Element:
+    @@Name: blink
+    @@Content: 
+      (#PCDATA | $:Inline.mix)
+    
+    @@Description:
+      Blinking text (Netscape, au)
