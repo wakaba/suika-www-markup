@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 our $SCRIPT_NAME = 'mkdtds';
-our $VERSION = do{my @r=(q$Revision: 1.4 $=~/\d+/g);sprintf "%d."."%02d" x $#r,@r};
+our $VERSION = do{my @r=(q$Revision: 1.5 $=~/\d+/g);sprintf "%d."."%02d" x $#r,@r};
 {require Message::Markup::SuikaWikiConfig20::Parser;
 
 my $parser = new Message::Markup::SuikaWikiConfig20::Parser;
@@ -423,6 +423,8 @@ sub qname_module ($$) {
   my $ID = $Info->{ID};
   my $ns = $src->get_attribute ('Namespace');
   my $s = <<EOH;
+<!ENTITY % sgml.tag.minimizable "IGNORE">
+
 <!ENTITY % NS.prefixed "@{[$ns->get_attribute_value ('UsePrefix')==1?
                             q(INCLUDE):q(IGNORE)]}">
 
@@ -772,12 +774,17 @@ sub element_def ($$) {
                    default => qq($short_name);
   $s .= "\n";
   $s .= xml_parameter_ENTITY qq($mname.element), value => 'INCLUDE';
+  my $cm = convert_content_model ($src, $Info, default => 'EMPTY');
   $s .= xml_condition_section (qq($mname.element) =>
-            xml_parameter_ENTITY
-              (qq($name.content),
-               value => convert_content_model ($src, $Info, default => 'EMPTY'))
+            xml_parameter_ENTITY (qq($name.content), value => $cm)
           . xml_parameter_ENTITY (qq($name.qname), value => $short_name)
-          . qq(<!ELEMENT %$name.qname; %$name.content;>\n));
+          . xml_parameter_ENTITY (qq($name.tagmin.start), value => q<->)
+          . xml_parameter_ENTITY (qq($name.tagmin.end), value => $cm eq 'EMPTY' ? q<o> : q<->)
+          . xml_condition_section (qq(sgml.tag.minimizable) =>
+              xml_parameter_ENTITY (qq($name.tagmin),
+                                    value => qq"%$name.tagmin.start; %$name.tagmin.end;"))
+          . xml_parameter_ENTITY (qq($name.tagmin), value => q"")
+          . qq(<!ELEMENT %$name.qname; %$name.tagmin; %$name.content;>\n));
   $s .= "\n";
   $s .= attlist_def (scalar $src->get_attribute ('Attribute', make_new_node => 1), $Info, $mname);
   $s;
