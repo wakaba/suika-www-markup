@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 our $SCRIPT_NAME = 'mkdtds';
-our $VERSION = do{my @r=(q$Revision: 1.5 $=~/\d+/g);sprintf "%d."."%02d" x $#r,@r};
+our $VERSION = do{my @r=(q$Revision: 1.6 $=~/\d+/g);sprintf "%d."."%02d" x $#r,@r};
 {require Message::Markup::SuikaWikiConfig20::Parser;
 
 my $parser = new Message::Markup::SuikaWikiConfig20::Parser;
@@ -223,6 +223,55 @@ EOH
   $s;
 }
 
+sub parameter_entity_declaration ($$%) {
+  my ($src, $Info, %opt) = @_;
+  my $name = name_of $src, $Info, %opt;
+  if (my $sysid = $src->get_attribute_value ('SYSTEM')) {
+    if ($sysid =~ /^\s*<([^<>]+)>\s*$/) {
+      $sysid = $1;
+      $sysid =~ s/([%"])/sprintf '&#x%02X;', ord $1/ge;
+    } elsif ($sysid =~ /^([^:]*):(.*)$/) {
+      my $ns = $1;
+      $sysid = $2;
+      $sysid =~ s/([%"])/sprintf '&#x%02X;', ord $1/ge;
+      $sysid = '%' . ($ns ? $ns . '.' : '') . 'sysid.base;' . $sysid;
+    } else {
+      $sysid = '%XHTML.sysid.base;' . $sysid;
+    }
+    my $r;
+    if (my $pubid = $src->get_attribute_value ('PUBLIC')) {
+      $r = qq{<!ENTITY % $name.sysid "$sysid">\n} .
+           qq{<!ENTITY % $name.fpi "$pubid">\n} .
+           qq{<!ENTITY % $name.fpi.defined "INCLUDE">\n};
+    } else {
+      $r = qq{<!ENTITY % $name.sysid "$sysid">\n} .
+           qq{<!ENTITY % $name.fpi "">\n} .
+           qq{<!ENTITY % $name.fpi.defined "IGNORE">\n};
+    }
+    return <<EOH;
+@{[get_desc ($src, $Info, prefix => qq(%$name: ),
+                   padding_length => 51, padding_dot => q(.),
+                   default => qq(%$name))
+]}$r
+<![%$name.fpi.defined;[
+<!ENTITY % $name.decl
+\t'PUBLIC "%$name.fpi;"
+\t\t"%$name.sysid;"'>
+]]>
+<!ENTITY % $name.decl
+\t'SYSTEM "%$name.sysid;"'>
+<!ENTITY % $name %$name.decl;>
+<!-- @{[dot_padding qq<%$name >, length => 51, dot => q<.>]} -->
+EOH
+  } else {
+    my $s = get_desc ($src, $Info);
+    $s .= qq{<!ENTITY % $name } .
+            paralit $src->get_attribute_value ('EntityValue');
+    $s .= ">\n";
+    return $s;
+  }
+}
+
 sub dtd_driver ($$) {
   my ($src, $Info) = @_;
   my $s = '';
@@ -237,14 +286,31 @@ sub dtd_driver ($$) {
       push @module_set, $src;
     } elsif ($src->local_name =~ /^(?:QName|Attribute|Datatype|Notation)Module/) {
       $s{$src->local_name} .= dtd_driver_load_module ($src, $Info);
+
     } elsif ($src->local_name eq 'IfModuleSet') {
-      $s .= qq(<![%@{[$src->get_attribute_value ('ModuleSet')]}.module;[\n);
+      my $ms = name_of $src, $Info, key => $src->get_attribute_value ('ID') ?
+                                             'ID' : 'ModuleSet';
+      $s .= qq(<![%$ms.module;[\n);
       $s .= submodule_declarations ($src, $Info);
-      $s .= qq(]]>\n);
+      $s .= qq(<!-- end of $ms -->]]>\n\n);
+
+    } elsif ($src->local_name eq 'IfModule') {
+      my $ms = name_of $src, $Info, key => 'ID';
+      $s .= qq(<![%$ms.module;[\n);
+      $s .= submodule_declarations ($src, $Info);
+      $s .= qq(<!-- end of $ms -->]]>\n\n);
+    } elsif ($src->local_name eq 'ElementSwitch') {
+      $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.element "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
+    } elsif ($src->local_name eq 'AttributeSwitch') {
+      $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.attlist "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
+    } elsif ($src->local_name eq 'ModuleSwitch') {
+      $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.module "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
+    } elsif ($src->local_name eq 'Switch') {
+      $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]} "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
     } elsif ($src->local_name eq 'GeneralEntity') {
       $s .= entity_declaration ($src, $Info, param => 0);
     } elsif ($src->local_name eq 'ParameterEntity') {
-      $s .= entity_declaration ($src, $Info, param => 1);
+      $s .= parameter_entity_declaration ($src, $Info);
     }
   }
   
@@ -480,7 +546,7 @@ sub qname_module ($$) {
 
 <!-- The parameter entity %URI.datatype; should already be defined in
      Datatype module. -->
-<!ENTITY % URI.datatype; "CDATA">
+<!ENTITY % URI.datatype "CDATA">
 
 <![%$ID.prefixed;[
 <!ENTITY % $ID.xmlns.decl.attrib
@@ -617,6 +683,7 @@ sub get_adefault ($$) {
 sub get_desc ($$;%) {
   my ($src, $Info, %opt) = @_;
   my $desc = $src->get_attribute_value ('Description');
+  $desc =~ s/--/- - /g;
   $desc =~ s/\n/\n     /g;
   if (length $desc) {
     $desc = qq($opt{prefix}$desc);
@@ -736,19 +803,33 @@ sub submodule_declarations ($$) {
     } elsif ($src->local_name eq 'Content') {
       $s .= element_content_def ($src, $Info);
     } elsif ($src->local_name eq 'IfModuleSet') {
-      $s .= qq(<![%@{[$src->get_attribute_value ('ModuleSet')]}.module;[\n);
+      my $ms = name_of $src, $Info, key => $src->get_attribute_value ('ID') ?
+                                             'ID' : 'ModuleSet';
+      $s .= qq(<![%$ms.module;[\n);
       $s .= submodule_declarations ($src, $Info);
-      $s .= qq(<!-- end of  -->]]>\n);
+      $s .= qq(<!-- end of $ms -->]]>\n\n);
+
+    } elsif ($src->local_name eq 'IfModule') {
+      my $ms = name_of $src, $Info, key => 'ID';
+      $s .= qq(<![%$ms.module;[\n);
+      $s .= submodule_declarations ($src, $Info);
+      $s .= qq(<!-- end of $ms -->]]>\n\n);
     } elsif ($src->local_name eq 'ElementSwitch') {
       $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.element "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
     } elsif ($src->local_name eq 'AttributeSwitch') {
       $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.attlist "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
     } elsif ($src->local_name eq 'ModuleSwitch') {
       $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]}.module "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
+    } elsif ($src->local_name eq 'Switch') {
+      $s .= qq(<!ENTITY % @{[name_of ($src, $Info)]} "@{[$src->get_attribute_value ('Use')>0?'INCLUDE':'IGNORE']}">\n);
     } elsif ($src->local_name eq 'GeneralEntity') {
       $s .= entity_declaration ($src, $Info, param => 0);
     } elsif ($src->local_name eq 'ParameterEntity') {
-      $s .= entity_declaration ($src, $Info, param => 1);
+      $s .= parameter_entity_declaration ($src, $Info);
+    } elsif ($src->local_name eq 'Module') {
+      $s .= dtd_driver_load_module ($src, $Info);
+    } elsif ($src->local_name eq 'DTD') {
+      $s .= dtd_driver_load_dtd ($src, $Info);
     }
   }
   $s;
@@ -977,7 +1058,16 @@ sub make_dtd ($$$$) {
   
   my $r = <<EOH;
 <!-- ....................................................................... -->
-<!-- @{[ dot_padding "$Info->{Name} DTD ", length => 71, dot => q(.) ]} -->
+<!-- @{[do{
+       my $s = qq($Info->{Name} DTD );
+       if (70 - length $s > 0) {
+         $s = dot_padding $s, length => 70, dot => q(.);
+       } else {
+         $s = qq(        $Info->{Version} DTD );
+         $s = qq($Info->{realname}\n     ) . dot_padding $s, length => 70, dot => q(.);
+       }
+       $s;
+     }]} -->
 <!-- file: $Info->{ID}.dtd
 -->
 

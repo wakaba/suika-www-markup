@@ -1,3 +1,12 @@
+2004-07-05  Wakaba  <wakaba@suika.fam.cx>
+
+	* mkdtds.pl (parameter_entity_declaration): New.
+	* NOTE: Interpretion of 'Name' and 'SYSTEM' attributes 
+	for 'ParameterEntity' is changed.  'Name' is now taken as
+	QName as 'Name' attributes for other declarations.
+	'SYSTEM' attribute is also to be QName-aware.  If aware,
+	base URI for that prefix is used.
+
 2004-06-20  Wakaba  <w@suika.fam.cx>
 
 	* mkdtd.pl: Some typo fixed.  XML Schema Instance (xsi) namespace support.
