@@ -1,0 +1,4 @@
+2003-07-07  Wakaba  <w@suika.fam.cx>
+
+	* ChangeLog: New file.
+	* test-1.xml, test-2.xml: Modfiy hlink-xbl.xml path.

@@ -13,7 +13,7 @@
   <h:style type="text/css"><![CDATA[
     @namespace h 'http://www.w3.org/1999/xhtml';
     h|link:first-child {
-      -moz-binding: url(hlink-xbl.xml#link-hlink);
+      -moz-binding: url(../implementation/hlink-xbl.xml#link-hlink);
     }
   ]]></h:style>
   <h:style type="text/css">
@@ -29,7 +29,7 @@
       overflow: hidden;
       background-color: InfoBackground;
       color: InfoText;
-      -moz-binding: url(hlink-xbl.xml#ll-links);
+      -moz-binding: url(../implementation/hlink-xbl.xml#ll-links);
     }
     &links;[ll|display='no'] {
       display: none;

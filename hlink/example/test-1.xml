@@ -26,7 +26,7 @@
       max-width: 0; max-height: 0;
     }
     xhtml1|style[type="application/x-hlink+xml"] *|hlink {
-      -moz-binding: url(hlink-xbl.xml#style-hlink);
+      -moz-binding: url(../implementation/hlink-xbl.xml#style-hlink);
     }
     fooml|anchor, fooml|page, fooml|home {
       display: block;
