@@ -1,0 +1,229 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: PrezArk Vocabulary
+  @Version: 
+  @ID: prezarc
+  @Description:
+      PrezArk markup vocabulary, as described in <http://www.justsystem.co.jp/ark/genba/06.html>.
+  @BaseURI:
+    data:,prezarc/
+  
+  @Namespace:
+    @@Name:
+      http://www.justsystem.co.jp/ark/xmlns/prezark/
+    @@DefaultPrefix: pa
+    @@UsePrefix: 1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2004/05/25 07:46:23 $
+
+Datatype:
+  @Type:
+    @@Name: bitvector
+    @@XMLType: NMTOKEN
+    @@Description: Show or hide in nth personalized view.
+  
+  @Type:
+    @@Name: effect
+    @@XMLType: NMTOKEN
+    @@Description: Effect name (extensible).
+  
+  @Type:
+    @@Name: URI
+    @@XMLType: CDATA
+    @@Description: URI.
+  
+  @Type:
+    @@Name: MMSS
+    @@XMLType: NMTOKEN
+    @@Description:
+      MM:SS subclock.
+  
+  @Type:
+    @@Name: props
+    @@XMLType: CDATA
+    @@Description: CSS-like semicolon-delimited name-value pairs.
+  
+Module:
+  @Name: Header
+  @ID: head
+  
+  @Attribute:
+    @@Name: html.version
+    @@ElementType:
+      :html
+    @@Attribute:
+      @@@Name: version
+      @@@Type: "CDATA"
+      @@@Default: #REQUIRED
+      @@@Description: Version information.  Should be "1.0".
+  
+  @Element:
+    @@Name: permit
+    @@Content: (item+)
+    @@Description:
+      Personalized view properties.
+  
+  @Element:
+    @@Name: item
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "title"
+        @@@@Type: "CDATA"
+        @@@@Default: #REQUIRED
+        @@@@Description: Personalized view name.
+      @@@Attribute:
+        @@@@Name: "selected"
+        @@@@Type: "(selected)"
+        @@@@Default: #IMPLIED
+        @@@@Description: Personalized view selected.
+    @@Description:
+      Personalized view item information
+  
+  @Element:
+    @@Name: tmaster
+    @@Content: "ANY"
+    @@Description:
+      Title page frame.  Content model unknown.
+  
+  @Element:
+    @@Name: smaster
+    @@Content: "ANY"
+    @@Description:
+      Slide page frame.  Content model unknown.
+
+Module:
+  @Name: Style
+  @ID: style
+  
+  @Attribute:
+    @@Name: div.type
+    @@ElementType:
+      :div
+    @@Attribute:
+      @@@Name: type
+      @@@Type:
+        "(page|note|area.title|area.subtitle|area.list|area.image|
+          area.clipart|area.object|area.misc)"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: permit
+    @@Attribute:
+      @@@Name: permit
+      @@@Type: bitvector
+      @@@Default: #IMPLIED
+      @@@Description: Show or hide
+  
+  @Attribute:
+    @@Name: div.permit
+    @@ElementType:
+      :div
+    @@ref: permit
+    @@Description: Applied to pages or frames.
+  @Attribute:
+    @@Name: h1.permit
+    @@ElementType:
+      :h1
+    @@ref: permit
+  @Attribute:
+    @@Name: li.permit
+    @@ElementType:
+      :li
+    @@ref: permit
+  @Attribute:
+    @@Name: img.permit
+    @@ElementType:
+      :img
+    @@ref: permit
+  
+  @Attribute:
+    @@Name: div.effect
+    @@ElementType:
+      :div
+    @@Attribute:
+      @@@Name: effect
+      @@@Type: effect
+      @@@Default: #IMPLIED
+      @@@Description: Effect name.
+    @@Description: Applied to pages.
+  
+  @Attribute:
+    @@Name: div.expand
+    @@ElementType:
+      :div
+    @@Attribute:
+      @@@Name: expand
+      @@@Type: "(expand|collapse)"
+      @@Default: #IMPLIED
+      @@Description: Expanding page in outline.
+    @@Description: Applied to pages.
+  
+  @Attribute:
+    @@Name: div.layout
+    @@ElementType:
+      :div
+    @@Attribute:
+      @@@Name: layout
+      @@@Type: "(title|list|list2|clipart|clipart_list|list_clipart|blank)"
+      @@Default: #IMPLIED
+      @@Description: Slide layout.
+    @@Description: Applied to pages.
+  
+  @Attribute:
+    @@Name: img.clipart
+    @@ElementType:
+      :img
+    @@Attribute:
+      @@@Name: category
+      @@@Type: "CDATA"
+      @@@Default: #IMPLIED
+      @@@Description: Clipart category.
+    @@Attribute:
+      @@@Name: keyword
+      @@@Type: "CDATA"
+      @@@Default: #IMPLIED
+      @@@Description: Clipart keyword.
+    @@Attribute:
+      @@@Name: data
+      @@@Type: URI
+      @@@Default: #IMPLIED
+      @@@Description: Clipart URI.
+    @@Description: Applied to cliparts.
+  
+  @Attribute:
+    @@Name: div.rehearsal
+    @@ElementType:
+      :div
+    @@Attribute:
+      @@@Name: rehearsal
+      @@@Type: MMSS
+      @@Default: #IMPLIED
+      @@Description: Rehearsal (expected) time.
+    @@Description: Applied to pages.
+  
+  @Attribute:
+    @@Name: div.frame-decoration
+    @@ElementType:
+      :div
+    @@Attribute:
+      @@@Name: frame-decoration
+      @@@Type: props
+      @@Default: #IMPLIED
+      @@Description: Frame decoration.
+    @@Description: Applied to frames.
+  
+  @Attribute:
+    @@Name: div.content
+    @@ElementType:
+      :div
+    @@Attribute:
+      @@@Name: content
+      @@@Type: "(table_of_contents)"
+      @@Default: #IMPLIED
+      @@Description: Content type.
+    @@Description: Applied to pages.
+  
