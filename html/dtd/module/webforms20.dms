@@ -1,0 +1,556 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: Web Forms 2.0
+  @Version: Working Draft 9 March 2004
+  @ID: webforms20
+  @BaseURI:
+    
+  @Description:
+    Web Forms 2.0 proposal <http://www.hixie.ch/specs/html/forms/web-forms>.
+  
+  @Namespace:
+    @@Name:
+      http://www.w3.org/1999/xhtml
+    @@DefaultPrefix: html
+    @@UsePrefix: 0
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: $Date: 2004/05/25 08:47:21 $
+
+Attribute:
+  @Attribute:
+    @@Name: repeat.global
+    @@Attribute:
+      @@@Name: repeat
+      @@@Type: "CDATA"
+      @@@Default: #IMPLIED
+  @Attribute:
+    @@Name: repeat
+    @@Attribute:
+      @@@Name: "repeat"
+      @@@Type: "CDATA"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: control.extra
+  @AttributeSet:
+    @@Name: control
+    @@ref: control.extra
+  
+  @AttributeSet:
+    @@Name:
+      :XHTML.common.extra
+  @AttributeSet:
+    @@Name: 
+      :XHTML.common
+    @@ref:
+      :XHTML.common.extra
+    @@ref: repeat
+  
+  @AttributeSet:
+    @@Name: common
+    @@ref:
+      :XHTML.common
+
+Module:
+  @Name: Forms Extensions
+  @ID: formext
+  
+  @Element:
+    @@Name: form
+    @@Content: 
+      ($:Heading.class | $:List.class | $:Block.mix)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "accept"
+        @@@@Type:
+          :ContentTypes
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "accept-charset"
+        @@@@Type:
+          :Charsets
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "action"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "enctype"
+        @@@@Type:
+          :ContentType
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "method"
+        @@@@Type: "(get|post|put|delete)"
+        @@@@Default: "get"
+      @@@Attribute:
+        @@@@Name: "replace"
+        @@@@Type: "(document|values)"
+        @@@@Default: "document"
+  
+  @Element:
+    @@Name: input
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "accept"
+        @@@@Type:
+          :ContentTypes
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "accesskey"
+        @@@@Type:
+          :Character
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "action"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "alt"
+        @@@@Type:
+          :Text
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "autocomplete"
+        @@@@Type: "(on|off)"
+        @@@@Default: "on"
+      @@@Attribute:
+        @@@@Name: "checked"
+        @@@@Type: "(checked)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "disabled"
+        @@@@Type: "(disabled)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "enctype"
+        @@@@Type:
+          :ContentType
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "form"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "help"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "inputmode"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "maxlength"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "method"
+        @@@@Type: "(get|post|put|delete)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "min"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "max"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "pattern"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "precision"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "readonly"
+        @@@@Type: "(readonly)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "replace"
+        @@@@Type: "(document|values)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "required"
+        @@@@Type: "(required)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "size"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "src"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "tabindex"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "template"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "type"
+        @@@@Type: "(text|password|checkbox|radio|button|submit|reset|add|remove|file|hidden|image|datetime|date|expdate|week|time|number|email|tel|uri)"
+        @@@@Default: "text"
+      @@@Attribute:
+        @@@@Name: "value"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@ref: control
+  
+  @Element:
+    @@Name: select
+    @@Content: (optgroup|option)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "autocomplete"
+        @@@@Type: "(on|off)"
+        @@@@Default: "on"
+      @@@Attribute:
+        @@@@Name: "disabled"
+        @@@@Type: "(disabled)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "form"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "help"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "inputmode"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "maxlength"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "multiple"
+        @@@@Type: "(multiple)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "pattern"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "required"
+        @@@@Type: "(required)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "size"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "tabindex"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@ref: control
+  
+  @Element:
+    @@Name: optgroup
+    @@Content: (option)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "disabled"
+        @@@@Type: "(disabled)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "label"
+        @@@@Type:
+          :Text
+        @@@@Default: #REQUIRED
+  
+  @Element:
+    @@Name: option
+    @@Content: (#PCDATA)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "disabled"
+        @@@@Type: "(disabled)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "label"
+        @@@@Type:
+          :Text
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "selected"
+        @@@@Type: "(selected)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "value"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+  
+  @Element:
+    @@Name: textarea
+    @@Content: (#PCDATA)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "accesskey"
+        @@@@Type:
+          :Character
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "autocomplete"
+        @@@@Type: "(on|off)"
+        @@@@Default: "on"
+      @@@Attribute:
+        @@@@Name: "cols"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "disabled"
+        @@@@Type: "(disabled)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "form"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "help"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "inputmode"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "maxlength"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "readonly"
+        @@@@Type: "(readonly)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "required"
+        @@@@Type: "(required)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "rows"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "tabindex"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "wrap"
+        @@@@Type: "(soft|hard)"
+        @@@@Default: "soft"
+      @@@ref: control
+  
+  @Element:
+    @@Name: output
+    @@Content: (#PCDATA)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "form"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@ref: control
+  
+  @Element:
+    @@Name: button
+    @@Content:
+      (#PCDATA|$:Heading.class|$:List.class|$:Block.mix|$:Inline.mix)*
+    @@Description: Content cannot include Form and Formctrl.
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "accesskey"
+        @@@@Type:
+          :Character
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "action"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "disabled"
+        @@@@Type: "(disabled)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "enctype"
+        @@@@Type:
+          :ContentType
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "form"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "help"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "method"
+        @@@@Type: "(get|post|put|delete)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "replace"
+        @@@@Type: "(document|values)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "tabindex"
+        @@@@Type:
+          :Number
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "template"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "type"
+        @@@@Type: "(button|submit|reset|add|remove)"
+        @@@@Default: "submit"
+      @@@Attribute:
+        @@@@Name: "value"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+      @@@ref: control
+  
+  @Element:
+    @@Name: fieldset
+    @@Content:
+      (#PCDATA|legend|$:Flow.mix)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "disabled"
+        @@@@Type: "(disabled)"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "form"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "help"
+        @@@@Type:
+          :URI
+        @@@@Default: #IMPLIED
+      @@@ref: control
+  
+  @Element:
+    @@Name: legend
+    @@Content:
+      (#PCDATA|$:Inline.mix)*
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "accesskey"
+        @@@@Type:
+          :Character
+        @@@@Default: #IMPLIED
+  
+  @Element:
+    @@Name: label
+    @@Content:
+      (#PCDATA|$:Inline.mix)*
+    @@Description: Cannot nest label itself.
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "accesskey"
+        @@@@Type:
+          :Character
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "for"
+        @@@@Type: "IDREF"
+        @@@@Default: #IMPLIED
+  
+  
+  @Element:
+    @@Name: repeat
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "index"
+        @@@@Type: "CDATA"
+        @@@@Default: #IMPLIED
+
+Module:
+  @Name: Extended Form Events
+  @ID: formevent
+  
+  @AttributeSet:
+    @@Name: oninput
+    @@Attribute:
+      @@@Name: "oninput"
+      @@@Type:
+        :Script
+      @@@Default: #IMPLIED
+  @AttributeSet:
+    @@Name: onformchange
+    @@Attribute:
+      @@@Name: "onformchange"
+      @@@Type:
+        :Script
+      @@@Default: #IMPLIED
+  @AttributeSet:
+    @@Name: onforminput
+    @@Attribute:
+      @@@Name: "onforminput"
+      @@@Type:
+        :Script
+      @@@Default: #IMPLIED
+  @AttributeSet:
+    @@Name: oninvalid
+    @@Attribute:
+      @@@Name: "oninvalid"
+      @@@Type:
+        :Script
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: control.extra
+  @AttributeSet:
+    @@Name: control
+    @@ref: onformchange
+    @@ref: onforminput
+    @@ref: oninvalid
+    @@ref: control.extra

@@ -14,7 +14,8 @@ ModuleSet:
     @@UsePrefix: 0
   
   @Copyright: Wakaba <w@suika.fam.cx>
-  @RCSDate: $Date: 2003/10/23 23:49:27 $
+  @RCSDate:
+    $Date: 2004/05/25 08:47:21 $
 
 Datatype:
   @Type:
@@ -43,6 +44,11 @@ Datatype:
     @@Description: MD5 checksum
   
   @Type:
+    @@Name: NUMBER
+    @@XMLType: NMTOKEN
+    @@Description: SGML.NUMBER
+  
+  @Type:
     @@Name:
       :URI
     @@XMLType: CDATA
@@ -59,6 +65,13 @@ Attribute:
       xml:space
   
   @AttributeSet:
+    @@Name: block.align
+    @@Attribute:
+      @@@Name: "align"
+      @@@Type: "(bleedleft|left|center|right|bleedright|justify)"
+      @@@Default: "center"
+  
+  @AttributeSet:
     @@Name: class
     @@Attribute:
       @@@Name: "class"
@@ -71,11 +84,35 @@ Attribute:
       @@@Type: "ID"
   
   @AttributeSet:
+    @@Name: imagemap
+    @@Attribute:
+      @@@Name: "imagemap"
+      @@@Type:
+        :URI
+    @@Description: a URI for processing image clicks and drags
+  
+  @AttributeSet:
     @@Name: lang
     @@Attribute:
       @@@Name: "lang"
       @@@Type: LanguageCode
-      @@@Default: "en.us"
+      @@@Default: #IMPLIED
+    @@Description:
+      HTML 3.0 draft 00 declares default value as "en.us", which
+      has some problem with regard to inheriting.
+  
+  @AttributeSet:
+    @@Name: Size
+    @@Attribute:
+      @@@Name: "width"
+      @@@Type: NUMBER
+    @@Attribute:
+      @@@Name: "height"
+      @@@Type: NUMBER
+    @@Attribute:
+      @@@Name: "units"
+      @@@Type: "(en|pixels)"
+      @@@Default: "pixels"
   
   @AttributeSet:
     @@Name: src
@@ -83,6 +120,13 @@ Attribute:
       @@@Name: "src"
       @@@Type:
         :URI
+  @AttributeSet:
+    @@Name: src.required
+    @@Attribute:
+      @@@Name: "src"
+      @@@Type:
+        :URI
+      @@@Default: #REQUIRED
   
   @AttributeSet:
     @@Name: attrs
@@ -108,16 +152,128 @@ Module:
   @ID: struct
   
   @Element:
+    @@Name: banner
+    @@Content: $body.content
+    @@Attribute:
+      @@@ref: attrs
+    @@Description:
+      corporate logos, navigation aids, disclaimers and other information
+  
+  @Element:
+    @@Name: bodytext
+    @@Content: $body.content
+    @@Description:
+      dummy element
+  
+  @Element:
+    @@Name: fn
+    @@Content: $body.content
+    @@Attribute:
+      @@@ref: attrs
+    @@Description:
+      footnotes, and when practical, rendered as pop-up notes
+  
+  @Element:
     @@Name: note
-    @@Content:
-      (#PCDATA | $:Flow.mix)*
-    
+    @@Content: $body.content
     @@Attribute:
       @@@ref: attrs
       @@@ref: src
       @@@ref: url.link
       @@@ref: needs
+    @@Description:
+      admonishments such as notes,
+      cautions or warnings, as commonly used in technical documentation
+
+Module:
+  @Name: Inline
+  @ID: inline
+  
+  @Element:
+    @@Name: au
+    @@Content: $text.content
+    @@Attribute:
+      @@@ref: attrs
     
     @@Description:
-      note: admonishments such as notes,
-      cautions or warnings, as commonly used in technical documentation
+      the name of an author
+  
+  @Element:
+    @@Name: person
+    @@Content: $text.content
+    
+    @@Attribute:
+      @@@ref: attrs
+    
+    @@Description:
+      names of people
+
+Module:
+  @Name: List
+  @ID: list
+  
+  @Element:
+    @@Name: lh
+    @@Content: $text.content
+    @@Attribute:
+      @@@ref: attrs
+    
+    @@Description:
+      a title for a list
+
+Module:
+  @Name: Figure
+  @ID: figure
+  
+  @Element:
+    @@Name: fig
+    @@Content:
+      (
+        overlay*,
+        (:caption|caption)?,
+        figtext,
+        credit?
+      )
+    @@Attribute:
+      @@@ref: attrs
+      @@@ref: needs
+      @@@ref: url.link
+      @@@ref: block.align
+      @@@ref: src.required
+      @@@Attribute:
+        @@@@Name: "noflow"
+        @@@@Type: (noflow)
+      @@@ref: Size
+      @@@ref: imagemap
+    
+    @@Description:
+      figures
+  
+  @Element:
+    @@Name: overlay
+    @@Content: "EMPTY"
+    @@Attribute:
+      @@@ref: url.link
+      @@@ref: src.required
+      @@@ref: Size
+      @@@ref: imagemap
+      @@@Attribute:
+        @@@@Name: "x"
+        @@@@Type: NUMBER
+        @@@@Description: X offset from the top left corner of the base image
+      @@@Attribute:
+        @@@@Name: "y"
+        @@@@Type: NUMBER
+        @@@@Description: Y offset from the top left corner of the base image
+  
+  @Element:
+    @@Name: figtext
+    @@Content: $body.content
+    @@Description: dummy element
+  
+  @Element:
+    @@Name: credit
+    @@Content: $text.content
+    @@Attribute:
+      @@@ref: attrs
+    @@Description: name the source of a block quotation or figure
