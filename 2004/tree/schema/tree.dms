@@ -18,7 +18,7 @@ ModuleSet:
   
   @Copyright: Wakaba <w@suika.fam.cx>
   @RCSDate:
-    $Date: 2004/12/10 08:34:20 $
+    $Date: 2004/12/10 08:39:55 $
   
   @ImplNote:
     @@lang:en
@@ -52,22 +52,16 @@ Module:
     @@Name: root
     @@Content:
       (content?, (leaf | node)*)
-    @@Attribute:
-      @@@ref: common
   
   @Element:
     @@Name: leaf
     @@Content:
       ANY
-    @@Attribute:
-      @@@ref: common
   
   @Element:
     @@Name: node
     @@Content:
       (content?, (leaf | node)*)
-    @@Attribute:
-      @@@ref: common
 
 Module:
   @Name: Data
@@ -76,7 +70,5 @@ Module:
   @Element:
     @@Name: content
     @@Content: ANY
-    @@Attribute:
-      @@@ref: common
 
 ## tree.dms ends here
