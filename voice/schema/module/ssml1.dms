@@ -1,0 +1,479 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: SSML
+  @Version: 1
+  @Description:
+    This is Speech Synthesis Markup Language (SSML), Version 1.
+  @ID: ssml1
+  @BaseURI:
+    http://suika.fam.cx/www/markup/voice/schema/module/
+  
+  @Namespace:
+    @@Name:
+      http://www.w3.org/2001/10/synthesis
+    @@DefaultPrefix: ssml
+    @@UsePrefix: 0
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2004/09/15 12:10:21 $
+  
+  @ImplNote:
+    @@lang:en
+    @@@:
+      Official DTD:
+      <http://www.w3.org/TR/speech-synthesis/synthesis.dtd>
+
+Datatype:
+  @Type:
+    @@Name: alphabet
+    @@XMLType: CDATA
+    @@Description: An alphabet name.  /(ipa|x-.*)/.
+  @Type:
+    @@Name: contour
+    @@XMLType: CDATA
+    @@Description: List of whitespace separated contourpoints.
+  @Type:
+    @@Name: contourpoint
+    @@XMLType: CDATA
+    @@Description: (Number%,pitch.datatype)
+  @Type:
+    @@Name: duration
+    @@XMLType: CDATA
+    @@Description: Duration.  CSS2 <times>.  /(\+)?([0-9]*\.)?[0-9]+(ms|s)/.
+  @Type:
+    @@Name: gender
+    @@XMLType: (male | famale | neutral)
+  @Type:
+    @@Name: height.scale
+    @@XMLType: (x-high | high | medium | low | x-low | default)
+    @@Description: Descriptive values for height.
+  @Type:
+    @@Name: hertz.number
+    @@XMLType: CDATA
+    @@Description: /([0-9]+|[0-9]+.[0-9]*|[0-9]*.[0-9]+)Hz/.
+  @Type:
+    @@Name: hertz.relative
+    @@XMLType: CDATA
+    @@Description: /[+\-]([0-9]+|[0-9]+.[0-9]*|[0-9]*.[0-9]+)Hz/.
+  @Type:
+    @@Name: integer
+    @@XMLType: CDATA
+    @@Description: An integer.
+  @Type:
+    @@Name: level
+    @@XMLType: (strong | moderate | none | reduced)
+  @Type:
+    @@Name: number
+    @@XMLType: CDATA
+    @@Description:
+      An xsd:decimal more than or equal to zero
+  @Type:
+    @@Name: percent
+    @@XMLType: CDATA
+    @@Description: /[+\-]?([0-9]+|[0-9]+.[0-9]*|[0-9]*.[0-9]+)%/.
+  @Type:
+    @@Name: pitch
+    @@XMLType: CDATA
+    @@Description:
+      Union of herz.number, herz.relative, percent, semitone or height.scale.
+  @Type:
+    @@Name: range
+    @@XMLType: CDATA
+    @@Description:
+      Union of herz.number, herz.relative, percent, semitone or height.scale.
+  @Type:
+    @@Name: rate
+    @@XMLType: CDATA
+    @@Description: Union of number, percent or speed.scale.
+  @Type:
+    @@Name: relative
+    @@XMLType: CDATA
+    @@Description: /[+\-]([0-9]+|[0-9]+.[0-9]*|[0-9]*.[0-9]+)/.
+  @Type:
+    @@Name: semitone
+    @@XMLType: CDATA
+    @@Description: /[+\-]([0-9]+|[0-9]+.[0-9]*|[0-9]*.[0-9]+)st/.
+  @Type:
+    @@Name: speed.scale
+    @@XMLType: (x-fast | fast | medium | slow | x-slow | default)
+    @@Description: Descriptive values for speed.
+  @Type:
+    @@Name: strength
+    @@XMLType: (none | x-weak | weak | medium | strong | x-strong)
+  @Type:
+    @@Name: version
+    @@XMLType: NMTOKEN
+    @@Description: Version.  Must be "1.0".
+  @Type:
+    @@Name: voicename
+    @@XMLType: CDATA
+    @@Description: /\S+/.
+  @Type:
+    @@Name: voicenames
+    @@XMLType: CDATA
+    @@Description: List of whitespace-separeted voicenames.
+  @Type:
+    @@Name: volume
+    @@XMLType: CDATA
+    @@Description: Union of volume.number, relative, percent or volume.scale.
+  @Type:
+    @@Name: volume.number
+    @@XMLType: CDATA
+    @@Description: A volume of [0.0, 100.0].
+  @Type:
+    @@Name: volume.scale
+    @@XMLType: (silent | x-soft | soft | medium | loud | x-loud | default)
+    @@Description: Descriptive values for volume.
+  @Type:
+    @@Name:
+      :LanguageCode
+    @@XMLType: NMTOKEN
+    @@Description: IETF Language Tag
+  @Type:
+    @@Name:
+      :URI
+    @@XMLType: CDATA
+    @@Description: A URI reference
+  @Type:
+    @@Name:
+      xsd:anyURI
+    @@XMLType: CDATA
+    @@Description: An IRI reference
+  @Type:
+    @@Name:
+      xsd:nonNegativeInteger
+    @@XMLType: CDATA
+    @@Description: An integer more than or equal to zero
+  @Type:
+    @@Name:
+      xsd:positiveInteger
+    @@XMLType: CDATA
+    @@Description: An integer more than zero
+  @Class:
+    @@Name:
+      xsd:token
+    @@XMLType: CDATA
+  @Class:
+    @@Name: audio
+    @@Content: audio
+  @Class:
+    @@Name: structure
+    @@Content: p | s
+  @Class:
+    @@Name: sentence-elements
+    @@Content: break | emphasis | mark | phoneme | prosody | say-as | voice | sub
+  @Class:
+    @@Name: allowed-within-sentense
+    @@Content: $audio | $sentence-elements
+  @Class:
+    @@Name: paragraph
+    @@Content:
+      $allowed-within-sentence | s
+  @Class:
+    @@Name: sentence
+    @@Content:
+      $allowed-within-sentence
+  @Class:
+    @@Name: sentenceAndStructure
+    @@Content:
+      $allowed-within-sentence | $structure
+  @Class:
+    @@Name: descAndSentenceAndStructure
+    @@Content: $sentenceAndStructure | desc
+  @Element:
+    @@Name: aws
+    @@Description: Abstract element type for allowed-within-sentence.
+  @Element:
+    @@Name: struct
+    @@Description: Abstract element type for structure.
+
+Attribute:
+
+Module:
+  @Name: Document Structure, Text Processing and Pronunciation
+  @ID: struct
+  
+  @Element:
+    @@Name: speak
+    @@Content:
+      (#PCDATA | $sentenceAndStructure | lexicon | meta | metadata)*
+    @@Description: Root Element
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name:
+          xml:lang
+        @@@@Type:
+          :LanguageCode
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The language of the root document.
+     @@@REF:
+         xml:base
+     @@@Attribute:
+       @@@@Name: "version"
+       @@@@Type: version
+       @@@@Default: #REQUIRED
+       @@@@Description:
+         @@@@@lang:en
+         @@@@@@: The version of the specification to be used.
+     @@@REF:
+       xsi:schemaLocation
+  
+  @Element:
+    @@Name: lexicon
+    @@Content: "EMPTY"
+    @@Description: Pronunciation Lexicon
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "uri"
+        @@@@Type:
+          xsd:anyURI
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The location of the pronunciation lexicon document.
+      @@@Attribute:
+        @@@@Name: "type"
+        @@@@Type:
+          :ContentType
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          The media type of the pronunciation lexicon document.
+  
+  @Element:
+    @@Name: meta
+    @@Content: "EMPTY"
+    @@Description: Information about the document
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "http-equiv"
+        @@@@Type: "NMTOKEN"
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          HTTP header field name.
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: "NMTOKEN"
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          Currently only "seeAlso" is defined.
+      @@@Attribute:
+        @@@@Name: "content"
+        @@@@Type: "CDATA"
+        @@@@Default: #REQUIRED
+      @@@Description:
+        Either "http-equiv" or "name" is required and they are exclusive.
+  
+  @Element:
+    @@Name: metadata
+    @@Content: "ANY"
+    @@Description:
+     Information about the document.  Use of RDF/XML and Dublin Core 
+     is recommended.
+  
+  @Element:
+    @@Name: p
+    @@Content: (#PCDATA | $paragraph)*
+    @@Attribute:
+      @@@REF:
+        xml:lang
+    @@Description: Paragraph
+  
+  @Element:
+    @@Name: s
+    @@Content: (#PCDATA | $sentence)*
+    @@AttributeSet:
+      @@@REF:
+        xml:lang
+    @@Description: Sentense
+  
+  @Element:
+    @@Name: say-as
+    @@Content: (#PCDATA)*
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "interpret-as"
+        @@@@Type: "NMTOKEN"
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The content type of the contained text construct.
+      @@@Attribute:
+        @@@@Name: "format"
+        @@@@Type: "NMTOKEN"
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          Futher hints on the precise formatting of the contained text
+          for content types that may have ambiguous formats.
+          The legal values depend on the value of the "interpret-as" attribute.
+      @@@Attribute:
+        @@@@Name: "detail"
+        @@@@Type: "NMTOKEN"
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          The level of detail to be read aloud or rendered.
+    @@Description:
+      Information on the type of text construct
+  
+  @Element:
+    @@Name: phoneme
+    @@Content: (#PCDATA)*
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "ph"
+        @@@@Type: "CDATA"
+        @@@@Default: #REQUIRED
+        @@@@Description:
+          The phoneme/phone string.
+      @@@Attribute:
+        @@@@Name: "alphabet"
+        @@@@Type: alphabet
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          The phonemic/phonetic alphabet used.  Valid values are "ipa" and
+          "x-" strings.
+    @@Description: Phonemic/phonetic pronunciation for the contained text
+  
+  @Element:
+    @@Name: sub
+    @@Content: (#PCDATA)*
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "alias"
+        @@@@Type: "CDATA"
+        @@@@Default: #REQUIRED
+    @@Description: Text Substition
+
+Module:
+  @Name: Prosody and Style
+  @ID: style
+  
+  @Element:
+    @@Name: voice
+    @@Content: (#PCDATA | $sentenceAndStructure)*
+    @@AttributeSet:
+      @@@REF:
+        xml:lang
+      @@@Attribute:
+        @@@@Name: "gender"
+        @@@@Type: gender
+        @@@@Default: #IMPLIED
+        @@@@Description: The preferred gender of the voice.
+      @@@Attribute:
+        @@@@Name: "age"
+        @@@@Type:
+          xsd:nonNegativeInteger
+        @@@@Default: #IMPLIED
+        @@@@Description: The preferred age in years (since birth) of the voice.
+      @@@Attribute:
+        @@@@Name: "variant"
+        @@@@Type:
+          xsd:positiveInteger
+        @@@@Default: #IMPLIED
+        @@@@Description: The preferred variant of the other voice characteristics.
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: voicenames
+        @@@@Default: #IMPLIED
+        @@@@Description: The voice name.
+      @@@Description:  At least one attribute is required.
+    @@Description: Request a change in speaking voice.
+  
+  @Element:
+    @@Name: emphasis
+    @@Content: (#PCDATA | $sentence)*
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "level"
+        @@@@Type: level
+        @@@@Default: "moderate"
+        @@@@Description: The strength of emphasis.
+    @@Description: Emphasis (or Prominence or Stress)
+  
+  @Element:
+    @@Name: break
+    @@Content: "EMPTY"
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "strength"
+        @@@@Type: strength
+        @@@@Default: "medium"
+        @@@@Description: The strength of the prosodic break.
+      @@@Attribute:
+        @@@@Name: "time"
+        @@@@Type: duration
+        @@@@Default: #IMPLIED
+        @@@@Description: The duration of a pause to be inserted.
+    @@Description: Control the pausing or other prosodic boundaries between words.
+  
+  @Element:
+    @@Name: prosody
+    @@Content: (#PCDATA | $sentenceAndStructure)*
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "pitch"
+        @@@@Type: pitch
+        @@@@Default: #IMPLIED
+        @@@@Description: The baseline pitch.
+      @@@Attribute:
+        @@@@Name: "contour"
+        @@@@Type: contour
+        @@@@Default: #IMPLIED
+        @@@@Description: The actual pitch contour.
+      @@@Attribute:
+        @@@@Name: "range"
+        @@@@Type: range
+        @@@@Default: #IMPLIED
+        @@@@Description: The pitch range (variability).
+      @@@Attribute:
+        @@@@Name: "rate"
+        @@@@Type: rate
+        @@@@Default: #IMPLIED
+        @@@@Description: The speaking rate.
+      @@@Attribute:
+        @@@@Name: "duration"
+        @@@@Type: duration
+        @@@@Default: #IMPLIED
+        @@@@Description: The desired time to take.
+      @@@Attribute:
+        @@@@Name: "volume"
+        @@@@Type: volume
+        @@@@Default: "100.0"
+        @@@@Description: The volume.
+      @@@Description: At least one attribute is required.
+    @@Description: Control of the pitch, speaking rate and volume
+
+Module:
+  @Name: Other
+  @ID: misc
+  
+  @Element:
+    @@Name: audio
+    @@Content: (#PCDATA | $descAndSentenceAndStructure)*
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "src"
+        @@@@Type:
+          xsd:anyURI
+        @@@@Default: #REQUIRED
+        @@@@Description: The URI of a document.
+    @@Description: The insertion of recorded audio files
+  
+  @Element:
+    @@Name: mark
+    @@Content: "EMPTY"
+    @@AttributeSet:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type:
+          xsd:token
+        @@@@Default: #REQUIRED
+    @@Description: Places a marker
+  
+  @Element:
+    @@Name: desc
+    @@Content: (#PCDATA)*
+    @@AttributeSet:
+      @@@REF:
+        xml:lang
+    @@Description: Alternative for the "audio"
