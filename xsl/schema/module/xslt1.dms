@@ -1,0 +1,887 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: XSL Transformations
+  @Version: 1
+  @ID: xslt1
+  @Description: XSLT, XSL Trensformations, Version 1.0
+  @BaseURI:
+    
+  
+  @Namespace:
+    @@Name:
+      http://www.w3.org/1999/XSL/Transform
+    @@DefaultPrefix: xsl
+    @@UsePrefix: 1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate: 
+    $Date: 2004/06/26 11:43:51 $
+
+Datatype:
+  @Type:
+    @@Name:
+      :ContentType
+    @@XMLType: CDATA
+    @@Description: Internet Media Type [RFC 2046]
+  
+  @Type:
+    @@Name:
+      :URI
+    @@XMLType: CDATA
+    @@Description: A URI Reference
+  
+  @Type:
+    @@Name: avt-alphabetical-traditional
+    @@XMLType: CDATA
+    @@Description:
+      An attribute value template that results "alphabetical" or "traditional"
+  
+  @Type:
+    @@Name: avt-ascending-descending
+    @@XMLType: CDATA
+    @@Description:
+      An attribute value template that results "ascending" or "descending"
+  
+  @Type:
+    @@Name: avt-char
+    @@XMLType: CDATA
+    @@Description: An attribute value template that results a character
+  
+  @Type:
+    @@Name: avt-ncname
+    @@XMLType: CDATA
+    @@Description: An attribute value template that results an NCName
+  
+  @Type:
+    @@Name: avt-nmtoken
+    @@XMLType: CDATA
+    @@Description: An attribute value template that results an NMTOKEN
+  
+  @Type:
+    @@Name: avt-number
+    @@XMLType: CDATA
+    @@Description: An attribute value template that results a number
+  
+  @Type: 
+    @@Name: avt-qname
+    @@XMLType: CDATA
+    @@Description: An attribute value template that results a QName
+  
+  @Type:
+    @@Name: avt-string
+    @@XMLType: CDATA
+    @@Description: An attribute value template that results a string
+  
+  @Type:
+    @@Name: avt-text-number-qname-but-not-ncname
+    @@XMLType: CDATA
+    @@Description:
+      An attribute value template that results "text", "number"
+      or QName but not NCName
+  
+  @Type:
+    @@Name: avt-upper-first-lower-first
+    @@XMLType: CDATA
+    @@Description:
+      An attribute value template that results "upper-first" or "lower-first"
+  
+  @Type: 
+    @@Name: avt-uri-reference
+    @@XMLType: CDATA
+    @@Description: An attribute value template that results a URI reference
+  
+  @Type:
+    @@Name: boolean-expr
+    @@XMLType: CDATA
+    @@Description: An XPath expression evaluated as boolean
+  
+  @Type:
+    @@Name: char
+    @@XMLType: CDATA
+  
+  @Type:
+    @@Name: expr
+    @@XMLType: CDATA
+    @@Description: An expression
+  
+  @Type:
+    @@Name: node-set-expr
+    @@XMLType: CDATA
+    @@Description: An expression evaluated as node-set
+  
+  @Type:
+    @@Name: number
+    @@XMLType: NMTOKEN
+  
+  @Type:
+    @@Name: number-expr
+    @@XMLType: CDATA
+    @@Description: An expression evaluated as number
+  
+  @Type:
+    @@Name: pattern
+    @@XMLType: CDATA
+    @@Description: A pattern
+  
+  @Type:
+    @@Name: prefix-or-default
+    @@XMLType: CDATA
+    @@Description: Namespace prefix or "#default"
+  
+  @Type:
+    @@Name: priority
+    @@XMLType: CDATA
+    @@Description: A priority
+  
+  @Type:
+    @@Name: qname
+    @@XMLType: NMTOKEN
+    @@Description: A QName
+  
+  @Type:
+    @@Name: qnames
+    @@XMLType: NMTOKENS
+    @@Description: A whitespace-separeted list of QNames
+  
+  @Type:
+    @@Name: string
+    @@XMLType: CDATA
+  
+  @Type:
+    @@Name: string-expression
+    @@XMLType: CDATA
+    @@Description An expression evaluated as string
+  
+  @Type:
+    @@Name: tokens
+    @@XMLType: CDATA
+    @@Description: A whitespace-separeted list of tokens
+  
+  @Type:
+    @@Name: yesno
+    @@XMLType: (yes | no)
+    @@Description: "yes" or "no"
+  
+  @Class:
+    @@Name: result-elements
+  
+  @Class:
+    @@Name: non-xsl-top-level
+  @Class:
+    @@Name: top-level.extra
+  @Class:
+    @@Name: top-level
+    @@Content:
+       include |
+       strip-space |
+       preserve-space |
+       output |
+       key |
+       decimal-format |
+       attribute-set |
+       variable |
+       param |
+       template |
+       namespace-alias
+       $non-xsl-top-level
+       $top-level.extra
+    @@Description: Top level elements
+  @Class:
+    @@Name: top-level.content
+    @@Content:
+      (
+        import*,
+        ($top-level)*
+      )
+    
+  @Class:
+    @@Name: char-instructions.extra
+  @Class:
+    @@Name: char-instructions
+    @@Content:
+        apply-templates |
+        call-template |
+        apply-imports |
+        value-of |
+        for-each |
+        copy-of |
+        number |
+        choose |
+        if |
+        text |
+        copy |
+        variable |
+        message |
+        fallback
+        $char-instructions.extra
+    
+    @Class:
+      @@Name: instructions.extra
+    @Class:
+      @@Name: instructions
+      @@Content:
+        $char-instructions |
+        processing-instruction |
+        comment |
+        element |
+        attribute
+        $instructions.extra
+    
+    @Class:
+      @@Name: char-template.content
+      @@Content:
+        (#PCDATA | $char-instructions)*
+    
+    @Class:
+      @@Name: xslt-template.content
+      @@Content:
+        (#PCDATA | $instructions | $result-elements)*
+
+Attribute:
+  @AttributeSet:
+    @@Name: disable-output-escaping
+    @@Attribute:
+      @@@Name: "disable-output-escaping"
+      @@@Type: yesno
+      @@@Default: "no"
+  
+  @AttributeSet:
+    @@Name: id
+    @@Attribute:
+      @@@Name: "id"
+      @@@Type: "ID"
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: mode
+    @@Attribute:
+      @@@Name: "mode"
+      @@@Type: qname
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: space
+    @@REF:
+      xml:space
+  
+  @AttributeSet:
+    @@Name: use-attribute-sets
+    @@Attribute:
+      @@@Name: "use-attribute-sets"
+      @@@Type: qnames
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: extension-element-prefixes
+    @@Attribute:
+      @@@Name: "extension-element-prefixes"
+      @@@Type: tokens
+      @@@Default: #IMPLIED
+      @@@Description: A whitespace-separated list of namespace prefixes
+  
+  @AttributeSet:
+    @@Name: exclude-result-prefixes
+    @@Attribute:
+      @@@Name: "exclude-result-prefixes"
+      @@@Type: tokens
+      @@@Default: #IMPLIED
+  
+  @AttributeSet:
+    @@Name: common
+
+Module:
+  @ID: struct
+  
+  @Element:
+    @@Name: stylesheet
+    @@Attribute:
+      @@@ref: id
+      @@@ref: extension-element-prefixes
+      @@@ref: exclide-result-prefixes
+      @@@Attribute:
+        @@@@Name: "version"
+        @@@@Type: number
+        @@@@Default: #REQUIRED
+        @@@@Description: Version of XSLT
+    @@Content: $top-level.content
+    @@Description: A stylesheet
+  @Element:
+    @@Name: transform
+    @@Attribute:
+      @@@ref: id
+      @@@ref: extension-element-prefixes
+      @@@ref: exclide-result-prefixes
+      @@@Attribute:
+        @@@@Name: "version"
+        @@@@Type: number
+        @@@@Default: #REQUIRED
+        @@@@Description: Version of XSLT
+    @@Content: $top-level.content
+    @@Description: A stylesheet (A synonym for xsl:stylesheet)
+  
+  @Element:
+    @@Name: include
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "href"
+        @@@@Type: 
+          :URI
+        @@@@Default: #REQUIRED
+        @@@@Description: URI reference identifying the stylesheet to be included
+    @@Content: "EMPTY"
+    @@Description: Stylesheet inclusion
+  @Element:
+    @@Name: import
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "href"
+        @@@@Type: 
+          :URI
+        @@@@Default: #REQUIRED
+        @@@@Description: URI reference identifying the stylesheet to be imported
+    @@Content: "EMPTY"
+    @@Description: Stylesheet import
+  
+  @Element:
+    @@Name: strip-space
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "elements"
+        @@@@Type: tokens
+        @@@@Default: #REQUIRED
+        @@@@Description: Whitespace-separated list of NameTests
+    @@Content: "EMPTY"
+    @@Description: Whitespace-striping element names
+  @Element:
+    @@Name: preserve-space
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "elements"
+        @@@@Type: tokens
+        @@@@Default: #REQUIRED
+        @@@@Description: Whitespace-separated list of NameTests
+    @@Content: "EMPTY"
+    @@Description: Whitespace-preserving element names
+  
+  @Element:
+    @@Name: namespace-alias
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "stylesheet-prefix"
+        @@@@Type: prefix-or-default
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "result-prefix"
+        @@@@Type: prefix-or-default
+        @@@@Default: #REQUIRED
+    @@Content: "EMPTY"
+  
+  @Element:
+    @@Name: output
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "method"
+        @@@@Type: qname
+        @@@@Default: "xml"
+        @@@@Description: Value is either "xml", "html" or QName but not NCName
+      @@@Attribute:
+        @@@@Name: "version"
+        @@@@Type: NMTOKEN
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "encoding"
+        @@@@Type: string
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "omit-xml-declaration"
+        @@@@Type: yesno
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "standalone"
+        @@@@Type: yesno
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "doctype-public"
+        @@@@Type: string
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "doctype-system"
+        @@@@Type: string
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "cdata-section-elements"
+        @@@@Type: qnames
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "indent"
+        @@@@Type: yesno
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "media-type"
+        @@@@Type: string
+        @@@@Default: #IMPLIED
+
+Module:
+  @Name: Literal Result Element
+  @ID: literal
+  
+  @AttributeSet:
+    @@Name: result-element
+    @@Attribute:
+      @@@Name: exclude-result-prefixes
+      @@@Type: tokens
+      @@@Default: #IMPLIED
+    @@Attribute:
+      @@@Name: extension-element-prefixes
+      @@@Type: tokens
+      @@@Default: #IMPLIED
+      @@@Description: A whitespace-separated list of namespace prefixes
+    @@Attribute:
+      @@@Name: use-attribute-sets
+      @@@Type: qnames
+      @@@Default: #IMPLIED
+    @@ref: xmlns.decl
+  
+  @AttributeSet:
+    @@Name: result-element-root
+    @@Attribute:
+      @@@Name: version
+      @@@Type: number
+      @@@Default: #REQUIRED
+      @@@Description: Version of XSLT
+    @@ref: result-element
+
+Module:
+  @Name: Template
+  @ID: template
+  
+  @Element:
+    @@Name: template
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "match"
+        @@@@Type: pattern
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          A Pattern that identifies the source node or nodes to which
+          the rule applies
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #IMPLIED
+        @@@@Description:
+          Template name
+      @@@Attribute:
+        @@@@Name: "priority"
+        @@@@Type: priority
+        @@@@Default: #IMPLIED
+        @@@@Description: Priority
+      @@@ref: mode
+    @@Content:
+#      (
+#        param*,
+#        ($template.mix)*
+#      )
+      (#PCDATA | param |
+        $instructions
+        $result-elements
+      )*
+    @@Description: Defining a template rule
+  
+  @Element:
+    @@Name: apply-templates
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: node-set-expr
+        @@@@Default: "node()"
+      @@@ref: mode
+    @@Content:
+      (
+        sort |
+        with-param
+      )*
+    @@Description: Applying template rules
+  @Element:
+    @@Name: apply-imports
+    @@Content: "EMPTY"
+    @@Description: Overriding template rules
+  
+  @Element:
+    @@Name: call-template
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #REQUIRED
+        @@@@Description: QName identifies the named template
+    @@Content:
+      (
+        with-param
+      )*
+  
+  @Element:
+    @@Name: element
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: avt-qname
+        @@@@Default: #REQUIRED
+        @@@@Description: Element name
+      @@@Attribute:
+        @@@@Name: "namespace"
+        @@@@Type: avt-uri-reference
+        @@@@Default: #IMPLIED
+        @@@@Description: Namespace name
+      @@@ref: use-attribute-sets
+      @@@ref: space
+    @@Model: $xslt-template.content
+    @@Description: Creating an element
+  
+  @Element:
+    @@Name: attribute
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: avt-qname
+        @@@@Default: #REQUIRED
+        @@@@Description: Attribute name
+      @@@Attribute:
+        @@@@Name: "namespace"
+        @@@@Type: avt-uri-reference
+        @@@@Default: #IMPLIED
+        @@@@Description: Namespace name
+      @@@ref: space
+    @@Content: $char-template.content
+    @@Description: Creating an attribute
+  
+  @Element:
+    @@Name: attribute-set
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #REQUIRED
+      @@ref: use-attribute-sets
+    @@Content:
+      (attribute)*
+    @@Description: Named attribute set
+  
+  @Element:
+    @@Name: text
+    @@Attribute:
+      @@@ref: disable-output-escaping
+    @@Content: (#PCDATA)*
+    @@Description: Creating a text
+  
+  @Element:
+    @@Name: processing-instruction
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: avt-ncname
+        @@@@Default: #REQUIRED
+      @@@ref: space
+    @@Content: $char-template.content
+    @@Description: Creating a processing instruction
+  
+  @Element:
+    @@Name: comment
+    @@Attribute:
+      @@@ref: space
+    @@Content: $char-template.content
+    @@Description: Creating a comment
+  
+  @Element:
+    @@Name: copy
+    @@Attribute:
+      @@@ref: use-attribute-sets
+      @@@ref: space
+    @@Content: $xslt-template.content
+    @@Description: Copying
+  
+  @Element:
+    @@Name: value-of
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: string-expr
+        @@@@Default: #REQUIRED
+      @@@ref: disable-output-escaping
+    @@Content: "EMPTY"
+    @@Description: Generating text
+  
+  @Element:
+    @@Name: number
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "level"
+        @@@@Type: "(single | multiple | any)"
+        @@@@Default: "single"
+      @@@Attribute:
+        @@@@Name: "count"
+        @@@@Type: pattern
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "from"
+        @@@@Type: pattern
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "value"
+        @@@@Type: number-expr
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "format"
+        @@@@Type: avt-string
+        @@@@Default: "1"
+      @@@Attribute:
+        @@@@Name: "lang"
+        @@@@Type: avt-nmtoken
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "letter-value"
+        @@@@Type: avt-alphabetic-traditional
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "grouping-separator"
+        @@@@Type: avt-char
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "grouping-size"
+        @@@@Type: avt-number
+        @@@@Default: #IMPLIED
+    @@Content: "EMPTY"
+    @@Description: Numbering
+  
+  @Element:
+    @@Name: for-each
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: node-set-expr
+        @@@@Default: #REQUIRED
+      @@@ref: space
+    @@Content:
+#      (
+#        sort*,
+#        ($template)*
+#      )
+      (#PCDATA | sort |
+        $instructions
+        $result-elements
+      )*
+    @@Description: Repetition
+  
+  @Element:
+    @@Name: if
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "test"
+        @@@@Type: boolean-expr
+        @@@@Default: #REQUIRED
+      @@@ref: space
+    @@Content: $xslt-template.content
+    @@Description: Conditional processing
+  
+  @Element:
+    @@Name: choose
+    @@Attribute:
+      @@@ref: space
+    @@Content:
+      (when+, otherwise?)
+    @@Description: Conditional processing
+  @Element:
+    @@Name: when
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "test"
+        @@@@Type: boolean-expr
+        @@@@Default: #REQUIRED
+      @@@ref: space
+    @@Content: $xslt-template.content
+  @Element:
+    @@Name: otherwise
+    @@Attribute:
+      @@@ref: space
+    @@Content: $xslt-template.content
+  
+  @Element:
+    @@Name: sort
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: string-expr
+        @@@@Default: "."
+      @@@Attribute:
+        @@@@Name: "lang"
+        @@@@Type: avt-nmtoken
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "data-type"
+        @@@@Type: avt-text-number-qname-but-not-ncname
+        @@@@Default: "text"
+      @@@Attribute:
+        @@@@Name: "order"
+        @@@@Type: avt-ascending-descending
+        @@@@Default: "ascending"
+      @@@Attribute:
+        @@@@Name: "case-order"
+        @@@@Type: avt-upper-first-lower-first
+        @@@@Default: #IMPLIED
+    @@Content: "EMPTY"
+    @@Description: Sorting
+  
+  @Element:
+    @@Name: variable
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: expr
+        @@@@Default: #IMPLIED
+    @@Content: $xslt-template.content
+    @@Description: Variable
+  @Element:
+    @@Name: param
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: expr
+        @@@@Default: #IMPLIED
+    @@Content: $xslt-template.content
+    @@Description: Variable
+  
+  @Element:
+    @@Name: copy-of
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: expr
+        @@@@Default: #REQUIRED
+    @@Content: "EMPTY"
+    @@Description: Using values of variables and parameters
+  
+  @Element:
+    @@Name: with-param
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "select"
+        @@@@Type: expr
+        @@@@Default: #IMPLIED
+    @@Content: $xslt-template.content
+    @@Description: Passing parameter to template
+  
+  @Element:
+    @@Name: message
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "terminate"
+        @@@@Type: yesno
+        @@@@Default: "no"
+      @@@ref: space
+    @@Content: $xslt-template.content
+    @@Description: Send a message
+  
+  @Element:
+    @@Name: fallback
+    @@Attribute:
+      @@@ref: space
+    @@Content: $xslt-template.content
+    @@Description: Fallback for an instruction element
+
+Module:
+  @Name: Expression
+  @ID: expression
+  
+  @Element:
+    @@Name: key
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "match"
+        @@@@Type: pattern
+        @@@@Default: #REQUIRED
+      @@@Attribute:
+        @@@@Name: "use"
+        @@@@Type: expr
+        @@@@Default: #REQUIRED
+    @@Content: "EMPTY"
+    @@Description: Variable
+  
+  @Element:
+    @@Name: decimal-format
+    @@Attribute:
+      @@@Attribute:
+        @@@@Name: "name"
+        @@@@Type: qname
+        @@@@Default: #IMPLIED
+      @@@Attribute:
+        @@@@Name: "decimal-separator"
+        @@@@Type: char
+        @@@@Default: "."
+      @@@Attribute:
+        @@@@Name: "grouping-separator"
+        @@@@Type: char
+        @@@@Default: ","
+      @@@Attribute:
+        @@@@Name: "infinity"
+        @@@@Type: string
+        @@@@Default: "Infinity"
+      @@@Attribute:
+        @@@@Name: "minus-sign"
+        @@@@Type: char
+        @@@@Default: "-"
+      @@@Attribute:
+        @@@@Name: "NaN"
+        @@@@Type: string
+        @@@@Default: "NaN"
+      @@@Attribute:
+        @@@@Name: "percent"
+        @@@@Type: char
+        @@@@Default: "%"
+      @@@Attribute:
+        @@@@Name: "per-mille"
+        @@@@Type: char
+        @@@@Default: "%#x2030;"
+      @@@Attribute:
+        @@@@Name: "zero-digit"
+        @@@@Type: char
+        @@@@Default: "0"
+      @@@Attribute:
+        @@@@Name: "digit"
+        @@@@Type: char
+        @@@@Default: "#"
+      @@@Attribute:
+        @@@@Name: "pattern-separator"
+        @@@@Type: char
+        @@@@Default: ";"
+    @@Content: "EMPTY"
+    @@Description: Number format
+
+Module:
+  @Name: Extension Element
+  @ID: extension
+  
+  @AttributeSet:
+    @@Name: extension
+    @@Attribute:
+      @@@Name: extension-element-prefixes
+      @@@Type: tokens
+      @@@Default: #IMPLIED
+      @@@Description: A whitespace-separated list of namespace prefixes
+    @@ref: xmlns.decl
