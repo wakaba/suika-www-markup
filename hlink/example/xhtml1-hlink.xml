@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!DOCTYPE hlinks PUBLIC "+//IDN suika.fam.cx//DTD Extended HLink 20030228//EN"
+                 "http://niigata.cool.ne.jp/wakaba2001/temp/hlink/hlink-ext.dtd" [
+  <!ENTITY % xHLink.prefix "x">
+  <!ENTITY % xHLink.xmlns.extra.attrib
+     "xmlns:h CDATA #FIXED 'http://www.w3.org/1999/xhtml'">
+  <!ENTITY x.effect.of.secondary.links "replace">
+]>
+<hlinks xmlns="http://www.w3.org/2002/06/hlink"
+  xmlns:x="urn:x-suika-fam-cx:markup:hlink:extension"
+  xmlns:xslt="http://www.w3.org/1999/XSL/Transform"
+  xmlns:h="http://www.w3.org/1999/xhtml">
+  <!-- Replacing Hyperlinks -->
+    <!-- xhtml1:a -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="a"
+           locator="@href" effect="replace" actuate="onRequest"
+           replacement="@target" role="@rel" reverseRole="@rev"
+           mediaType="@type" shape="@shape" coords="@coords">
+           <x:target>
+             <x:locators node="@href"/>
+             <x:langs node="@hreflang"/>
+             <x:mediaTypes node="@type"/>
+             <x:charsets node="@charset"/>
+           </x:target>
+           <x:replacement node="@target"/>
+           <x:role node="@rel"/>
+           <x:reverseRole node="@rev"/>
+           <x:shape node="@shape"/>
+           <x:coords node="@coords"/>
+    </hlink>
+    <!-- xhtml1:link -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="link"
+           locator="@href" effect="replace" actuate="onRequest"
+           replacement="@target" role="@rel" reverseRole="@rev"
+           mediaType="@type">
+           <x:target>
+             <x:locators node="@href"/>
+             <x:langs node="@hreflang"/>
+             <x:mediaTypes node="@type"/>
+             <x:mediaDesc node="@media"/>
+             <x:charsets node="@charset"/>
+           </x:target>
+           <x:replacement node="@target"/>
+           <x:role node="@rel"/>
+           <x:reverseRole node="@rev"/>
+    </hlink>
+  <!-- Embeding Hyperlinks -->
+    <!-- xhtml1:img -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="img"
+           locator="@src" effect="embed" actuate="onLoad"
+           onFailure="warn">
+           <x:target>
+             <x:locators node="@src"/>
+           </x:target>
+           <x:onFailure node="@alt"/>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="img"
+           locator="@longdesc" effect="&x.effect.of.secondary.links;"
+           actuate="onRequestSecondary">
+           <x:target>
+             <x:locators node="@longdesc"/>
+           </x:target>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="img"
+           locator="@usemap" effect="map" actuate="onLoad">
+           <x:target>
+             <x:locators node="@usemap"/>
+           </x:target>
+    </hlink>
+    <!-- xhtml1:object -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="object"
+           locator="@data" effect="embed" actuate="onLoad"
+           onFailure="processChildren" onSuccess="ignoreChildren"
+           mediaType="@type">
+           <x:target>
+             <x:locators node="@data"/>
+             <x:mediaTypes node="@type"/>
+           </x:target>
+           <x:onFailure node="self"/>
+           <x:loading node="@standby"/>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="object"
+           locator="@classid" effect="embed" actuate="onLoad"
+           onFailure="processChildren" onSuccess="ignoreChildren"
+           mediaType="@codetype">
+           <x:target>
+             <x:locators node="@classid"/>
+             <x:mediaTypes node="@codetype"/>
+           </x:target>
+           <x:onFailure node="self"/>
+           <x:loading node="@standby"/>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="object"
+           effect="embed" actuate="onLoad">
+           <x:target>
+             <x:locators node="@archive" type="space-separeted"/>
+           </x:target>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="object"
+           locator="@usemap" effect="map" actuate="onLoad">
+           <x:target>
+             <x:locators node="@usemap"/>
+           </x:target>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="param"
+           locator="@value" effect="&x.effect.of.secondary.links;"
+           actuate="onRequestSecondary"
+           mediaType="@type">
+           <xslt:if test="@valuetype='ref'">
+             <x:target>
+               <x:locators node="@value"/>
+               <x:mediaTypes node="@type"/>
+             </x:target>
+           </xslt:if>
+    </hlink>
+    <!-- xhtml1:script -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="script"
+           locator="@src" effect="embed" actuate="onLoad"
+           onFailure="ignoreChildren" onSuccess="ignoreChildren">
+           <x:target>
+             <x:locators node="@src"/>
+           </x:target>
+    </hlink>
+    <!-- xhtml1:applet -->
+  <!-- Form submitting -->
+    <!-- xhtml1:input[@type='submit' or @type='image'] -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="input"
+           effect="submit" actuate="onRequest">
+           <xslt:if test="@type='submit' or @type='image'">
+             <x:target>
+               <x:locators node="ancestor::h:form/@action"/>
+             </x:target>
+             <x:replacement node="ancestor::h:form/@target"/>
+           </xslt:if>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="input"
+           locator="@src" effect="embed" actuate="onLoad"
+           onFailure="warn">
+           <xslt:if test="@type='image'">
+             <x:target>
+               <x:locators node="@src"/>
+             </x:target>
+             <x:onFailure node="@alt"/>
+           </xslt:if>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="input"
+           locator="@usemap" effect="map" actuate="onLoad">
+           <xslt:if test="@type='image'">
+             <x:target>
+               <x:locators node="@usemap"/>
+             </x:target>
+           </xslt:if>
+    </hlink>
+    <!-- xhtml1:button -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="button"
+           effect="submit" actuate="onRequest">
+           <xslt:if test="@type='submit'">
+             <x:target>
+               <x:locators node="ancestor::h:form/@action"/>
+             </x:target>
+             <x:replacement node="ancestor::h:form/@target"/>
+           </xslt:if>
+    </hlink>
+  <!-- Map -->
+    <!-- xhtml1:area -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="area"
+           locator="@href" effect="replace" actuate="onRequest"
+           replacement="@target" shape="@shape" coords="@coords">
+           <x:target>
+             <x:locators node="@href"/>
+           </x:target>
+           <x:replacement node="@target"/>
+           <x:shape node="@shape"/>
+           <x:coords node="@coords"/>
+           <x:onFailure node="@alt"/>
+    </hlink>
+  <!-- Informational Hyperlinks -->
+    <!-- xhtml1:blockquote -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="blockquote"
+           locator="@cite" effect="&x.effect.of.secondary.links;"
+           actuate="onRequestSecondary">
+           <x:target>
+             <x:locators node="@cite"/>
+           </x:target>
+    </hlink>
+    <!-- xhtml1:q -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="q"
+           locator="@cite" effect="&x.effect.of.secondary.links;"
+           actuate="onRequestSecondary">
+           <x:target>
+             <x:locators node="@cite"/>
+           </x:target>
+    </hlink>
+    <!-- xhtml1:head -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="head"
+           effect="&x.effect.of.secondary.links;"
+           actuate="onRequestSecondary">
+           <x:target>
+             <x:locators node="@profile" type="space-separated"/>
+           </x:target>
+    </hlink>
+  <!-- Frames -->
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="frame"
+           locator="@src" effect="embed" actuate="onLoad" onFailure="warn">
+           <x:target>
+             <x:locators node="@src"/>
+           </x:target>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="frame"
+           locator="@longdesc" effect="&x.effect.of.secondary.links;"
+           actuate="onRequestSecondary">
+           <x:target>
+             <x:locators node="@longdesc"/>
+           </x:target>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="iframe"
+           locator="@src" effect="embed" actuate="onLoad"
+           onFailure="processChildren" onSuccess="ignoreChildren">
+           <x:target>
+             <x:locators node="@src"/>
+           </x:target>
+    </hlink>
+    <hlink namespace="http://www.w3.org/1999/xhtml" element="iframe"
+           locator="@longdesc" effect="&x.effect.of.secondary.links;"
+           actuate="onRequestSecondary">
+           <x:target>
+             <x:locators node="@longdesc"/>
+           </x:target>
+    </hlink>
+</hlinks>
