@@ -1,0 +1,8 @@
+2003-10-24  Wakaba  <w@suika.fam.cx>
+
+	* ChangeLog: New file.
+	* mkdtds.pl (POD): New sections.
+
+2003-10-22  Wakaba  <w@suika.fam.cx>
+
+	* mkdtds.pl: New script.
