@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="us-ascii"?>
+
+
+<!ENTITY % URI.datatype "CDATA">
+<!ENTITY % xHLink.NS.prefixed "INCLUDE">
+<!ENTITY % xHLink.prefixed "%xHLink.NS.prefixed;">
+<!ENTITY % xHLink.xmlns "urn:x-suika-fam-cx:markup:hlink:extension">
+<!ENTITY % xHLink.prefix "xhlink">
+<![%xHLink.prefixed;[
+<!ENTITY % xHLink.pfx  "%xHLink.prefix;:" >
+]]>
+<!ENTITY % xHLink.pfx  "" >
+
+<!ENTITY % xHLink.XSLT.prefix "xslt">
+<!ENTITY % xHLink.XSLT.xmlns "http://www.w3.org/1999/XSL/Transform">
+<!ENTITY % xHLink.XSLT.pfx  "%xHLink.XSLT.prefix;:" >
+
+<!ENTITY % xHLink.xmlns.extra.attrib "">
+<![%xHLink.prefixed;[
+<!ENTITY % HLINK.xmlns.extra.attrib
+   "xmlns:%xHLink.prefix;      %URI.datatype;  #FIXED '%xHLink.xmlns;'
+    xmlns:%xHLink.XSLT.prefix; %URI.datatype;  #FIXED '%xHLink.XSLT.xmlns;'
+    %xHLink.xmlns.extra.attrib;">
+]]>
+
+
+<!ENTITY % xHLink.target.qname "%xHLink.pfx;target" >
+<!ENTITY % xHLink.replacement.qname "%xHLink.pfx;replacement" >
+<!ENTITY % xHLink.role.qname "%xHLink.pfx;role" >
+<!ENTITY % xHLink.reverseRole.qname "%xHLink.pfx;reverseRole" >
+<!ENTITY % xHLink.shape.qname "%xHLink.pfx;shape" >
+<!ENTITY % xHLink.coords.qname "%xHLink.pfx;coords" >
+<!ENTITY % xHLink.onFailure.qname "%xHLink.pfx;onFailure" >
+<!ENTITY % xHLink.actuate.qname "%xHLink.pfx;actuate" >
+<!ENTITY % xHLink.effect.qname "%xHLink.pfx;effect" >
+<!ENTITY % xHLink.loading.qname "%xHLink.pfx;loading" >
+<!ENTITY % xHLink.onSuccess.qname "%xHLink.pfx;onSuccess" >
+
+<!ENTITY % xHLink.locators.qname "%xHLink.pfx;locators" >
+<!ENTITY % xHLink.langs.qname "%xHLink.pfx;langs" >
+<!ENTITY % xHLink.mediaTypes.qname "%xHLink.pfx;mediaTypes" >
+<!ENTITY % xHLink.charsets.qname "%xHLink.pfx;charsets" >
+<!ENTITY % xHLink.mediaDesc.qname "%xHLink.pfx;mediaDesc" >
+<!ENTITY % xHLink.legnth.qname "%xHLink.pfx;legnth" >
+<!ENTITY % xHLink.features.qname "%xHLink.pfx;features" >
+
+
+<!ENTITY % xHLink.XSLT.if.qname "%xHLink.XSLT.pfx;if" >
+
+<!-- HLink Qname (Qualified Name) Module -->
+<!ENTITY % hlink-qname.mod
+    PUBLIC "-//W3C//ENTITIES HLink Qualified Names 1.0//EN"
+           "http://www.w3.org/2002/06/hlink-qname.mod" >
+%hlink-qname.mod;
+
+<!ENTITY % xHLink.hlink.content "%xHLink.target.qname;|%xHLink.replacement.qname;|%xHLink.role.qname;|%xHLink.reverseRole.qname;|%xHLink.shape.qname;|%xHLink.coords.qname;|%xHLink.onFailure.qname;|%xHLink.actuate.qname;|%xHLink.effect.qname;|%xHLink.loading.qname;|%xHLink.onSuccess.qname;">
+
+<!ENTITY % HLINK.hlink.content "(%xHLink.XSLT.if.qname;|(%xHLink.hlink.content;)*)">
+
+<!ELEMENT %HLINK.hlink.qname; (%HLINK.hlink.content;)>
+
+<!-- W3C WD's standard DTD -->
+<!ENTITY % hlink.dtd PUBLIC "-//W3C//DTD HLink 1.0//EN"
+                     "http://www.w3.org/2002/06/hlink.dtd">
+%hlink.dtd;
+
+<!ENTITY % XPath.datatype "CDATA">
+<!ENTITY % Language.datatype "CDATA">
+<!ENTITY % xHLink.attrElements.content "(#PCDATA)">
+<!ENTITY % xHLink.attr.core
+   "xml:base  %URI.datatype;       #IMPLIED
+    xml:lang  %Language.datatype;  #IMPLIED
+    xml:space CDATA                #IMPLIED">
+<!ENTITY % xHLink.attrElements.attr
+   "node      %XPath.datatype;     #IMPLIED
+    type      CDATA                #IMPLIED">
+<!ENTITY % xHLink.target.content "%xHLink.locators.qname;|%xHLink.langs.qname;|%xHLink.mediaTypes.qname;|%xHLink.charsets.qname;|%xHLink.mediaDesc.qname;|%xHLink.legnth.qname;|%xHLink.features.qname;">
+
+<!ELEMENT %xHLink.target.qname; (%xHLink.target.content;)+>
+<!ATTLIST %xHLink.target.qname;
+    %xHLink.attr.core;
+>
+
+<!ELEMENT %xHLink.replacement.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.replacement.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.role.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.role.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.reverseRole.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.reverseRole.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.shape.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.shape.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.coords.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.coords.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.onFailure.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.onFailure.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.actuate.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.actuate.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.effect.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.effect.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.loading.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.loading.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.onSuccess.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.onSuccess.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+
+<!ELEMENT %xHLink.locators.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.locators.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.langs.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.langs.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.mediaTypes.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.mediaTypes.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.charsets.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.charsets.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.mediaDesc.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.mediaDesc.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.legnth.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.legnth.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+<!ELEMENT %xHLink.features.qname; %xHLink.attrElements.content;>
+<!ATTLIST %xHLink.features.qname;
+    %xHLink.attr.core;
+    %xHLink.attrElements.attr;>
+
+<!ELEMENT %xHLink.XSLT.if.qname; (%HLINK.hlink.content;)>
+<!ATTLIST %xHLink.XSLT.if.qname;
+    %xHLink.attr.core;
+    test    CDATA    #REQUIRED>
