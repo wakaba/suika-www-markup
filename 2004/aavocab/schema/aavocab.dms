@@ -18,7 +18,7 @@ ModuleSet:
   
   @Copyright: Wakaba <w@suika.fam.cx>
   @RCSDate:
-    $Date: 2004/10/09 02:00:50 $
+    $Date: 2004/10/09 02:15:31 $
   
   @ImplNote:
     @@lang:en
@@ -43,6 +43,9 @@ Module:
       それ自体がどんなものであるかは我々には不可知であるとする。
       \
       <http://pc5.2ch.net/test/read.cgi/hp/1096723178/19>
+      \
+      Example:
+      \  <aa xmlns="http://pc5.2ch.net/test/read.cgi/hp/1096723178/aavocab#">orz</aa>
     @@Attribute:
       @@@REF:
         xml:lang
