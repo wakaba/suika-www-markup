@@ -1,10 +1,13 @@
 #!/usr/bin/perl
 use strict;
 use Encode;
+my $opt = {};
 sub c{
   $_ = shift;
+  s/\\preprocess{([^{}=\s]+)(?:\s*=\s*([^{}=\s]*))?}/$opt->{$1}=defined$2?$2:1;''/ge;
   s/\x{3001}/, /g;
   s/\x{3002}/. /g;
+  s/\$/\\\$/g if $opt->{'Perl-mode'};
   s{\\sourcecode\s*(?:\[([^\[\]]*)\]\s*)?{([^{}]+)}}{
     my %opt = map {$_->[1] = 1 unless defined $_->[1]; @$_}
               map {[split /\s*=\s*/, $_, 2]} split /\s*,\s*/, $1;
@@ -72,4 +75,4 @@ modify it under the same terms as Perl itself.
 
 =cut
 
-# $Date: 2004/06/13 03:53:35 $
+# $Date: 2004/07/31 07:39:00 $
