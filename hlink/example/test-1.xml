@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<foo:root xmlns:foo="http://example.org/markup/foo"
+          xmlns:h="http://www.w3.org/1999/xhtml"
+          xml:lang="en">
+  <h:style type="application/x-hlink+xml">
+    <hlinks xmlns="http://www.w3.org/2002/06/hlink">
+      <hlink namespace="http://example.org/markup/foo" element="anchor"
+             locator="@href" effect="replace" actuate="onRequest"/>
+      <hlink namespace="http://example.org/markup/foo" element="page"
+             locator="@src" effect="embed" actuate="onLoad" mediaType="@type"/>
+      <hlink namespace="http://example.org/markup/foo" element="home"
+             locator="/" effect="replace" actuate="onRequest"/>
+      <hlink namespace="http://example.org/markup/foo" element="home"
+             locator="internal-gopher-menu" effect="embed" actuate="onLoad"
+             mediaType="image/png"/>
+    </hlinks>
+  </h:style>
+  <h:style type="text/css"><![CDATA[
+    @namespace fooml 'http://example.org/markup/foo';
+    @namespace xhtml1 'http://www.w3.org/1999/xhtml';
+    xhtml1|style {
+      display: none;
+    }
+    xhtml1|style[type="application/x-hlink+xml"] {
+      display: block;
+      max-width: 0; max-height: 0;
+    }
+    xhtml1|style[type="application/x-hlink+xml"] *|hlink {
+      -moz-binding: url(hlink-xbl.xml#hlink);
+    }
+    fooml|anchor, fooml|page, fooml|home {
+      display: block;
+      color: orange;
+    }
+  ]]></h:style>
+  <foo:anchor>&lt;anchor/&gt;</foo:anchor>
+  <foo:anchor href="">&lt;anchor href=""/&gt;</foo:anchor>
+  <foo:anchor href="http://foo.example/">&lt;anchor href="http://foo.example/"/&gt;</foo:anchor>
+  
+  <foo:page src="about:mozilla" type="text/html">Alternate Content</foo:page>
+  <foo:page src="data:application/octet-stream,foo"
+    type="application/octet-stream">Alternate Content</foo:page>
+  
+  <foo:home/>
+</foo:root>
