@@ -2,7 +2,7 @@
 <!-- Hypertext Markup Language : Datatype module
      
      Copyright 2003 Wakaba <w@suika.fam.cx>.
-     Revision: $Date: 2003/09/17 23:57:40 $
+     Revision: $Date: 2003/10/01 01:28:37 $
      
      SYSTEM "http://suika.fam.cx/gate/cvs/*checkout*/markup/html/dtd/datatype.mod"
   -->
@@ -19,6 +19,15 @@
 <!-- coordinate *("," coordinate) -->
 <!ENTITY % Coords.datatype "CDATA">
 
+<!-- Input format -->
+<!ENTITY % xhtmlau.format.datatype "CDATA">
+
+<!-- Icon name <http://www.au.kddi.com/ezfactory/tec/spec/3.html> -->
+<!ENTITY % xhtmlau.iconname.datatype "NMTOKEN">
+
+<!-- Input format "1" / "2" / "3" / "4" -->
+<!ENTITY % xhtmlau.istyle.datatype "NMTOKEN">
+
 <!-- RFC 3066 Language Tag -->
 <!ENTITY % LanguageCode.datatype "CDATA">
 <!-- HTML 3.0 draft 00 Language Code -->
@@ -26,6 +35,9 @@
 
 <!-- linktype *(WSP linktype) -->
 <!ENTITY % LinkTypes.datatype "CDATA">
+
+<!-- 'infinite' / 1*DIGIT -->
+<!ENTITY % xhtmlau.loop.datatype "CDATA">
 
 <!-- MD5 checksum -->
 <!ENTITY % html30-00.md5.datatype "CDATA">
