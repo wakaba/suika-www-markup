@@ -5,7 +5,7 @@ ModuleSet:
   @Version: 3.0 (draft 00)
   @ID: html30-00
   @BaseURI:
-    http://suika.fam.cx/gate/cvs/*checkout*/markup/html/dtd/
+    http://suika.fam.cx/www/markup/html/dtd/module/
   
   @Namespace:
     @@Name:
@@ -15,28 +15,47 @@ ModuleSet:
   
   @Copyright: Wakaba <w@suika.fam.cx>
   @RCSDate:
-    $Date: 2004/05/25 08:47:21 $
+    $Date: 2005/04/05 01:49:12 $
 
 Datatype:
   @Type:
     @@Name: classes
     @@XMLType: NMTOKENS
-    @@Description: HTML 3.0 classes (SGML NAMES)
+    @@Description: 
+      @@@lang:en
+      @@@@:
+        A space-separated list of SGML NAME tokens.  By convention, the 
+        class names are interpreted hierarchically, with the most 
+        general class at the first and the most specific at the last,
+        where classes are separated by a period.
   
   @Type:
     @@Name: clear
     @@XMLType: NMTOKENS
     @@Description: (left|right|all|<number> <unit>)
+
+  @Type:
+    @@Name: id
+    @@XMLType: ID
+    @@Description:
+      @@@lang:en
+      @@@@:
+        HTML 3.0 Unique Identifiers
   
   @Type:
     @@Name: LanguageCode
     @@XMLType: CDATA
-    @@Description: HTML 3.0 Language Code (lang.country)
-  @Type
+    @@Description: 
+      @@@lang:en
+      @@@@:
+          A two letter language code from ISO 639, optionally followed 
+          by a period and a two letter country code from ISO 3166.
+
+  @Type:
     @@Name:
       :LanguageCode
     @@XMLType: CDATA
-    @@Description: IETF Language Tag or empty string (See XML 1.0 SE Errata)
+    @@Description: IETF Language Tag or empty string (See XML 1.0 TE)
   
   @Type:
     @@Name: md5
@@ -76,12 +95,32 @@ Attribute:
     @@Attribute:
       @@@Name: "class"
       @@@Type: classes
+      @@@Description:
+        @@@@lang:en
+        @@@@@:
+          Subclassing element type names.  For instance, 
+          <div class="appendix"> defines a division that acts as an appendix.
+          \
+          The class attribute is most commonly used to attach a different
+          style to some element, but it is recommended that where 
+          practical class names should be picked on the basis of the 
+          element's semantics, as this will permit other uses, 
+          such as restricting search through documents by matching on 
+          element class names.
   
   @AttributeSet:
     @@Name: id
     @@Attribute:
       @@@Name: "id"
-      @@@Type: "ID"
+      @@@Type: id
+      @@@Description:
+        @@@@lang:en
+        @@@@@:
+          An SGML identifier used as the target for hypertext links
+          or for naming particular elements in associated
+          style seets.
+          \
+          Use of this attribute is deprecated; use xml:id attribute instead.
   
   @AttributeSet:
     @@Name: imagemap
@@ -97,9 +136,19 @@ Attribute:
       @@@Name: "lang"
       @@@Type: LanguageCode
       @@@Default: #IMPLIED
-    @@Description:
-      HTML 3.0 draft 00 declares default value as "en.us", which
-      has some problem with regard to inheriting.
+      @@@Description:
+        @@@@lang:en
+        @@@@@:
+          Language abbreviation.  It can be used by parsers to select
+          language specific choices for quotation marks, ligatures,
+          hypenation rules, etc.
+          \
+          This attribute is deprecated; use xml:lang attribute instead.
+      @@@ImplNote:
+        @@@@lang:en
+        @@@@@:
+          HTML 3.0 draft 00 declares default value as "en.us", which
+          has some problem with regard to inheriting.
   
   @AttributeSet:
     @@Name: Size
@@ -157,7 +206,11 @@ Module:
     @@Attribute:
       @@@ref: attrs
     @@Description:
-      corporate logos, navigation aids, disclaimers and other information
+      Used for corporate logos, navigation aids, disclaimers
+      and other information which shouldn't be scrolled with
+      the rest of the document.  It provides an alternative to
+      using link element in the document head to reference an
+      externally defined banner.
   
   @Element:
     @@Name: bodytext
@@ -196,7 +249,7 @@ Module:
       @@@ref: attrs
     
     @@Description:
-      the name of an author
+      The name of an author.
   
   @Element:
     @@Name: person
@@ -206,7 +259,37 @@ Module:
       @@@ref: attrs
     
     @@Description:
-      names of people
+      Names of people to allow these to be extracted
+      automatically by indexing programs.
+
+  @Element:
+    @@Name: tab
+    @@Content: "EMPTY"
+    
+    @@Attribute:
+      @@@ref: attrs
+      @@@Attribute:
+        @@@@Name:"indent"
+        @@@@Type:NUMBER
+        @@@@Description:
+          @@@@@lang:en
+          @@@@@@:
+            The number of en units before the tab stop.  This attribute
+            is not meaningful when combined with the to attribute.
+      @@@Attribute:
+        @@@@Name:"to"
+        @@@@Type:"IDREF"
+        @@@@Description:
+          @@@@@lang:en
+          @@@@@@:
+            A previously defined tab stop.
+
+    @@Description:
+      @@@lang:en
+      @@@@:
+        Controls over the horizontal positioning. 
+        \
+        See: <http://www.w3.org/MarkUp/html3/tabs.html>
 
 Module:
   @Name: List
