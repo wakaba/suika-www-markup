@@ -1,0 +1,82 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: Tree
+  @Version: 
+  @Description:
+    This is a markup vocabulary for trees, as defined by 564
+    <http://pc5.2ch.net/test/read.cgi/hp/1101043958/564>.
+  @ID: tree
+  @BaseURI:
+    http://suika.fam.cx/www/markup/2004/tree/schema/
+  
+  @Namespace:
+    @@Name:
+      http://pc5.2ch.net/test/read.cgi/hp/1101043958/564
+    @@DefaultPrefix: tree
+    @@UsePrefix: 0
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2004/12/10 08:34:20 $
+  
+  @ImplNote:
+    @@lang:en
+    @@@:
+      There is no official DTD.
+      \
+      For the definition of elements, see 
+      <http://pc5.2ch.net/test/read.cgi/hp/1101043958/564>.
+
+Attribute:
+  @AttributeSet:
+    @@Name: common
+    @@REF:
+        xml:lang
+    @@REF:
+        xml:base
+    @@REF:
+        xml:space
+    @@REF:
+        xsi:schemaLocation
+    @@REF:
+        xsi:type
+    @@REF:
+        xsi:nil
+
+Module:
+  @Name: Structure
+  @ID: struct
+  
+  @Element:
+    @@Name: root
+    @@Content:
+      (content?, (leaf | node)*)
+    @@Attribute:
+      @@@ref: common
+  
+  @Element:
+    @@Name: leaf
+    @@Content:
+      ANY
+    @@Attribute:
+      @@@ref: common
+  
+  @Element:
+    @@Name: node
+    @@Content:
+      (content?, (leaf | node)*)
+    @@Attribute:
+      @@@ref: common
+
+Module:
+  @Name: Data
+  @ID: data
+  
+  @Element:
+    @@Name: content
+    @@Content: ANY
+    @@Attribute:
+      @@@ref: common
+
+## tree.dms ends here
