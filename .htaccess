@@ -2,3 +2,8 @@
 AddType application/xml-dtd .dtd .mod
 AddCharset iso-2022-jp .dtd .mod
 
+## ECMAScript scripts
+AddType application/x-javascript .js
+AddCharset iso-2022-jp .js
+
+
