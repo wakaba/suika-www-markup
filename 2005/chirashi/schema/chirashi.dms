@@ -1,0 +1,59 @@
+#?SuikaWikiConfig/2.0
+
+ModuleSet:
+  @Name: Chirashi no Ura
+  @Version: 
+  @Description:
+    This is a markup vocabulary for "chirashi no ura" (reversed side of 
+    handbills)
+  @ID: chirashi
+  @BaseURI:
+    http://suika.fam.cx/www/markup/2005/chirashi/schema/
+  
+  @Namespace:
+    @@Name:
+      http://www.2ch.net/
+    @@DefaultPrefix: chirashi
+    @@UsePrefix: -1
+  
+  @Copyright: Wakaba <w@suika.fam.cx>
+  @RCSDate:
+    $Date: 2005/08/24 04:46:29 $
+  
+  @ImplNote:
+    @@lang:en
+    @@@:
+      There is no official DTD.
+      \
+      See
+      <http://pc8.2ch.net/test/read.cgi/hp/1122561220/29>.
+
+Attribute:
+  @AttributeSet:
+    @@Name: common
+    @@REF:
+        xml:lang
+    @@REF:
+        xml:base
+    @@REF:
+        xml:space
+    @@REF:
+        xsi:schemaLocation
+    @@REF:
+        xsi:type
+    @@REF:
+        xsi:nil
+
+Module:
+  @Name: Structure
+  @ID: struct
+  
+  @Element:
+    @@Name: チラシの裏
+    @@Content:
+      @@@@:
+        (#PCDATA | $:Flow.mix)*
+      @@@ImplNote:
+        The minimal content model is officially not defined.
+
+## chirashi.dms ends here
