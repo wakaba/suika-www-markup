@@ -19,8 +19,8 @@
 <script>
   function update () {
     document.logElement.textContent = '';
-    var p = new Parser ();
-    p.parse (new InputStream (document.sourceElement.value));
+    var p = new Parser (new InputStream (document.sourceElement.value));
+    p.parse ();
     log (dumpTree (p.doc, ''));
   } // update
 
@@ -32,13 +32,15 @@
     this.s = s;
   } // InputStream
 
-  function Parser () {
+  function Parser (i) {
     this.parseMode = 'pcdata';
-    this.doc = new JSDocument ();
+    this.doc = new JSDocument (this);
     this.openElements = [this.doc];
+    this.in = i;
   } // Parser
 
-  Parser.prototype.getNextToken = function (i) {
+  Parser.prototype.getNextToken = function () {
+    var i = this.in;
     if (this.parseMode == 'script') {
       var token;
       i.s = i.s.replace (/^([\s\S]+?)<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/,
@@ -79,33 +81,76 @@
     return {type: 'eof'};
   } // getNextToken
 
-  Parser.prototype.parse = function (i) {
+  Parser.prototype.parse = function () {
     log ('start parsing');
 
     while (true) {
-      var token = this.getNextToken (i);
+      var token = this.getNextToken ();
       log ('token: ' + token.type + ' "' + token.value + '"');
 
       if (token.type == 'start-tag') {
-        var el = new JSElement (token.value);
         if (token.value == 'script') {
+          // 1. Create an element for the token in the HTML namespace.
+          var el = new JSElement (this.doc, token.value);
+
+          // 2. Mark the element as being "parser-inserted".
+          el.manakaiParserInserted = true;
+
+          // 3. Switch the tokeniser's content model flag to the CDATA state.
           this.parseMode = 'script';
 
+          // 4.1. Collect all the character tokens.
           while (true) {
-            var token = this.getNextToken (i);
+            var token = this.getNextToken ();
             log ('token: ' + token.type + ' "' + token.value + '"');
 
             if (token.type == 'char') {
+              // 5. Append a single Text node to the script element node.
               el.manakaiAppendText (token.value);
+
+            // 4.2. Until it returns a token that is not a character token, or
+            // TODO: 4.3. Until it stops tokenising.
             } else if (token.type == 'eof' ||
                        (token.type == 'end-tag' && token.value == 'script')) {
+              // 6. Switched back to the PCDATA state.
               this.parseMode = 'pcdata';
+
+              // 7.1. If the next token is not an end tag token with ...
+              if (token.type != 'end-tag') {
+                // 7.2. This is a parse error.
+                log ('Parse error: no </' + 'script>');
+
+                // 7.3. Mark the script element as "already executed".
+                el.manakaiAlreadyExecuted = true;
+              } else {
+                // 7.4. Ignore it.
+                //
+              }
               break;
             }
           }
 
+          // 8.1. If the parser were originally created for the ...
+          if (this.fragmentParsingMode) {
+            // 8.2. Mark the script element as "already executed" and ...
+            el.alreadyExecuted = true;
+            continue;
+          }
+
+          // 9.1. Let the old insertion point have the same value as the ...
+
+          // 9.2. Let the insertion point be just before the next input ...
+
+          // 10. Append the new element to the current node.
           this.openElements[this.openElements.length - 1].appendChild (el);
+
+          // 11. Let the insertion point have the value of the old ...
+
+          // 12. If there is a script that will execute as soon as ...
+          
+
         } else {
+          var el = new JSElement (this.doc, token.value);
           this.openElements[this.openElements.length - 1].appendChild (el);
           this.openElements.push (el);
         }
@@ -124,12 +169,14 @@
     log ('stop parsing');
   } // parse
 
-  function JSDocument () {
+  function JSDocument (p) {
     this.childNodes = [];
+    this._parser = p;
   } // JSDocument
 
-  function JSElement (localName) {
+  function JSElement (doc, localName) {
     this.localName = localName;
+    this.ownerDocument = doc;
     this.childNodes = [];
   } // JSElement
 
@@ -137,8 +184,105 @@
   function (e) {
     this.childNodes.push (e);
     e.parentNode = this;
+
+    if (e.localName == 'script') {
+      log ('start running a script');
+
+      var doc = this.ownerDocument;
+      var p = doc._parser;
+
+      // 1. Script type
+      //
+
+      // 2.1. If scripting is disabled
+      //
+      // 2.2. If the script element was created by an XML ... innerHTML ...
+      //
+      // 2.3. If the user agent does not support the scripting language ...
+      //
+      // 2.4. If the script element has its "already executed" flag set
+      if (e.manakaiAlreadyExecuted) {
+        // 2.5. Abort these steps at this point.
+        log ('running a script: aborted');
+        return e;
+      }
+
+      // 3. Set the element's "already executed" flag.
+      e.manakaiAlreadyExecuted = true;
+
+      // 4. If the element has a src attribute, then a load for ...
+      // TODO: load an external resource
+
+      // 5. The first of the following options:
+
+      // 5.1. 
+      if (/* TODO: If the document is still being parsed && */
+          e.defer && !e.async) {
+        // TODO
+      } else if (e.async && e.src != null) {
+        // TODO
+      } else if (e.async && e.src == null
+                 /* && list of scripts that will execute asynchronously is not empty */) {
+        // TODO
+      } else if (e.src != null && e.manakaiParserInserted) {
+        // TODO
+      } else if (e.src != null) {
+        // TODO
+      } else {
+        executeScript (doc, e); // even if other scripts are already executing.
+      }
+
+      log ('end running a script');
+    }
+
     return e;
   }; // appendChild
+
+  function executeScript (doc, e) {
+    log ('executing a script block: start');
+
+    // If the load resulted in an error, then ... firing an error event ...
+
+    // If the load was successful
+    log ('load event fired at the script element');
+
+    if (true) {
+    // Scripting is enabled, Document.designMode is disabled,
+    // Document is the active document in its browsing context
+
+      var s;
+      if (e.src != null) {
+        // TODO: from external file
+      } else {
+        s = e.text;
+      }
+
+      parseAndRunScript (doc, s);
+    }
+
+    log ('executing a script block: end');
+  } // executeScript
+
+  function parseAndRunScript (doc, s) {
+    while (true) {
+      var matched = false;
+      s = s.replace (/^\s*document\.write\s*\(((?:'[^']*'|"[^"]*")\s*(?:,\s*(?:'[^']*'|"[^"]*"))*)\)\s*;\s*/, function (s, t) {
+        matched = true;
+        var args = [];
+        t.replace (/('[^']*'|"[^"]*")/g, function (s, v) {
+          args.push (v.substring (1, v.length - 1));
+          return '';
+        });
+        doc.write.apply (doc, args);
+        return '';
+      });
+      if (s == '') break;
+      if (!matched) {
+        log ('Script parse error: "' + s + '"');
+        break;
+      }
+    }
+  } // parseAndRunScript
 
   function JSText (data) {
     this.data = data;
@@ -154,6 +298,33 @@
       this.childNodes.push (new JSText (s));
     }
   }; // manakaiAppendText
+
+  JSDocument.prototype.write = function () {
+    // 1. If the insertion point is undefined, the open() method must be ...
+    // 
+
+    // 2. ... inserted into the input stream just before the insertion point.
+    log ('document.write: insert "' + Array.join (arguments, '') + '"');
+
+    // 3. If there is a script that will execute as soon as the parser resumes
+    // TODO
+
+    // 4. Process the characters that were inserted, ...
+
+    // 5. Return
+    log ('document.write: return');
+    return;
+  }; // document.write
+
+  JSElement.prototype.__defineGetter__ ('text', function () {
+    var r = '';
+    for (var i = 0; i < this.childNodes.length; i++) {
+      if (this.childNodes[i] instanceof JSText) {
+        r += this.childNodes[i].data;
+      }
+    }
+    return r;
+  });
 
   function dumpTree (n, indent) {
     var r = '';
