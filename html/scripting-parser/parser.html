@@ -13,15 +13,17 @@
   output {
     display: block;
     font-family: monospace;
-    white-space: pre;
+    white-space: -moz-pre-wrap;
+    white-space: pre-wrap;
   }
 </style>
 <script>
   function update () {
     document.logElement.textContent = '';
     var p = new Parser (new InputStream (document.sourceElement.value));
+    var doc = p.doc;
     p.parse ();
-    log (dumpTree (p.doc, ''));
+    log (dumpTree (doc, ''));
   } // update
 
   function log (s) {
@@ -32,11 +34,16 @@
     this.s = s;
   } // InputStream
 
-  function Parser (i) {
+  function Parser (i, doc) {
     this.parseMode = 'pcdata';
-    this.doc = new JSDocument (this);
-    this.openElements = [this.doc];
+    if (!doc) {
+      doc = new JSDocument (this);
+      doc.manakaiIsHTML = true;
+    }
+    this.doc = doc;
+    this.openElements = [doc];
     this.in = i;
+    this.scriptsExecutedAfterParsing = [];
   } // Parser
 
   Parser.prototype.getNextToken = function () {
@@ -47,26 +54,32 @@
       if (p.insertionPoint <= 0) {
         return {type: 'abort'};
       }
-      i.s = i.s.replace (/^([\s\S]+?)<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/,
+      i.s = i.s.replace (/^([^<]+)/,
       function (s, t) {
         if (0 < p.insertionPoint && p.insertionPoint < t.length) {
           token = {type: 'char', value: t.substring (0, p.insertionPoint)};
           var ip = p.insertionPoint;
           p.insertionPoint = 0;
-          return t.substring (ip, t.length) +
-              s.substring (s.length - 9, s.length);
+          return t.substring (ip, t.length);
         }
         token = {type: 'char', value: t};
-        p.insertionPoint -= s.length;
-        return '<' + '/script>';
+        p.insertionPoint -= t.length;
+        return '';
       });
       if (token) return token;
       i.s = i.s.replace (/^<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/, function (s) {
-        if (s.length < p.insertionPoint) {
+        if (p.insertionPoint < s.length) {
           token = {type: 'abort'};
           return s;
         }
         token = {type: 'end-tag', value: 'script'};
+        p.insertionPoint -= s.length;
+        return '';
+      });
+      if (token) return token;
+      i.s = i.s.replace (/^</,
+      function (s) {
+        token = {type: 'char', value: s};
         p.insertionPoint -= s.length;
         return '';
       });
@@ -90,7 +103,18 @@
         token = {type: 'abort'};
         return s;
       }
-      token = {type: 'start-tag', value: e.toLowerCase ()};
+      var tagName;
+      var attrs = {};
+      e = e.replace (/^[\S]+/, function (v) {
+        tagName = v.toLowerCase ();
+        return '';
+      });
+      e = e.replace (/^\s*(\S+)\s*(?:=\s*"([^"]*)"|'([^']*)'|([^"']+))?/,
+      function (x, attrName, attrValue1, attrValue2, attrValue3) {
+        attrs[attrName] = attrValue1 || attrValue2 || attrValue3;
+        return '';
+      });
+      token = {type: 'start-tag', value: tagName, attrs: attrs};
       p.insertionPoint -= s.length;
       return '';
     });
@@ -130,6 +154,9 @@
         if (token.value == 'script') {
           // 1. Create an element for the token in the HTML namespace.
           var el = new JSElement (this.doc, token.value);
+          if (token.attrs.async != null) el.async = true;
+          if (token.attrs.defer != null) el.defer = true;
+          if (token.attrs.src != null) el.src = token.attrs.src;
 
           // 2. Mark the element as being "parser-inserted".
           el.manakaiParserInserted = true;
@@ -214,12 +241,44 @@
     }
 
     log ('stop parsing');
+
+    // readyState = 'interactive'
+
+    // "When a script completes loading" rules start applying.
+
+    // TODO: Handles "list of scripts that will execute as soon as possible"
+    // and "list of scripts that will execute asynchronously"
+
+    // Handle "list of scripts that will execute when the document has finished
+    // parsing".
+    var list = this.scriptsExecutedAfterParsing;
+    while (list.length > 0) {
+      // TODO: break unless completed loading
+
+      // Step 1.
+      //
+
+      // Step 2. and Step 3.
+      log ('Executing a |defer|red script...');
+      executeScript (this.doc, list.shift ());
+
+      // Step 4.
+    }
+
+    log ('DOMContentLoaded event fired');
+
+    // "delays tha load event" things has completed:
+    // readyState = 'complete'
+    log ('load event fired');
   } // parse
 
   Parser.prototype.setInsertionPoint = function (ip) {
     if (ip == undefined || ip == null || isNaN (ip)) {
       log ('insertion point: set to undefined');
       this.insertionPoint = undefined;
+    } else if (ip == this.in.s.length) {
+      log ('insertion point: end of file');
+      this.insertionPoint = ip;
     } else {
       log ('insertion point: set to ' + ip +
            ' (before "' + this.in.s.substring (0, 10) + '")');
@@ -244,7 +303,7 @@
     e.parentNode = this;
 
     if (e.localName == 'script') {
-      log ('start running a script');
+      log ('Running a script: start');
 
       var doc = this.ownerDocument || this;
       var p = doc._parser;
@@ -261,7 +320,7 @@
       // 2.4. If the script element has its "already executed" flag set
       if (e.manakaiAlreadyExecuted) {
         // 2.5. Abort these steps at this point.
-        log ('running a script: aborted');
+        log ('Running a script: aborted');
         return e;
       }
 
@@ -276,7 +335,8 @@
       // 5.1. 
       if (/* TODO: If the document is still being parsed && */
           e.defer && !e.async) {
-        // TODO
+        p.scriptsExecutedAfterParsing.push (e);
+        log ('Running a script: aborted (defer)');
       } else if (e.async && e.src != null) {
         // TODO
       } else if (e.async && e.src == null
@@ -290,7 +350,7 @@
         executeScript (doc, e); // even if other scripts are already executing.
       }
 
-      log ('end running a script');
+      log ('Running a script: end');
     }
 
     return e;
@@ -357,12 +417,65 @@
     }
   }; // manakaiAppendText
 
+  JSDocument.prototype.open = function () {
+    // Two or fewer arguments
+
+    // Step 1.
+    var type = arguments[0] || 'text/html';
+    
+    // Step 2.
+    var replace = arguments[1] == 'replace';
+
+    // Step 3.
+    if (this._parser &&
+        !this._parser.scriptCreated &&
+        this._parser.in.insertionPoint != undefined) {
+      log ('document.open () in parsing mode is ignored');
+      return this;
+    }
+
+    // Step 4.
+    log ('onbeforeunload event fired');
+    log ('onunload event fired');
+
+    // Step 5.
+    if (this._parser) {
+      // Discard the parser.
+    }
+
+    // Step 6.
+    log ('document cleared by document.open ()');
+    this.childNodes = [];
+
+    // Step 7.
+    this._parser = new Parser (new InputStream (''), this);
+    this._parser.scriptCreated = true;
+
+    // Step 8.
+    this.manakaiIsHTML = true;
+
+    // Step 9.
+    // If not text/html, ...
+
+    // Step 10.
+    if (!replace) {
+      // History      
+    }
+
+    // Step 11.
+    this._parser.setInsertionPoint (this._parser.in.s.length);
+
+    // Step 12.
+    return this;
+  }; // document.open
+
   JSDocument.prototype.write = function () {
     var p = this._parser;
 
     // 1. If the insertion point is undefined, the open() method must be ...
-    if (p.insertionPoint == NaN || p.insertionPoint == undefined) {
-      // TODO: open ()
+    if (isNaN (p.insertionPoint) || p.insertionPoint == undefined) {
+      this.open ();
+      p = this._parser;
     }
 
     // 2. ... inserted into the input stream just before the insertion point.
@@ -400,6 +513,9 @@
       var node = n.childNodes[i];
       if (node instanceof JSElement) {
         r += '| ' + indent + node.localName + '\n';
+        if (node.async) r += '| ' + indent + '  async=""\n';
+        if (node.defer) r += '| ' + indent + '  defer=""\n';
+        if (node.src) r += '| ' + indent + '  src="' + node.src + '"\n';
         r += dumpTree (node, indent + '  ');
       } else if (node instanceof JSText) {
         r += '| ' + indent + '"' + node.data + '"\n';
