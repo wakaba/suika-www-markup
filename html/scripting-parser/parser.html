@@ -40,17 +40,34 @@
   } // Parser
 
   Parser.prototype.getNextToken = function () {
+    var p = this;
     var i = this.in;
     if (this.parseMode == 'script') {
       var token;
+      if (p.insertionPoint <= 0) {
+        return {type: 'abort'};
+      }
       i.s = i.s.replace (/^([\s\S]+?)<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/,
       function (s, t) {
+        if (0 < p.insertionPoint && p.insertionPoint < t.length) {
+          token = {type: 'char', value: t.substring (0, p.insertionPoint)};
+          var ip = p.insertionPoint;
+          p.insertionPoint = 0;
+          return t.substring (ip, t.length) +
+              s.substring (s.length - 9, s.length);
+        }
         token = {type: 'char', value: t};
+        p.insertionPoint -= s.length;
         return '<' + '/script>';
       });
       if (token) return token;
-      i.s = i.s.replace (/^<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/, function () {
+      i.s = i.s.replace (/^<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/, function (s) {
+        if (s.length < p.insertionPoint) {
+          token = {type: 'abort'};
+          return s;
+        }
         token = {type: 'end-tag', value: 'script'};
+        p.insertionPoint -= s.length;
         return '';
       });
       if (token) return token;
@@ -59,22 +76,43 @@
 
     var token;
     i.s = i.s.replace (/^<\/([^>]+)>/, function (s, e) {
+      if (p.insertionPoint < s.length) {
+        token = {type: 'abort'};
+        return s;
+      }
       token = {type: 'end-tag', value: e.toLowerCase ()};
+      p.insertionPoint -= s.length;
       return '';
     });
     if (token) return token;
     i.s = i.s.replace (/^<([^>]+)>/, function (s, e) {
+      if (p.insertionPoint < s.length) {
+        token = {type: 'abort'};
+        return s;
+      }
       token = {type: 'start-tag', value: e.toLowerCase ()};
+      p.insertionPoint -= s.length;
       return '';
     });
     if (token) return token;
+    if (p.insertionPoint <= 0) {
+      return {type: 'abort'};
+    }
     i.s = i.s.replace (/^[^<]+/, function (s) {
+      if (p.insertionPoint < s.length) {
+        token = {type: 'char', value: s.substring (0, p.insertionPoint)};
+        var ip = p.insertionPoint;
+        p.insertionPoint = 0;
+        return s.substring (ip, s.length);
+      }
       token = {type: 'char', value: s};
+      p.insertionPoint -= s.length;
       return '';
     });
     if (token) return token;
     i.s = i.s.replace (/^[\s\S]/, function (s) {
       token = {type: 'char', value: s};
+      p.insertionPoint -= s.length;
       return '';
     });
     if (token) return token;
@@ -109,9 +147,10 @@
               el.manakaiAppendText (token.value);
 
             // 4.2. Until it returns a token that is not a character token, or
-            // TODO: 4.3. Until it stops tokenising.
+            // until it stops tokenising.
             } else if (token.type == 'eof' ||
-                       (token.type == 'end-tag' && token.value == 'script')) {
+                       (token.type == 'end-tag' && token.value == 'script') ||
+                       token.type == 'abort') {
               // 6. Switched back to the PCDATA state.
               this.parseMode = 'pcdata';
 
@@ -138,13 +177,15 @@
           }
 
           // 9.1. Let the old insertion point have the same value as the ...
-
+          var oldInsertionPoint = this.insertionPoint;
           // 9.2. Let the insertion point be just before the next input ...
+          this.setInsertionPoint (0);
 
           // 10. Append the new element to the current node.
           this.openElements[this.openElements.length - 1].appendChild (el);
 
           // 11. Let the insertion point have the value of the old ...
+          this.setInsertionPoint (oldInsertionPoint);
 
           // 12. If there is a script that will execute as soon as ...
           
@@ -161,13 +202,30 @@
         } else {
           log ('parse error: unmatched end tag: ' + token.value);
         }
+      } else if (token.type == 'char') {
+        this.openElements[this.openElements.length - 1].manakaiAppendText
+            (token.value);
       } else if (token.type == 'eof') {
         break;
+      } else if (token.type == 'abort') {
+        log ('parse: abort');
+        return;
       }
     }
 
     log ('stop parsing');
   } // parse
+
+  Parser.prototype.setInsertionPoint = function (ip) {
+    if (ip == undefined || ip == null || isNaN (ip)) {
+      log ('insertion point: set to undefined');
+      this.insertionPoint = undefined;
+    } else {
+      log ('insertion point: set to ' + ip +
+           ' (before "' + this.in.s.substring (0, 10) + '")');
+      this.insertionPoint = ip;
+    }
+  }; // setInsertionPoint
 
   function JSDocument (p) {
     this.childNodes = [];
@@ -188,7 +246,7 @@
     if (e.localName == 'script') {
       log ('start running a script');
 
-      var doc = this.ownerDocument;
+      var doc = this.ownerDocument || this;
       var p = doc._parser;
 
       // 1. Script type
@@ -300,16 +358,26 @@
   }; // manakaiAppendText
 
   JSDocument.prototype.write = function () {
+    var p = this._parser;
+
     // 1. If the insertion point is undefined, the open() method must be ...
-    // 
+    if (p.insertionPoint == NaN || p.insertionPoint == undefined) {
+      // TODO: open ()
+    }
 
     // 2. ... inserted into the input stream just before the insertion point.
-    log ('document.write: insert "' + Array.join (arguments, '') + '"');
+    var s = Array.join (arguments, '');
+    log ('document.write: insert "' + s + '"' +
+         ' before "' + p.in.s.substring (p.insertionPoint, p.insertionPoint + 10) + '"');
+    p.in.s = p.in.s.substring (0, p.insertionPoint) + s
+        + p.in.s.substring (p.insertionPoint, p.in.s.length);
+    p.insertionPoint += s.length;
 
     // 3. If there is a script that will execute as soon as the parser resumes
     // TODO
 
     // 4. Process the characters that were inserted, ...
+    p.parse ();
 
     // 5. Return
     log ('document.write: return');
@@ -353,7 +421,7 @@
 &lt;head>&lt;/head>&lt;body>
 &lt;p>
 &lt;script>
-document.write ('aaaaaaa&lt;/p>\n&lt;script>\ndocument.write("cccccc")\n&lt;/', 'script>\nbbbbbb');
+document.write ('aaaaaaa&lt;/p>&lt;script>document.write("cccccc");&lt;/', 'script>bbbbbb');
 &lt;/script>
 &lt;p>
 </textarea>
