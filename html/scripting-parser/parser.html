@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html lang=en>
+<head>
+<title>Demo of HTML5 Parsing Algorithm with Scripting Enabled</title>
+<style>
+  textarea {
+     display: block;
+     width: 80%;
+     margin-left: auto;
+     margin-right: auto;
+     min-height: 20em;
+  }
+  output {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+  }
+</style>
+<script>
+  function update () {
+    document.logElement.textContent = '';
+    var p = new Parser ();
+    p.parse (new InputStream (document.sourceElement.value));
+    log (dumpTree (p.doc, ''));
+  } // update
+
+  function log (s) {
+    document.logElement.appendChild (document.createTextNode (s + "\n"));
+  } // log
+
+  function InputStream (s) {
+    this.s = s;
+  } // InputStream
+
+  function Parser () {
+    this.parseMode = 'pcdata';
+    this.doc = new JSDocument ();
+    this.openElements = [this.doc];
+  } // Parser
+
+  Parser.prototype.getNextToken = function (i) {
+    if (this.parseMode == 'script') {
+      var token;
+      i.s = i.s.replace (/^([\s\S]+?)<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/,
+      function (s, t) {
+        token = {type: 'char', value: t};
+        return '<' + '/script>';
+      });
+      if (token) return token;
+      i.s = i.s.replace (/^<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/, function () {
+        token = {type: 'end-tag', value: 'script'};
+        return '';
+      });
+      if (token) return token;
+      return {type: 'eof'};
+    }
+
+    var token;
+    i.s = i.s.replace (/^<\/([^>]+)>/, function (s, e) {
+      token = {type: 'end-tag', value: e.toLowerCase ()};
+      return '';
+    });
+    if (token) return token;
+    i.s = i.s.replace (/^<([^>]+)>/, function (s, e) {
+      token = {type: 'start-tag', value: e.toLowerCase ()};
+      return '';
+    });
+    if (token) return token;
+    i.s = i.s.replace (/^[^<]+/, function (s) {
+      token = {type: 'char', value: s};
+      return '';
+    });
+    if (token) return token;
+    i.s = i.s.replace (/^[\s\S]/, function (s) {
+      token = {type: 'char', value: s};
+      return '';
+    });
+    if (token) return token;
+    return {type: 'eof'};
+  } // getNextToken
+
+  Parser.prototype.parse = function (i) {
+    log ('start parsing');
+
+    while (true) {
+      var token = this.getNextToken (i);
+      log ('token: ' + token.type + ' "' + token.value + '"');
+
+      if (token.type == 'start-tag') {
+        var el = new JSElement (token.value);
+        if (token.value == 'script') {
+          this.parseMode = 'script';
+
+          while (true) {
+            var token = this.getNextToken (i);
+            log ('token: ' + token.type + ' "' + token.value + '"');
+
+            if (token.type == 'char') {
+              el.manakaiAppendText (token.value);
+            } else if (token.type == 'eof' ||
+                       (token.type == 'end-tag' && token.value == 'script')) {
+              this.parseMode = 'pcdata';
+              break;
+            }
+          }
+
+          this.openElements[this.openElements.length - 1].appendChild (el);
+        } else {
+          this.openElements[this.openElements.length - 1].appendChild (el);
+          this.openElements.push (el);
+        }
+      } else if (token.type == 'end-tag') {
+        if (this.openElements[this.openElements.length - 1].localName ==
+            token.value) {
+          this.openElements.pop ();
+        } else {
+          log ('parse error: unmatched end tag: ' + token.value);
+        }
+      } else if (token.type == 'eof') {
+        break;
+      }
+    }
+
+    log ('stop parsing');
+  } // parse
+
+  function JSDocument () {
+    this.childNodes = [];
+  } // JSDocument
+
+  function JSElement (localName) {
+    this.localName = localName;
+    this.childNodes = [];
+  } // JSElement
+
+  JSDocument.prototype.appendChild = JSElement.prototype.appendChild =
+  function (e) {
+    this.childNodes.push (e);
+    e.parentNode = this;
+    return e;
+  }; // appendChild
+
+  function JSText (data) {
+    this.data = data;
+  } // JSText
+
+  JSDocument.prototype.manakaiAppendText =
+  JSElement.prototype.manakaiAppendText =
+  function (s) {
+    if (this.childNodes.length > 0 &&
+        this.childNodes[this.childNodes.length - 1] instanceof JSText) {
+      this.childNodes[this.childNodes.length - 1].data += s;
+    } else {
+      this.childNodes.push (new JSText (s));
+    }
+  }; // manakaiAppendText
+
+  function dumpTree (n, indent) {
+    var r = '';
+    for (var i = 0; i < n.childNodes.length; i++) {
+      var node = n.childNodes[i];
+      if (node instanceof JSElement) {
+        r += '| ' + indent + node.localName + '\n';
+        r += dumpTree (node, indent + '  ');
+      } else if (node instanceof JSText) {
+        r += '| ' + indent + '"' + node.data + '"\n';
+      } else {
+        r += '| ' + indent + node + '\n';
+      }
+    }
+    return r;
+  } // dumpTree
+</script>
+</head>
+<body onload="
+  document.sourceElement = document.getElementsByTagName ('textarea')[0];
+  document.logElement = document.getElementsByTagName ('output')[0];
+  update ();
+">
+
+<textarea onchange=" update () ">&lt;html>
+&lt;head>&lt;/head>&lt;body>
+&lt;p>
+&lt;script>
+document.write ('aaaaaaa&lt;/p>\n&lt;script>\ndocument.write("cccccc")\n&lt;/', 'script>\nbbbbbb');
+&lt;/script>
+&lt;p>
+</textarea>
+
+<output></output>
+
+</body>
+</html>
