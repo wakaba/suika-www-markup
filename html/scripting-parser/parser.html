@@ -77,6 +77,14 @@
         return '';
       });
       if (token) return token;
+      var m;
+      if ((p.insertionPoint < '</script'.length) &&
+          (m = i.s.match (/^<\/([SCRIPTscript]+)/))) {
+        var v = m[1].substring (0, p.insertionPoint).toLowerCase ();
+        if (v == 'script'.substring (0, p.insertionPoint - '</'.length)) {
+          return {type: 'abort'};
+        }
+      }
       i.s = i.s.replace (/^</,
       function (s) {
         token = {type: 'char', value: s};
@@ -88,8 +96,10 @@
     }
 
     var token;
-    i.s = i.s.replace (/^<\/([^>]+)>/, function (s, e) {
-      if (p.insertionPoint < s.length) {
+    i.s = i.s.replace (/^<\/([^>]+)(?:>|$)/, function (s, e) {
+      if (p.insertionPoint < s.length ||
+          (p.insertionPoint <= s.length &&
+           s.substring (s.length - 1, 1) != '>')) {
         token = {type: 'abort'};
         return s;
       }
@@ -98,8 +108,10 @@
       return '';
     });
     if (token) return token;
-    i.s = i.s.replace (/^<([^>]+)>/, function (s, e) {
-      if (p.insertionPoint < s.length) {
+    i.s = i.s.replace (/^<([^>]+)(?:>|$)/, function (s, e) {
+      if (p.insertionPoint < s.length ||
+          (p.insertionPoint <= s.length &&
+           s.substring (s.length - 1, 1) != '>')) {
         token = {type: 'abort'};
         return s;
       }
@@ -212,6 +224,7 @@
           this.openElements[this.openElements.length - 1].appendChild (el);
 
           // 11. Let the insertion point have the value of the old ...
+          oldInsertionPoint += this.insertionPoint;
           this.setInsertionPoint (oldInsertionPoint);
 
           // 12. If there is a script that will execute as soon as ...
