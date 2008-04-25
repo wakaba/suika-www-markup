@@ -3,12 +3,17 @@
 <head>
 <title>Demo of HTML5 Parsing Algorithm with Scripting Enabled</title>
 <style>
+  h1, h2 {
+    margin: 0;
+    font-size: 100%;
+  }
+  p, pre {
+    margin: 0;
+  }
   textarea {
-     display: block;
-     width: 80%;
-     margin-left: auto;
-     margin-right: auto;
-     min-height: 20em;
+    width: 100%;
+    -width: 99%;
+    height: 10em;
   }
   output {
     display: block;
@@ -18,13 +23,27 @@
   }
 </style>
 <script>
+  var delayedUpdater = 0;
+
   function update () {
+    if (delayedUpdater) {
+      clearTimeout (delayedUpdater);
+      delayedUpdater = 0;
+    }
+    delayedUpdater = setTimeout (update2, 100);
+  } // update
+
+  function update2 () {
     document.logElement.textContent = '';
-    var p = new Parser (new InputStream (document.sourceElement.value));
+    var v = document.sourceElement.value;
+    var p = new Parser (new InputStream (v));
     var doc = p.doc;
     p.parse ();
     log (dumpTree (doc, ''));
-  } // update
+
+    document.links['permalink'].href
+        = location.href + '?s=' + encodeURIComponent (v);
+  } // update2
 
   var logIndentLevel = 0;
   function log (s) {
@@ -235,6 +254,7 @@
           this.openElements[this.openElements.length - 1].appendChild (el);
 
           // 11. Let the insertion point have the value of the old ...
+
           oldInsertionPoint += this.insertionPoint;
           this.setInsertionPoint (oldInsertionPoint);
 
@@ -634,8 +654,12 @@
   document.logElement = document.getElementsByTagName ('output')[0];
   update ();
 ">
+<h1>Live Scripting Parser</h1>
 
-<textarea onchange=" update () ">&lt;html>
+<h2>Markup to test
+(<a href=data:, id=permalink rel=bookmark>permalink</a>)</h2>
+<p>
+<textarea onkeydown=" update () " onchange=" update () " oninput=" update () ">&lt;html>
 &lt;head>&lt;/head>&lt;body>
 &lt;p>
 &lt;script>
@@ -644,7 +668,14 @@ document.write ('aaaaaaa&lt;/p>&lt;script>document.write("cccccc");&lt;/', 'scri
 &lt;p>
 </textarea>
 
-<output></output>
+<h2>Log</h2>
+<p><output></output>
+
+<!-- TODO: short description -->
+
+<!-- TODO: permalink query -> textarea -->
+
+<!-- TODO: multiple attributes are not supported yet -->
 
 </body>
 </html>
