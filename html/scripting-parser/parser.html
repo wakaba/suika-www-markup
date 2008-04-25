@@ -26,7 +26,11 @@
     log (dumpTree (doc, ''));
   } // update
 
+  var logIndentLevel = 0;
   function log (s) {
+    for (var i = 0; i < logIndentLevel; i++) {
+      s = '  ' + s;
+    }
     document.logElement.appendChild (document.createTextNode (s + "\n"));
   } // log
 
@@ -121,11 +125,17 @@
         tagName = v.toLowerCase ();
         return '';
       });
-      e = e.replace (/^\s*(\S+)\s*(?:=\s*"([^"]*)"|'([^']*)'|([^"']+))?/,
+      e = e.replace (/^\s*([^\s=]+)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^"']+)))?/,
       function (x, attrName, attrValue1, attrValue2, attrValue3) {
-        attrs[attrName] = attrValue1 || attrValue2 || attrValue3;
+        v = attrValue1 || attrValue2 || attrValue3;
+        v = v.replace (/&quot;/g, '"').replace (/&apos;/g, "'")
+            .replace (/&amp;/g, '&');
+        attrs[attrName.toLowerCase ()] = v;
         return '';
       });
+      if (e.length) {
+        log ('Broken start tag: "' + e + '"');
+      }
       token = {type: 'start-tag', value: tagName, attrs: attrs};
       p.insertionPoint -= s.length;
       return '';
@@ -156,7 +166,8 @@
   } // getNextToken
 
   Parser.prototype.parse = function () {
-    log ('start parsing');
+    logIndentLevel++;
+    log ('parse: start');
 
     while (true) {
       var token = this.getNextToken ();
@@ -228,8 +239,35 @@
           this.setInsertionPoint (oldInsertionPoint);
 
           // 12. If there is a script that will execute as soon as ...
-          
+          while (this.scriptExecutedWhenParserResumes) {
+            // 12.1. If the tree construction stage is being called reentrantly
+            if (this.reentrant) {
+              log ('parse: abort (reentrance)');
+              logIndentLevel--;
+              return;
 
+            // 12.2. Otherwise
+            } else {
+              // 1.
+              var script = this.scriptExecutedWhenParserResumes;
+              this.scriptExecutedWhenParserResumes = null;
+
+              // 2. Pause until the script has completed loading.
+              // 
+
+              // 3. Let the insertion point to just before the next input char.
+              this.setInsertionPoint (0);
+
+              // 4. Execute the script.
+              executeScript (this.doc, script);
+
+              // 5. Let the insertion point be undefined again.
+              this.setInsertionPoint (undefined);
+
+              // 6. If there is once again a script that will execute ...
+              //
+            }
+          }
         } else {
           var el = new JSElement (this.doc, token.value);
           this.openElements[this.openElements.length - 1].appendChild (el);
@@ -249,6 +287,7 @@
         break;
       } else if (token.type == 'abort') {
         log ('parse: abort');
+        logIndentLevel--;
         return;
       }
     }
@@ -283,6 +322,8 @@
     // "delays tha load event" things has completed:
     // readyState = 'complete'
     log ('load event fired');
+
+    logIndentLevel--;
   } // parse
 
   Parser.prototype.setInsertionPoint = function (ip) {
@@ -316,6 +357,7 @@
     e.parentNode = this;
 
     if (e.localName == 'script') {
+      logIndentLevel++;
       log ('Running a script: start');
 
       var doc = this.ownerDocument || this;
@@ -334,6 +376,7 @@
       if (e.manakaiAlreadyExecuted) {
         // 2.5. Abort these steps at this point.
         log ('Running a script: aborted');
+        logIndentLevel--;
         return e;
       }
 
@@ -356,7 +399,11 @@
                  /* && list of scripts that will execute asynchronously is not empty */) {
         // TODO
       } else if (e.src != null && e.manakaiParserInserted) {
-        // TODO
+        if (p.scriptExecutedWhenParserResumes) {
+          log ('Error: There is a script that will execute as soon as the parser resumes.');
+        }
+        p.scriptExecutedWhenParserResumes = e;
+        log ('Running a script: aborted (src)');
       } else if (e.src != null) {
         // TODO
       } else {
@@ -364,6 +411,7 @@
       }
 
       log ('Running a script: end');
+      logIndentLevel--;
     }
 
     return e;
@@ -372,7 +420,20 @@
   function executeScript (doc, e) {
     log ('executing a script block: start');
 
-    // If the load resulted in an error, then ... firing an error event ...
+    var s;
+    if (e.src != null) {
+      s = getExternalScript (e.src);
+
+      // If the load resulted in an error, then ... firing an error event ...
+      if (s == null) {
+        log ('error event fired at the script element');
+        return;
+      }
+
+      log ('External script loaded: "' + s + '"');
+    } else {
+      s = e.text;
+    }
 
     // If the load was successful
     log ('load event fired at the script element');
@@ -381,18 +442,32 @@
     // Scripting is enabled, Document.designMode is disabled,
     // Document is the active document in its browsing context
 
-      var s;
-      if (e.src != null) {
-        // TODO: from external file
-      } else {
-        s = e.text;
-      }
-
       parseAndRunScript (doc, s);
     }
 
     log ('executing a script block: end');
   } // executeScript
+
+  function getExternalScript (uri) {
+    if (uri.match (/^javascript:/i)) {
+      var m;
+      if (m = uri.match (/^javascript:\s*(?:'([^']*)'|"([^"]+)")\s*$/i)) {
+        if (m[1]) {
+          return m[1];
+        } else if (m[2]) {
+          return m[2];
+        } else {
+          return null;
+        }
+      } else {
+        log ('Complex javascript: URI is not supported: <' + uri + '>');
+        return null;
+      }
+    } else {
+      log ('URI scheme not supported: <' + uri + '>');
+      return null;
+    }
+  } // getExternalScript
 
   function parseAndRunScript (doc, s) {
     while (true) {
@@ -483,6 +558,8 @@
   }; // document.open
 
   JSDocument.prototype.write = function () {
+    logIndentLevel++;
+
     var p = this._parser;
 
     // 1. If the insertion point is undefined, the open() method must be ...
@@ -500,13 +577,25 @@
     p.insertionPoint += s.length;
 
     // 3. If there is a script that will execute as soon as the parser resumes
-    // TODO
+    if (p.scriptExecutedAfterParserResumes) {
+      log ('document.write: processed later (there is an unprocessed <script src>)');
+      logIndentLevel--;
+      return;
+    }
 
     // 4. Process the characters that were inserted, ...
+    var originalReentrant = p.reentrant;
+    p.reentrant = true;
     p.parse ();
+    p.reentrant = originalReentrant;
+    // TODO: "Abort the processing of any nested invokations of the tokeniser,
+    // yielding control back to the caller." (<script> parsing).  Do we need
+    // to do something here?
 
     // 5. Return
     log ('document.write: return');
+
+    logIndentLevel--;
     return;
   }; // document.write
 
