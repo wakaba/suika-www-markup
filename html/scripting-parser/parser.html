@@ -504,13 +504,9 @@
       var m;
       if (m = uri.match (/^javascript:\s*(?:'([^']*)'|"([^"]+)")\s*$/i)) {
         if (m[1]) {
-          return m[1].replace (/\\u([0-9A-F]{4})/g, function (s, v) {
-            return String.fromCharCode (parseInt ('0x' + v));
-          });
+          return unescapeJSLiteral (m[1]);
         } else if (m[2]) {
-          return m[2].replace (/\\u([0-9A-F]{4})/g, function (s, v) {
-            return String.fromCharCode (parseInt ('0x' + v));
-          });
+          return unescapeJSLiteral (m[2]);
         } else {
           return null;
         }
@@ -531,7 +527,7 @@
         matched = true;
         var args = [];
         t.replace (/('[^']*'|"[^"]*")/g, function (s, v) {
-          args.push (v.substring (1, v.length - 1));
+          args.push (unescapeJSLiteral (v.substring (1, v.length - 1)));
           return '';
         });
         doc.write.apply (doc, args);
@@ -540,7 +536,7 @@
       s = s.replace (/^\s*var\s+s\s*=\s*document\.createElement\s*\(\s*['"]script['"]\s*\)\s*;\s*s\.src\s*=\s*(?:'(javascript:[^']*)'|"(javascript:[^"]*)")\s*;\s*document\.documentElement\.appendChild\s*\(\s*s\s*\)\s*;\s*/,
       function (s, t, u) {
         matched = true;
-        var args = [t ? t : u];
+        var args = [unescapeJSLiteral (t ? t : u)];
         doc._insertExternalScript.apply (doc, args);
         return '';
       });
@@ -551,6 +547,12 @@
       }
     }
   } // parseAndRunScript
+
+  function unescapeJSLiteral (s) {
+    return s.replace (/\\u([0-9A-Fa-f]{4})/g, function (t, v) {
+      return String.fromCharCode (parseInt ('0x' + v));
+    });
+  } // unescapeJSLiteral
 
   function JSText (data) {
     this.data = data;
@@ -788,8 +790,8 @@ Note that strings may be delimited by <code>'</code>s instead of
 <code>src</code> attribute of the <code>script</code> element.  In addition, 
 the <abbr title="Uniform Resource Identifiers">URI</abbr> must be conform to 
 the regular expression <code>^javascript:\s*(?:"[^"]*"|'[^']*')\s*$</code>.
-<li>Only supports <code>\u<var>HHHH</var></code> escapes only in
-<code>javascript:</code> URI.
+<li>Only supports <code>\u<var>HHHH</var></code> escapes in JavaScript 
+string literals.
 </ul>
 
 <p>For some reason, this parser does not work in browsers that do
