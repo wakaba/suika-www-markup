@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang=en>
 <head>
-<title>Demo of HTML5 Parsing Algorithm with Scripting Enabled</title>
+<title>Live Scripting HTML Parser</title>
 <style>
   h1, h2 {
     margin: 0;
@@ -34,15 +34,21 @@
   } // update
 
   function update2 () {
-    document.logElement.textContent = '';
     var v = document.sourceElement.value;
-    var p = new Parser (new InputStream (v));
-    var doc = p.doc;
-    p.parse ();
-    log (dumpTree (doc, ''));
+    if (v != document.previousSourceText) {
+      document.previousSourceText = v;
+      document.links['permalink'].href
+          = location.pathname + '?s=' + encodeURIComponent (v);
+      document.links['ldvlink'].href
+          = 'http://software.hixie.ch/utilities/js/live-dom-viewer/?'
+          + encodeURIComponent (v);
 
-    document.links['permalink'].href
-        = location.href + '?s=' + encodeURIComponent (v);
+      document.logElement.textContent = '';
+      var p = new Parser (new InputStream (v));
+      var doc = p.doc;
+      p.parse ();
+      log (dumpTree (doc, ''));
+    }
   } // update2
 
   var logIndentLevel = 0;
@@ -65,13 +71,13 @@
     }
     this.doc = doc;
     this.openElements = [doc];
-    this.in = i;
+    this.input = i;
     this.scriptsExecutedAfterParsing = [];
   } // Parser
 
   Parser.prototype.getNextToken = function () {
     var p = this;
-    var i = this.in;
+    var i = this.input;
     if (this.parseMode == 'script') {
       var token;
       if (p.insertionPoint <= 0) {
@@ -350,12 +356,12 @@
     if (ip == undefined || ip == null || isNaN (ip)) {
       log ('insertion point: set to undefined');
       this.insertionPoint = undefined;
-    } else if (ip == this.in.s.length) {
+    } else if (ip == this.input.s.length) {
       log ('insertion point: end of file');
       this.insertionPoint = ip;
     } else {
       log ('insertion point: set to ' + ip +
-           ' (before "' + this.in.s.substring (0, 10) + '")');
+           ' (before "' + this.input.s.substring (0, 10) + '")');
       this.insertionPoint = ip;
     }
   }; // setInsertionPoint
@@ -537,7 +543,7 @@
     // Step 3.
     if (this._parser &&
         !this._parser.scriptCreated &&
-        this._parser.in.insertionPoint != undefined) {
+        this._parser.input.insertionPoint != undefined) {
       log ('document.open () in parsing mode is ignored');
       return this;
     }
@@ -571,7 +577,7 @@
     }
 
     // Step 11.
-    this._parser.setInsertionPoint (this._parser.in.s.length);
+    this._parser.setInsertionPoint (this._parser.input.s.length);
 
     // Step 12.
     return this;
@@ -591,9 +597,10 @@
     // 2. ... inserted into the input stream just before the insertion point.
     var s = Array.join (arguments, '');
     log ('document.write: insert "' + s + '"' +
-         ' before "' + p.in.s.substring (p.insertionPoint, p.insertionPoint + 10) + '"');
-    p.in.s = p.in.s.substring (0, p.insertionPoint) + s
-        + p.in.s.substring (p.insertionPoint, p.in.s.length);
+         ' before "' +
+         p.input.s.substring (p.insertionPoint, p.insertionPoint + 10) + '"');
+    p.input.s = p.input.s.substring (0, p.insertionPoint) + s
+        + p.input.s.substring (p.insertionPoint, p.input.s.length);
     p.insertionPoint += s.length;
 
     // 3. If there is a script that will execute as soon as the parser resumes
@@ -651,13 +658,31 @@
 </head>
 <body onload="
   document.sourceElement = document.getElementsByTagName ('textarea')[0];
+
+  var q = location.search;
+  if (q != null) {
+    q = q.substring (1).split (/;/);
+    for (var i = 0; i < q.length; i++) {
+      var v = q[i].split (/=/, 2);
+      v[0] = decodeURIComponent (v[0]);
+      v[1] = decodeURIComponent (v[1] || '');
+      if (v[0] == 's') {
+        document.sourceElement.value = v[1];
+      }
+    }
+  }
+
   document.logElement = document.getElementsByTagName ('output')[0];
   update ();
 ">
-<h1>Live Scripting Parser</h1>
+<h1>Live Scripting <abbr title="Hypertext Markup Language">HTML</abbr>
+Parser</h1>
 
 <h2>Markup to test
-(<a href=data:, id=permalink rel=bookmark>permalink</a>)</h2>
+(<a href=data:, id=permalink rel=bookmark>permalink</a>,
+<a href="http://software.hixie.ch/utilities/js/live-dom-viewer/"
+    id=ldvlink>Live <abbr title="Document Object Model">DOM</abbr>
+    Viewer</a>)</h2>
 <p>
 <textarea onkeydown=" update () " onchange=" update () " oninput=" update () ">&lt;html>
 &lt;head>&lt;/head>&lt;body>
@@ -671,9 +696,41 @@ document.write ('aaaaaaa&lt;/p>&lt;script>document.write("cccccc");&lt;/', 'scri
 <h2>Log</h2>
 <p><output></output>
 
-<!-- TODO: short description -->
+<h2>Note</h2>
 
-<!-- TODO: permalink query -> textarea -->
+<p>This is a <em>simplified</em> implementation of 
+<a href="http://www.whatwg.org/specs/web-apps/current-work/#parsing">HTML5 
+Parsing Algorithm</a>.  It only implements script-related part of the 
+algorithm.  Especially, this parser:
+<ul>
+<li>Does not support <code>DOCTYPE</code> and comment tokens.
+<li>Does not support entities except for <code>&amp;quot;</code>,
+<code>&amp;apos;</code>, and <code>&amp;amp;</code> in <code>script</code>
+<code>src</code> attribute value.
+<li>Does not support omissions of start or end tags, the <abbr>AAA</abbr>
+algorithm, and so on.
+<li>Does not raise parse errors for invalid attribute specifications in start 
+or end tags.
+<li>Does not support CDATA/PCDATA element other than <code>script</code>.
+<li>Does not support <code>&lt;!--</code>..<code>--></code> parsing rule
+in <code>script</code> element.
+<li>Does not support foreign (SVG or MathML) elements.
+<li>Only supports <code>script</code> <code>type</code>
+<code>text/javascript</code>.  <code>type</code> and <code>language</code>
+attributes are ignored.
+<li>Only supports <code>document.write</code>.
+The script code must be match to the regular expression
+<code>^\s*(?:document\.write\s*\(<var>v</var>\s*(?:,\s*<var>v</var>\s*)*\)\s*;\s*)*$</code>
+where <var>v</var> is <code>"[^"]*"|'[^']*'</code>.
+<li>Only supports <code>javascript:</code> 
+<abbr title="Uniform Resourace Identifiers">URI</abbr> scheme in the 
+<code>src</code> attribute of the <code>script</code> element.  In addition, 
+the <abbr title="Uniform Resource Identifiers">URI</abbr> must be conform to 
+the regular expression <code>^javascript:\s*(?:"[^"]*"|'[^']*')\s*$</code>.
+</ul>
+
+<p>For some reason, this parser does not work in browsers that do
+not support JavaScript 1.5.
 
 <!-- TODO: multiple attributes are not supported yet -->
 
