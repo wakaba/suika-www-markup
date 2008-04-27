@@ -79,6 +79,7 @@
     this.input = i;
     this.scriptsExecutedAfterParsing = [];
     this.scriptsExecutedSoon = [];
+    this.scriptsExecutedAsynchronously = [];
   } // Parser
 
   Parser.prototype.getNextToken = function () {
@@ -335,21 +336,41 @@
 
     // "When a script completes loading" rules start applying.
 
-    // List of scripts that will execute as soon as possible
-    for (var i = 0; i < this.scriptsExecutedSoon.length; i++) {
-      var e = this.scriptsExecutedSoon[i];
+    while (this.scriptsExecutedSoon.length > 0 ||
+           this.scriptsExecutedAsynchronously.length > 0) {
+      // Handle "list of scripts that will execute as soon as possible".
+      while (this.scriptsExecutedSoon.length > 0) {
+        var e = this.scriptsExecutedSoon.shift ();
+  
+        // If it has completed loading
+        log ('Execute an external script not inserted by parser...');
+        executeScript (this.doc, e);
 
-      // If it has completed loading
-      log ('Execute an external script not inserted by parser...');
-      executeScript (this.doc, e);
+        // NOTE: It MAY be executed before the end of the parsing, according
+        // to the spec.
+        this.hasAsyncScript = true;
+      }
 
-      // NOTE: It MAY be executed before the end of the parsing, according
-      // to the spec.
-      this.hasAsyncScript = true;
+      // Handle "list of scripts that will execute asynchronously".
+      while (this.scriptsExecutedAsynchronously.length > 0) {
+        var e = this.scriptsExecutedAsynchronously.shift ();
+
+        // Step 1.
+        // We assume that all scripts have been loaded at this time.
+  
+        // Step 2.
+        log ('Execute an asynchronous script...');
+        executeScript (this.doc, e);
+
+        // Step 3.
+        //
+ 
+        // Step 4.
+        //
+
+        this.hasAsyncScript = true;
+      }
     }
-
-    // TODO: Handles
-    // "list of scripts that will execute asynchronously"
 
     // Handle "list of scripts that will execute when the document has finished
     // parsing".
@@ -444,10 +465,13 @@
         p.scriptsExecutedAfterParsing.push (e);
         log ('Running a script: aborted (defer)');
       } else if (e.async && e.src != null) {
-        // TODO
-      } else if (e.async && e.src == null
-                 /* && list of scripts that will execute asynchronously is not empty */) {
-        // TODO
+        p.scriptsExecutedAsynchronously.push (e);
+        log ('Running a script: aborted (async src)');
+      } else if (e.async && e.src == null &&
+                 p.scriptsExecutedAsynchronously.length > 0) {
+        p.scriptsExecutedAsynchronously.push (e);
+        log ('Running a script: aborted (async)');
+        // ISSUE: What is the difference with the case above?
       } else if (e.src != null && e.manakaiParserInserted) {
         if (p.scriptExecutedWhenParserResumes) {
           log ('Error: There is a script that will execute as soon as the parser resumes.');
@@ -792,10 +816,20 @@ the <abbr title="Uniform Resource Identifiers">URI</abbr> must be conform to
 the regular expression <code>^javascript:\s*(?:"[^"]*"|'[^']*')\s*$</code>.
 <li>Only supports <code>\u<var>HHHH</var></code> escapes in JavaScript 
 string literals.
+<li>Does not handle <i>stop parsing</i> phase correctly if the document is 
+replaced by <code>document.open ()</code> call.  In other word, delayed 
+(deferred or asynchronous) script executions and event firings might be
+treated in a wrong way if a <code>document.open ()</code> invocation
+is implicitly done by <code>document.write ()</code> in a delayed script.
 </ul>
 
 <p>For some reason, this parser does not work in browsers that do
 not support JavaScript 1.5.
+
+<!-- TODO: |src| attribute value should refer the value at the time
+when it is inserted into the document, not the value when the script is 
+executed.  Currently it does not matter, since we don't allow dynamic
+modification to the |src| content/DOM attribute value yet. -->
 
 <!-- TODO: license -->
 
