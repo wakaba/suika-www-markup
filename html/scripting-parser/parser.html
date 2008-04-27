@@ -150,14 +150,19 @@
         tagName = v.toLowerCase ();
         return '';
       });
-      e = e.replace (/^\s*([^\s=]+)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^"']+)))?/,
-      function (x, attrName, attrValue1, attrValue2, attrValue3) {
-        v = attrValue1 || attrValue2 || attrValue3;
-        v = v.replace (/&quot;/g, '"').replace (/&apos;/g, "'")
-            .replace (/&amp;/g, '&');
-        attrs[attrName.toLowerCase ()] = v;
-        return '';
-      });
+      while (true) {
+        var m = false;
+        e = e.replace (/^\s*([^\s=]+)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^"'\s]*)))?/,
+        function (x, attrName, attrValue1, attrValue2, attrValue3) {
+          v = attrValue1 || attrValue2 || attrValue3;
+          v = v.replace (/&quot;/g, '"').replace (/&apos;/g, "'")
+              .replace (/&amp;/g, '&');
+          attrs[attrName.toLowerCase ()] = v;
+          m = true;
+          return '';
+        });
+        if (!m) break;
+      }
       if (e.length) {
         log ('Broken start tag: "' + e + '"');
       }
@@ -644,7 +649,9 @@
         r += '| ' + indent + node.localName + '\n';
         if (node.async) r += '| ' + indent + '  async=""\n';
         if (node.defer) r += '| ' + indent + '  defer=""\n';
-        if (node.src) r += '| ' + indent + '  src="' + node.src + '"\n';
+        if (node.src != null) {
+          r += '| ' + indent + '  src="' + node.src + '"\n';
+        }
         r += dumpTree (node, indent + '  ');
       } else if (node instanceof JSText) {
         r += '| ' + indent + '"' + node.data + '"\n';
@@ -731,8 +738,6 @@ the regular expression <code>^javascript:\s*(?:"[^"]*"|'[^']*')\s*$</code>.
 
 <p>For some reason, this parser does not work in browsers that do
 not support JavaScript 1.5.
-
-<!-- TODO: multiple attributes are not supported yet -->
 
 </body>
 </html>
