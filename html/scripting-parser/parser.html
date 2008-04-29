@@ -65,9 +65,11 @@
 
   var logIndentLevel = 0;
   function log (s) {
+    var indent = '';
     for (var i = 0; i < logIndentLevel; i++) {
-      s = '  ' + s;
+      indent += '  ';
     }
+    s = indent + s.replace (/\n/g, "\n" + indent);
     document.logElement.appendChild (document.createTextNode (s + "\n"));
   } // log
 
@@ -501,7 +503,7 @@
       // 2.4. If the script element has its "already executed" flag set
       if (e.manakaiAlreadyExecuted) {
         // 2.5. Abort these steps at this point.
-        log ('Running a script: aborted');
+        log ('Running a script: aborted (already executed)');
         logIndentLevel--;
         return e;
       }
@@ -612,11 +614,22 @@
         doc.write.apply (doc, args);
         return '';
       });
-      s = s.replace (/^\s*var\s+s\s*=\s*document\.createElement\s*\(\s*['"]script['"]\s*\)\s*;\s*s\.src\s*=\s*(?:'(javascript:[^']*)'|"(javascript:[^"]*)")\s*;\s*document\.documentElement\.appendChild\s*\(\s*s\s*\)\s*;\s*/,
+      var noDocumentElement = false;
+      s = s.replace (/^\s*var\s+s\s*=\s*document\.createElement\s*\(\s*['"]script['"]\s*\)\s*;\s*s\.src\s*=\s*(?:'([^']*)'|"([^"]*)")\s*;\s*document\.documentElement\.appendChild\s*\(\s*s\s*\)\s*;\s*/,
       function (s, t, u) {
         matched = true;
         var args = [unescapeJSLiteral (t ? t : u)];
-        doc._insertExternalScript.apply (doc, args);
+        noDocumentElement = !doc._insertExternalScript.apply (doc, args);
+        return '';
+      });
+      if (noDocumentElement) {
+        log ('Script error: documentElement is null');
+        break;
+      }
+      s = s.replace (/^\s*w\s*\(\s*document\.documentElement\.innerHTML\s*\)\s*;\s*/,
+      function (s, t) {
+        matched = true;
+        log (dumpTree (doc, ''));
         return '';
       });
       if (s == '') break;
@@ -701,6 +714,7 @@
   }; // document.open
 
   JSDocument.prototype.write = function () {
+    log ('document.write: start');
     logIndentLevel++;
 
     var p = this._parser;
@@ -724,6 +738,7 @@
     if (p.scriptExecutedAfterParserResumes) {
       log ('document.write: processed later (there is an unprocessed <script src>)');
       logIndentLevel--;
+      log ('document.write: return');
       return;
     }
 
@@ -737,16 +752,21 @@
     // to do something here?
 
     // 5. Return
+    logIndentLevel--;
     log ('document.write: return');
 
-    logIndentLevel--;
     return;
   }; // document.write
 
   JSDocument.prototype._insertExternalScript = function (uri) {
     var s = new JSElement (this, 'script');
     s.src = uri;
-    this.documentElement.appendChild (s);
+    if (this.documentElement) {
+      this.documentElement.appendChild (s);
+      return true;
+    } else {
+      return false;
+    }
   }; // _insertExternalScript
 
   JSDocument.prototype.__defineGetter__ ('documentElement', function () {
@@ -863,6 +883,10 @@ introduced, followed, or separated by white space characters:
   <li><code>var s = document.createElement ("script");
             s.src = "<var>string</var>";
             document.documentElement.appendChild (s);</code>
+  <li><code>w (document.documentElement.innerHTML);</code> (This statement
+  can be used to dump the document, even when the document has no
+  document element.  The output format is the tree dump format used
+  in html5lib test data, not <abbr>HTML</abbr>.)
   </ul>
 Note that strings may be delimited by <code>'</code>s instead of
 <code>"</code>s.
@@ -890,7 +914,7 @@ modification to the |src| content/DOM attribute value yet. -->
 
 </body>
 </html>
-<!-- $Date: 2008/04/29 02:50:00 $ -->
+<!-- $Date: 2008/04/29 03:29:41 $ -->
 <!--
 
 Copyright 2008 Wakaba <w@suika.fam.cx>
