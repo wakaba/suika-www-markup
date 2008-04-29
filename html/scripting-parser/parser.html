@@ -92,7 +92,8 @@
   Parser.prototype.getNextToken = function () {
     var p = this;
     var i = this.input;
-    if (this.parseMode == 'script') {
+    if (this.parseMode == 'cdata') {
+      var tagName = this.endTagName;
       var token;
       if (p.insertionPoint <= 0) {
         return {type: 'abort'};
@@ -110,21 +111,22 @@
         return '';
       });
       if (token) return token;
-      i.s = i.s.replace (/^<\/[Ss][Cc][Rr][Ii][Pp][Tt]>/, function (s) {
+      var pattern = new RegExp ('^</' + tagName + '>', 'i');
+      i.s = i.s.replace (pattern, function (s) {
         if (p.insertionPoint < s.length) {
           token = {type: 'abort'};
           return s;
         }
-        token = {type: 'end-tag', value: 'script'};
+        token = {type: 'end-tag', value: tagName};
         p.insertionPoint -= s.length;
         return '';
       });
       if (token) return token;
       var m;
-      if ((p.insertionPoint < '</script'.length) &&
-          (m = i.s.match (/^<\/([SCRIPTscript]+)/))) {
+      if ((p.insertionPoint < ('</' + tagName).length) &&
+          (m = i.s.match (/^<\/([A-Za-z]+)/))) {
         var v = m[1].substring (0, p.insertionPoint).toLowerCase ();
-        if (v == 'script'.substring (0, p.insertionPoint - '</'.length)) {
+        if (v == tagName.substring (0, p.insertionPoint - '</'.length)) {
           return {type: 'abort'};
         }
       }
@@ -229,7 +231,8 @@
           el.manakaiParserInserted = true;
 
           // 3. Switch the tokeniser's content model flag to the CDATA state.
-          this.parseMode = 'script';
+          this.parseMode = 'cdata';
+          this.endTagName = 'script';
 
           // 4.1. Collect all the character tokens.
           while (true) {
@@ -243,13 +246,13 @@
             // 4.2. Until it returns a token that is not a character token, or
             // until it stops tokenising.
             } else if (token.type == 'eof' ||
-                       (token.type == 'end-tag' && token.value == 'script') ||
+                       token.type == 'end-tag' ||
                        token.type == 'abort') {
               // 6. Switched back to the PCDATA state.
               this.parseMode = 'pcdata';
 
               // 7.1. If the next token is not an end tag token with ...
-              if (token.type != 'end-tag') {
+              if (!(token.type == 'end-tag' && token.value == 'script')) {
                 // 7.2. This is a parse error.
                 log ('Parse error: no </' + 'script>');
 
@@ -311,6 +314,51 @@
 
               // 6. If there is once again a script that will execute ...
               //
+            }
+          }
+        } else if (token.value == 'style' ||
+                   token.value == 'noscript' ||
+                   token.value == 'xmp') {
+          // 1. Create an element for the token in the HTML namespace.
+          var el = new JSElement (this.doc, token.value);
+
+          // 2. Append the new element to the current node.
+          this.openElements[this.openElements.length - 1].appendChild (el);
+
+          // 3. Switch the tokeniser's content model flag to the CDATA state.
+          this.parseMode = 'cdata';
+          this.endTagName = token.value;
+
+          // 4.1. Collect all the character tokens.
+          while (true) {
+            var token = this.getNextToken ();
+            log ('token: ' + token.type + ' "' + token.value + '"');
+
+            if (token.type == 'char') {
+              // 5. Append a single Text node to the script element node.
+              el.manakaiAppendText (token.value);
+
+            // 4.2. Until it returns a token that is not a character token, or
+            // until it stops tokenising.
+            } else if (token.type == 'eof' ||
+                       token.type == 'end-tag' ||
+                       token.type == 'abort') {
+              // 6. Switched back to the PCDATA state.
+              this.parseMode = 'pcdata';
+
+              // 7.1. If the next token is not an end tag token with ...
+              if (!(token.type == 'end-tag' &&
+                    token.value == this.endTagName)) {
+                // 7.2. This is a parse error.
+                log ('Parse error: no </' + this.endTagName + '>');
+
+                // 7.3. Mark the script element as "already executed".
+                el.manakaiAlreadyExecuted = true;
+              } else {
+                // 7.4. Ignore it.
+                //
+              }
+              break;
             }
           }
         } else {
@@ -397,7 +445,7 @@
 
     log ('DOMContentLoaded event fired');
 
-    // "delays tha load event" things has completed:
+    // "delays the load event" things has completed:
     // readyState = 'complete'
     log ('load event fired');
 
@@ -798,7 +846,9 @@ algorithm.  Especially, this parser:
 algorithm, and so on.
 <li>Does not raise parse errors for invalid attribute specifications in start 
 or end tags.
-<li>Does not support CDATA/PCDATA element other than <code>script</code>.
+<li>Does not support PCDATA elements (<code>title</code> and
+<code>textarea</code>).
+<li>Does not strip the first newline in <code>pre</code> elements.
 <li>Does not support <code>&lt;!--</code>..<code>--></code> parsing rule
 in <code>script</code> element.
 <li>Does not support foreign (SVG or MathML) elements.
@@ -840,7 +890,7 @@ modification to the |src| content/DOM attribute value yet. -->
 
 </body>
 </html>
-<!-- $Date: 2008/04/27 11:27:04 $ -->
+<!-- $Date: 2008/04/29 02:50:00 $ -->
 <!--
 
 Copyright 2008 Wakaba <w@suika.fam.cx>
