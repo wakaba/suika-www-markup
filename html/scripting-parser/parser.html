@@ -598,7 +598,6 @@
     }
 
     // If the load was successful
-    log ('load event fired at the script element');
 
     if (true) {
     // Scripting is enabled, Document.designMode is disabled,
@@ -606,6 +605,8 @@
 
       parseAndRunScript (doc, s);
     }
+
+    log ('load event fired at the script element');
 
     log ('executing a script block: end');
   } // executeScript
@@ -896,11 +897,12 @@ algorithm.  Especially, this parser:
 algorithm, and so on.
 <li>Does not raise parse errors for invalid attribute specifications in start 
 or end tags.
-<li>Does not support PCDATA elements (<code>title</code> and
+<li>Does not support RCDATA elements (<code>title</code> and
 <code>textarea</code>).
-<li>Does not strip the first newline in <code>pre</code> elements.
+<li>Does not strip the first newline in <code>pre</code>,
+<code>listing</code>, and <code>textarea</code> elements.
 <li>Does not support <code>&lt;!--</code>..<code>--></code> parsing rule
-in <code>script</code> element.
+in CDATA/RCDATA elements.
 <li>Does not support foreign (SVG or MathML) elements.
 <li>Only supports <code>script</code> <code>type</code>
 <code>text/javascript</code>.  <code>type</code> and <code>language</code>
@@ -944,7 +946,7 @@ modification to the |src| content/DOM attribute value yet. -->
 
 </body>
 </html>
-<!-- $Date: 2008/04/29 04:07:18 $ -->
+<!-- $Date: 2008/05/16 10:29:25 $ -->
 <!--
 
 Copyright 2008 Wakaba <w@suika.fam.cx>
