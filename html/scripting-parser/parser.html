@@ -312,8 +312,8 @@
           oldInsertionPoint += this.insertionPoint;
           this.setInsertionPoint (oldInsertionPoint);
 
-          // 12. If there is a script that will execute as soon as ...
-          while (this.scriptExecutedWhenParserResumes) {
+          // 12. If there is a pending external script
+          while (this.pendingExternalScript) {
             // 12.1. If the tree construction stage is being called reentrantly
             if (this.reentrant) {
               log ('parse: abort (reentrance)');
@@ -323,8 +323,8 @@
             // 12.2. Otherwise
             } else {
               // 1.
-              var script = this.scriptExecutedWhenParserResumes;
-              this.scriptExecutedWhenParserResumes = null;
+              var script = this.pendingExternalScript;
+              this.pendingExternalScript = null;
 
               // 2. Pause until the script has completed loading.
               // 
@@ -560,10 +560,10 @@
         log ('Running a script: aborted (async)');
         // ISSUE: What is the difference with the case above?
       } else if (e.src != null && e.manakaiParserInserted) {
-        if (p.scriptExecutedWhenParserResumes) {
-          log ('Error: There is a script that will execute as soon as the parser resumes.');
+        if (p.pendingExternalScript) {
+          log ('Error: There is a pending external script.');
         }
-        p.scriptExecutedWhenParserResumes = e;
+        p.pendingExternalScript = e;
         log ('Running a script: aborted (src parser-inserted)');
       } else if (e.src != null) {
         p.scriptsExecutedSoon.push (e);
@@ -765,8 +765,8 @@
         + p.input.s.substring (p.insertionPoint, p.input.s.length);
     p.insertionPoint += s.length;
 
-    // 3. If there is a script that will execute as soon as the parser resumes
-    if (p.scriptExecutedAfterParserResumes) {
+    // 3. If there is a pending external script
+    if (p.pendingExternalScript) {
       log ('document.write: processed later (there is an unprocessed <script src>)');
       logIndentLevel--;
       log ('document.write: return');
@@ -946,7 +946,7 @@ modification to the |src| content/DOM attribute value yet. -->
 
 </body>
 </html>
-<!-- $Date: 2008/05/16 10:29:25 $ -->
+<!-- $Date: 2008/08/31 09:46:14 $ -->
 <!--
 
 Copyright 2008 Wakaba <w@suika.fam.cx>
