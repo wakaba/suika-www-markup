@@ -12,7 +12,7 @@ have id="" specified.  In such cases the field for the r2256 id=""
 value is left blank.
 
 
-Concact
+Contact
 ~~~~~~~
 
 Wakaba <w@suika.fam.cx>.
