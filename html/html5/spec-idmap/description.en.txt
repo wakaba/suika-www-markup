@@ -1,0 +1,27 @@
+idmap-r2255-r2256.txt
+~~~~~~~~~~~~~~~~~~~~~
+
+HTML5 specification id="" mapping table, between r2255 (CSS
+postprocessor) and r2256 (anolis).
+
+This file contains a tab (U+0009) separated list of r2255 and r2256
+id="" values.
+
+In r2256 some |dfn| element that had id="" specified in r2255 does not
+have id="" specified.  In such cases the field for the r2256 id=""
+value is left blank.
+
+
+Concact
+~~~~~~~
+
+Wakaba <w@suika.fam.cx>.
+
+License
+~~~~~~~ 
+
+Copyright 2004-2008 Apple Computer, Inc., Mozilla Foundation, and
+Opera Software ASA.
+
+You are granted a license to use, reproduce and create derivative
+works of these files.
