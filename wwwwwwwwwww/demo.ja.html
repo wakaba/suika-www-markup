@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<title>ちょwwwwwwwwwww なんぞこれwwwwwwwwwww</title>
+<link rel=stylesheet href="http://suika.fam.cx/www/style/html/xhtml">
+<style>
+textarea {
+  min-height: 10em;
+}
+</style>
+<script>
+function htescape (s) {
+  return s.replace (/&/g, '&amp;').replace (/</g, '&lt;').replace (/"/g, '&quot;');
+} // htescape
+
+function wwwwwwwwwww2html (s) {
+  s = s.split (/(\s+)/);
+  var r = ['<!DOCTYPE HTML>'];
+  var tagNames = [];
+
+  for (var i = 0; i < s.length; i++) {
+    var token = s[i];
+    var tagName;
+    var attrs = {};
+
+    if (/^[wｗ]+[^wｗ]/.test (token)) {
+      token = token.replace (/^[wｗ]+([^wｗ]+)[wｗ]+/, function (_, t) {
+        tagName = t;
+        return '';
+      });
+      
+      token = token.replace (/^[wｗ]*[vｖ]([^vｖ]*)[vｖ](?:([^vｖ]*)[vｖ])?/g, function (_, n, v) {
+        attrs[n] = v;
+        return '';
+      });
+  
+      var tag = '<' + tagName;
+      for (var n in attrs) {
+        tag += ' ' + n + '="' + htescape (attrs[n]) + '"';
+      }
+      tag += '>';
+      r.push (tag);
+
+      if ({
+          p: true, li: true, dt: true, dd: true, div: true, table: true,
+          ul: true, ol: true, dl: true, pre: true, form: true,
+          h1: true, h2: true, h3: true, h4: true, h5: true, h6: true,
+          section: true, article: true, header: true, hgroup: true,
+          footer: true, nav: true, aside: true
+      }[tagName] && {p: true, li: true, dt: true, dd: true}[tagNames[tagNames.length - 1]]) {
+        tagNames.pop ();
+      }
+      tagNames.push (tagName);
+    } else if (/^w+$/.test (token)) {
+      r.push ('</' + tagNames.pop () + '>');
+    } else {
+      r.push (htescape (token));
+    }
+  }
+
+  return r.join ('');
+} // wwwwwwwwwww2html
+
+function update () {
+  document.getElementById ('html').innerHTML = htescape (wwwwwwwwwww2html (document.getElementById ('wwwwwwwwwww').value));
+}
+
+window.onload = update;
+</script>
+
+<body class=has-abstract>
+
+<h1>wwwwwwwwwww</h1>
+
+<h2>ソースwwwwwwwwwwwwwwwwwwwwww</h2>
+
+<textarea id=wwwwwwwwwww onchange=" update () ">
+wwwwhtmlwwwwvlangvja-2chvwwww
+wwwwwwwwwwwheadwwwwwwwww
+   wwwwwwtitlewwwwwwwww ちょwwwwwwwwwwww なんぞこれwwwwwwwwwwwwww wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwbodywwwwwwwwww
+  wwwwwwwwwwh1wwwwwwwwwww
+      ちょｗｗｗｗｗｗｗｗｗｗｗｗｗｗ なんぞこれｗｗｗｗｗっうぇｗっうぇｗ
+  wwwwwwwwwwwwwwwwwwwwwww
+
+  ｗｗｗｗｗｗｗｗｗｗｗｗｗpｗｗｗｗｗｗｗｗ うｗｗｗｗっうぇうぇうぇｗｗｗｗｗｗｗｗ
+  wwwwwwwwwwwwwwwwwwwpwwwwwwwwwwwwwwwwwwwww テラカオスwwwwwwwww なにこれｗｗｗｗｗｗｗ
+  
+  ｗｗｗｗｗｗｗｗｗｗｗｗｗulwwwwwwwww 
+         wwwwwwwwwwwwwwwwliwwwwwwwww あわわあわわwwwwwww これはひどいwwwwwwwww
+         wwwwwwwwwwwwwwwliwwwwwwwwww いみふwwwwwwww wwwwwwwww
+         wwwwwwwwwwliwwwwwwwwww 今北産業wwwwwwwww wwwww
+    wwwwwwwwwww
+
+   wwwwwwwwwwwwwwawwwwvhrefvhttp://www.google.com/vwwwwww ぐぐれカスwwwwwwwwwwwwww wwww
+wwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwww
+</textarea>
+
+<h2>HTMLwwwwwwwwwww 変換結果wwwwwwwwwwwwwwwwwwwwww</h2>
+
+<pre id=html></pre>
+
+<h2>文法wwwwwwwwwww</h2>
+
+<pre>
+  wwwwwwwwwww := element *s
+  element := stag content etag
+  stag := 1*s 1*w tagname 1*w [attrs 1*w]
+  etag := 1*s 1*w
+  tagname := 1*&lt;w, s 以外>
+  attrs := *attr
+  attr := v attr-name v [attr-value v]
+  attr-name := 1*&lt;v, s 以外>
+  attr-value := 1*&lt;v, s 以外>
+  content := *(1*s &lt;w, s 以外> *&lt;s 以外> / element)
+  s := &lt;JavaScript /\s/>
+  w := "w" / "ｗ"
+  v := "v" / "ｖ"
+</pre>
+
+<p>ただしwwwwww
+<ul>
+<li>最初のタグの前の 1*s は省略可能wwwwwwwwwwww
+<li>p, div, ul など一部タグの前の etag は、それが p、li、dt、dd のいずれかの要素の終了をあらわすなら省略可能wwwwwww
+</ul>
