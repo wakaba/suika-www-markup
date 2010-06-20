@@ -1,0 +1,3 @@
+RedirectMatch 301 /www/markup/html/html5/spec-ja/.* http://www.whatwg.org/specs/web-apps/current-work/complete.html
+
+## License: Public Domain.
