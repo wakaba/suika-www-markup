@@ -1,0 +1,12 @@
+[submodule "h2h"]
+	path = h2h
+	url = git@melon:/git/pub/markup/h2h.git
+[submodule "slide"]
+	path = slide
+	url = git@melon:/git/pub/markup/hsml.git
+[submodule "cssexts"]
+	path = cssexts
+	url = git@melon:/git/pub/markup/cssexts.git
+[submodule "rfc"]
+	path = rfc
+	url = git@melon:/git/pub/markup/rfclang.git
