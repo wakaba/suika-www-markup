@@ -18,6 +18,7 @@ AddType application/xml .xml
 AddCharset iso-2022-jp .xml
 
 ReadmeName description
+IndexIgnore *.tmp
 
 Redirect 301 /www/markup/selectors/ http://suika.fam.cx/www/markup/cssexts/selectors/
 
