@@ -1,0 +1,4 @@
+Redirect 301 /www/markup/html/exts http://suika.fam.cx/www/markup/html/exts/
+Redirect 301 /www/markup/html/whatpm http://suika.fam.cx/www/markup/html/whatpm/readme
+
+## License: Public Domain.
