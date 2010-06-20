@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="iso-2022-jp"?>
+
+<!--
+     Document Type Definition for iモード対応HTML and iモード対応XHTML
+     Core module (experimental)
+
+       SYSTEM "http://suika.fam.cx/www/markup/html/dtd/imode-base.dtd"
+
+     This DTD is NOT an official material provided by NTT DoCoMo,
+     the developer of the i-XHTML language.
+
+     For more information on i-XHTML, see
+      - <http://www.nttdocomo.co.jp/mc-user/i/xhtml/>
+      - <http://www.nttdocomo.co.jp/p_s/imode/xhtml/>
+
+     Copyright 2003-2005 Wakaba <w@suika.fam.cx>.  All rights reserved.
+     You can use, distribute and/or modify this DTD freely.
+-->
+
+<!-- Language Versions -->
+
+<!ENTITY % iHTML.version.1.0 "INCLUDE">
+<!ENTITY % iHTML.version.2.0 "INCLUDE">
+<!ENTITY % iHTML.version.3.0 "INCLUDE">
+<!ENTITY % iHTML.version.4.0 "INCLUDE">
+<!ENTITY % iHTML.version.5.0 "INCLUDE">
+<!ENTITY % iXHTML.version.1.0 "INCLUDE">
+<!ENTITY % iXHTML.version.1.1 "INCLUDE">
+<!ENTITY % iXHTML.version.2.0 "INCLUDE">
+
+<![%iHTML.version.1.0;[
+  <!ENTITY % iHTML.version.1,0.1,0 "INCLUDE">
+  <!ENTITY % iHTML.version.html "INCLUDE">
+]]>
+<![%iXHTML.version.1.0;[
+  <!ENTITY % iHTML.version.1,0.1,0 "INCLUDE">
+  <!ENTITY % iHTML.version.xhtml "INCLUDE">
+]]>
+<!ENTITY % iHTML.version.1,0.1.0 "IGNORE">
+
+<!ENTITY % iHTML.version.html "IGNORE">
+<!ENTITY % iHTML.version.xml "IGNORE">
+
+<![%iHTML.version.html;[
+  <!ENTITY % iHTML.omittag.-- "- -">
+]]>
+<!ENTITY % iHTML.omittag.-- "">
+
+<![%iHTML.version.html;[
+  <!ENTITY % iHTML.omittag.-o "- o">
+]]>
+<!ENTITY % iHTML.omittag.-o "">
+
+<![%iHTML.version.html;[
+  <!ENTITY % iHTML.omittag.oo "o o">
+]]>
+<!ENTITY % iHTML.omittag.oo "">
+
+
+<!-- iモード対応HTML "tags" known as non-tag markups in HTML or XML -->
+
+<![%iHTML.version.1.0.1.0;[
+<!--
+    !-- element --- Comment
+-->
+]]>
+
+<![%iXHTML.version.1.0;[
+<!--
+    !DOCTYPE element --- DOCTYPE declaration
+
+    In iモード対応XHTML 1.0:
+      <!DOCTYPE html PUBLIC "-//i-mode group (ja)//DTD XHTML i-XHTML
+                             (Locale/Ver.=ja/1.0) 1.0//EN"
+                            "i-xhtml_4ja_10.dtd">
+    In iモード対応XHTML 1.1:
+      <!DOCTYPE html PUBLIC " -//i-mode group (ja)//DTD XHTML i-XHTML
+                             (Locale/Ver.=ja/1.1) 1.0//EN"
+                            " i-xhtml_4ja_10.dtd">
+    In iモード対応XHTML 2,0:
+      <!DOCTYPE html PUBLIC "-//i-mode group (ja)//DTD XHTML
+                             i-XHTML(Locale/Ver.=ja/2.0) 1.0//EN"
+                            "i-xhtml_4ja_10.dtd">
+-->
+]]>
+
+<![%iXHTML.version.1.0;[
+<!-- 
+    ![CDATA[ element --- CDATA section
+-->
+]]>
+
+<![%iHTML.version.1.0.1.0;[
+<!--
+    &XXX; element --- 
+
+    In iモード対応HTML:
+      |&amp;|, |&copy;|, |&gt;|, |&lt;|, |&quot;|, |&reg;|, |&nbsp;|, or
+      |&#0;|-|&#127;|
+
+    In iモード対応XHTML:
+      |&amp;|, |&copy;|, |&gt;|, |&lt;|, |&quot;|, |&reg;|, |&nbsp;|,
+      |&apos;|, |&#x9;|, |&#xA|, |&#xD|, |&#x20;|-|&#x7F;|, |&#xA9;|, or
+      |&#xAE;|
+-->
+
+<!ENTITY amp "&#x26;#x26;">   <!-- AMPERSAND -->
+<!ENTITY copy "&#xA9;">       <!-- COPYRIGHT SIGN -->
+<!ENTITY gt ">">              <!-- GREATER-THAN SIGN -->
+<!ENTITY lt "&#x26;#x3C;">    <!-- LESS-THAN SIGN -->
+<!ENTITY quot "&#x22;">       <!-- QUOTATION MARK -->
+<!ENTITY reg "&#xAE;">        <!-- REGISTERED SIGN -->
+<!ENTITY nbsp "&#xA0;">       <!-- NO-BREAK SPACE -->
+]]>
+<![%iXHTML.version.1.0;[
+<!ENTITY apos "'">            <!-- APOSTROPHE -->
+]]>
+
+<![%iXHTML.version.1.0;[
+<!--
+    ?xml element --- 
+
+    Attributes:
+      version	#FIXED "1.0"	#REQUIRED	XML version
+      encoding	CDATA	#REQUIRED	Document character encoding
+-->
+]]>
+
+<!-- Element types -->
+
+<![%iHTML.version.1.0.1.0;[
+<!-- 
+    A element
+-->
+<!ELEMENT a %iHTML.omittag.--; %flow.content;>
+]]>
+
+<!-- work in progress -->
+
+<!-- imode-base.dtd ends here -->

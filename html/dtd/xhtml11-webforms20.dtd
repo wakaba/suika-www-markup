@@ -1,0 +1,303 @@
+<!-- ....................................................................... -->
+<!-- XHTML 1.1 + Web Forms 2.0
+             Web Forms 2.0 Call For Comments - 27 June 2004 DTD ........... -->
+<!-- file: xhtml11-webforms20.dtd
+-->
+
+<!-- XHTML 1.1 + Web Forms 2.0 Web Forms 2.0 Call For Comments - 27 June 2004 DTD
+
+     XHTML 1.1 + Web Forms proposal.
+
+     Copyright 2004 Wakaba <w@suika.fam.cx>, All Rights Reserved.
+
+     Permission to use, copy, modify and distribute this DTD and its
+     accompanying documentation for any purpose and without fee is hereby
+     granted in perpetuity, provided that the above copyright notice and
+     this paragraph appear in all copies.  The copyright holders make no
+     representation about the suitability of the DTD for any purpose.
+
+     It is provided "as is" without expressed or implied warranty.
+
+       Revision: 2004-07-05T13:53:14+00:00
+
+-->
+<!-- This is the driver file for the XHTML 1.1 + Web Forms 2.0 Web Forms 2.0 Call For Comments - 27 June 2004 DTD.
+
+     This DTD is identified by the SYSTEM identifier:
+
+     SYSTEM "http://suika.fam.cx/www/markup/html/dtd/xhtml11-webforms20.dtd"
+-->
+
+<!-- Switchers to include/ignore each vocabulary -->
+<!ENTITY % XHTML.module "INCLUDE">
+<!ENTITY % webforms20.module "INCLUDE">
+
+<!-- Namespace names -->
+<!ENTITY % XHTML.xmlns "http://www.w3.org/1999/xhtml">
+<!ENTITY % webforms20.xmlns "http://www.w3.org/1999/xhtml">
+
+<!-- Base URIs for the relavant DTD modules -->
+<!ENTITY % XHTML.sysid.base "http://www.w3.org/TR/xhtml-modularization/DTD/">
+<!ENTITY % webforms20.sysid.base "module/">
+
+<!-- Namespace prefix -->
+<!ENTITY % NS.prefixed "IGNORE">
+<!ENTITY % XHTML.prefix "xhtml1">
+<!ENTITY % XHTML.prefixed "IGNORE">
+<!ENTITY % webforms20.prefix "xhtml1">
+<!ENTITY % webforms20.prefixed "IGNORE">
+
+<!-- a URI reference -->
+<!ENTITY % URI.datatype "CDATA">
+
+<!-- Placefolders for foreign namespace declarations -->
+<!ENTITY % XHTML.xmlns.extra.attrib "">
+<!ENTITY % webforms20.xmlns.extra.attrib "">
+
+<!-- Namespace declarations -->
+<![%XHTML.module;[
+<![%XHTML.prefixed;[
+<!ENTITY % XHTML.xmlns.decl.attrib
+	"xmlns:%XHTML.prefix;	%URI.datatype;	#FIXED '%XHTML.xmlns;'">
+]]>
+<!ENTITY % XHTML.xmlns.decl.attrib
+	"xmlns	%URI.datatype;	#FIXED '%XHTML.xmlns;'">
+]]>
+<!ENTITY % XHTML.xmlns.decl.attrib "">
+
+<![%webforms20.module;[
+<![%webforms20.prefixed;[
+<!ENTITY % webforms20.xmlns.decl.attrib
+	"xmlns:%webforms20.prefix;	%URI.datatype;	#FIXED '%webforms20.xmlns;'">
+]]>
+<!ENTITY % webforms20.xmlns.decl.attrib
+	"xmlns	%URI.datatype;	#FIXED '%webforms20.xmlns;'">
+]]>
+<!ENTITY % webforms20.xmlns.decl.attrib "">
+
+<!-- Declare a parameter entity %XSI.prefix as a prefix to use for
+     XML Schema Instance attributes. -->
+<!ENTITY % XSI.prefix "xsi">
+
+<!ENTITY % XSI.pfx "%XSI.prefix;:">
+
+<!ENTITY % XSI.xmlns "http://www.w3.org/2001/XMLSchema-instance">
+
+<!-- Declare a parameter entity %XSI.xmlns.attrib as support for
+     the schemaLocation attribute. -->
+<!ENTITY % XSI.xmlns.attrib
+	"xmlns:%XSI.prefix;	%URI.datatype;	#FIXED '%XSI.xmlns;'">
+
+<!ENTITY % NS.decl.attrib
+	"%XHTML.xmlns.decl.attrib;
+	%webforms20.xmlns.decl.attrib;
+	%XHTML.xmlns.extra.attrib;
+	%webforms20.xmlns.extra.attrib;
+	%XSI.xmlns.attrib;">
+
+<!ENTITY % XHTML.xmlns.attrib "%NS.decl.attrib;">
+<!ENTITY % webforms20.xmlns.attrib "%NS.decl.attrib;">
+
+
+<!-- QName Module -->
+<![%webforms20.module;[
+<!ENTITY % webforms20.qname.module "INCLUDE">
+<![%webforms20.qname.module;[
+<!ENTITY % webforms20.qname.decl
+	'SYSTEM "%webforms20.sysid.base;webforms20-qname.mod"'>
+<!ENTITY % webforms20.qname.mod %webforms20.qname.decl;>
+%webforms20.qname.mod;]]>
+]]>
+
+<!-- QName Module -->
+<![%XHTML.module;[
+<!ENTITY % xhtml-qname.module "INCLUDE">
+<![%xhtml-qname.module;[
+<!ENTITY % xhtml-qname.decl
+	'PUBLIC "-//W3C//ENTITIES XHTML Qualified Names 1.0//EN"
+	       "%XHTML.sysid.base;xhtml-qname-1.mod"'>
+<!ENTITY % xhtml-qname.mod %xhtml-qname.decl;>
+%xhtml-qname.mod;]]>
+]]>
+
+<!-- Datatypes Module -->
+<![%webforms20.module;[
+<!ENTITY % webforms20.datatype.module "INCLUDE">
+<![%webforms20.datatype.module;[
+<!ENTITY % webforms20.datatype.decl
+	'SYSTEM "%webforms20.sysid.base;webforms20-datatype.mod"'>
+<!ENTITY % webforms20.datatype.mod %webforms20.datatype.decl;>
+%webforms20.datatype.mod;]]>
+]]>
+
+<!-- Datatypes Module -->
+<![%XHTML.module;[
+<!ENTITY % xhtml-datatypes.module "INCLUDE">
+<![%xhtml-datatypes.module;[
+<!ENTITY % xhtml-datatypes.decl
+	'PUBLIC "-//W3C//ENTITIES XHTML Datatypes 1.0//EN"
+	       "%XHTML.sysid.base;xhtml-datatypes-1.mod"'>
+<!ENTITY % xhtml-datatypes.mod %xhtml-datatypes.decl;>
+%xhtml-datatypes.mod;]]>
+]]>
+
+<!-- Common Attributes Module -->
+<![%webforms20.module;[
+<!ENTITY % webforms20.attribs.module "INCLUDE">
+<![%webforms20.attribs.module;[
+<!ENTITY % webforms20.attribs.decl
+	'SYSTEM "%webforms20.sysid.base;webforms20-attribs.mod"'>
+<!ENTITY % webforms20.attribs.mod %webforms20.attribs.decl;>
+%webforms20.attribs.mod;]]>
+]]>
+
+<!-- Common Attributes Module -->
+<![%XHTML.module;[
+<!ENTITY % xhtml-attribs.module "INCLUDE">
+<![%xhtml-attribs.module;[
+<!ENTITY % XHTML.bidi "INCLUDE">
+<![%webforms20.attribs.module;[
+<!ENTITY % xhtml11-webforms20.br.attlist "INCLUDE">
+<![%xhtml11-webforms20.br.attlist;[
+<!ATTLIST %br.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.br.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.bdo.attlist "INCLUDE">
+<![%xhtml11-webforms20.bdo.attlist;[
+<!ATTLIST %bdo.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.bdo.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.meta.attlist "INCLUDE">
+<![%xhtml11-webforms20.meta.attlist;[
+<!ATTLIST %meta.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.meta.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.base.attlist "INCLUDE">
+<![%xhtml11-webforms20.base.attlist;[
+<!ATTLIST %base.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.base.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.script.attlist "INCLUDE">
+<![%xhtml11-webforms20.script.attlist;[
+<!ATTLIST %script.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.script.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.style.attlist "INCLUDE">
+<![%xhtml11-webforms20.style.attlist;[
+<!ATTLIST %style.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.style.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.param.attlist "INCLUDE">
+<![%xhtml11-webforms20.param.attlist;[
+<!ATTLIST %param.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.param.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.title.attlist "INCLUDE">
+<![%xhtml11-webforms20.title.attlist;[
+<!ATTLIST %title.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.title.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.head.attlist "INCLUDE">
+<![%xhtml11-webforms20.head.attlist;[
+<!ATTLIST %head.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.head.attlist -->]]>
+
+<!ENTITY % xhtml11-webforms20.html.attlist "INCLUDE">
+<![%xhtml11-webforms20.html.attlist;[
+<!ATTLIST %html.qname;
+	%webforms20.repeat.attrib;>
+<!-- end of xhtml11-webforms20.html.attlist -->]]>
+
+<!ENTITY % Ruby.common.attlists "INCLUDE">
+<!ENTITY % Ruby.common.attrib.attrib
+	"%webforms20.repeat.attrib;">
+
+<!-- end of webforms20.attribs -->]]>
+
+<!ENTITY % xhtml-attribs.decl
+	'PUBLIC "-//W3C//ENTITIES XHTML Common Attributes 1.0//EN"
+	       "%XHTML.sysid.base;xhtml-attribs-1.mod"'>
+<!ENTITY % xhtml-attribs.mod %xhtml-attribs.decl;>
+%xhtml-attribs.mod;]]>
+]]>
+
+<![%XHTML.module;[
+<!ENTITY % xhtml-model.module "INCLUDE">
+<![%xhtml-model.module;[
+<!ENTITY % InlForm.class "|%webforms20.input.qname;|%webforms20.select.qname;|%webforms20.textarea.qname;|%webforms20.output.qname;|%webforms20.button.qname;|%webforms20.label.qname;">
+
+<!ENTITY % Form.class "|%webforms20.form.qname;">
+
+<!ENTITY % Fieldset.class "|%webforms20.fieldset.qname;">
+
+<!ENTITY % xhtml-model.decl
+	'PUBLIC "-//W3C//ENTITIES XHTML 1.1 Document Model 1.0//EN"
+	       "http://www.w3.org/TR/xhtml11/DTD/xhtml11-model-1.mod"'>
+<!ENTITY % xhtml-model.mod %xhtml-model.decl;>
+%xhtml-model.mod;]]>
+]]>
+
+<!-- Web Forms 2.0 Form Extension -->
+<![%webforms20.module;[
+<!ENTITY % webforms20.formext.module "INCLUDE">
+<![%webforms20.formext.module;[
+<!ENTITY % webforms20.formext.decl
+	'SYSTEM "%webforms20.sysid.base;webforms20-formext.mod"'>
+<!ENTITY % webforms20.formext.mod %webforms20.formext.decl;>
+%webforms20.formext.mod;]]>
+]]>
+
+<!ENTITY % xhtml-events.module "INCLUDE">
+<![%xhtml-events.module;[
+<![%webforms20.module;[
+<!ENTITY % webforms20.formevent.module "INCLUDE">
+<![%webforms20.formevent.module;[
+<!ENTITY % webforms20.formevent.decl
+	'SYSTEM "%webforms20.sysid.base;webforms20-formevent.mod"'>
+<!ENTITY % webforms20.formevent.mod %webforms20.formevent.decl;>
+%webforms20.formevent.mod;]]>
+]]>
+
+<!-- end of xhtml-events -->]]>
+
+<![%XHTML.module;[
+<!-- %xhtml-special: Avoid xhtml-m12n DTD bug .......... -->
+<!ENTITY % xhtml-special.sysid "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
+<!ENTITY % xhtml-special.fpi "-//W3C//ENTITIES Special for XHTML//EN">
+<!ENTITY % xhtml-special.fpi.defined "INCLUDE">
+
+<![%xhtml-special.fpi.defined;[
+<!ENTITY % xhtml-special.decl
+	'PUBLIC "%xhtml-special.fpi;"
+		"%xhtml-special.sysid;"'>
+]]>
+<!ENTITY % xhtml-special.decl
+	'SYSTEM "%xhtml-special.sysid;"'>
+<!ENTITY % xhtml-special %xhtml-special.decl;>
+<!-- %xhtml-special .................................... -->
+<!ENTITY % xhtml-form.module "IGNORE">
+<!ENTITY % XHTML.dtd.sysid "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!ENTITY % XHTML.dtd.fpi "-//W3C//DTD XHTML 1.1//EN">
+<!ENTITY % XHTML.dtd.fpi.defined "INCLUDE">
+
+<![%XHTML.dtd.fpi.defined;[
+<!ENTITY % XHTML.dtd.decl
+	'PUBLIC "%XHTML.dtd.fpi;"
+	       "%XHTML.dtd.sysid;"'>
+]]>
+<!ENTITY % XHTML.dtd.decl
+	'SYSTEM "%XHTML.dtd.sysid;"'>
+<!ENTITY % XHTML.dtd %XHTML.dtd.decl;>
+%XHTML.dtd;]]>
+
+
+<!-- end of xhtml11-webforms20.dtd -->
