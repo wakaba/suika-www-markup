@@ -1,10 +1,11 @@
 BIN = ../../../tool/
-LIB = ../../../tool/
 
-PERL = perl -I$(LIB)
+PERL = perl
 MKDTDS = $(BIN)mkdtds.pl
 
-all: rfc2629 rfc2629ja myns
+all: xslt1
 
 %: %.dms $(MKDTDS)
 	$(PERL) $(MKDTDS) $<
+
+## License: Public Domain.

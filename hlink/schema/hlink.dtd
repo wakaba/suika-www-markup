@@ -1,0 +1,133 @@
+<!-- ....................................................................... -->
+<!-- HLink First Working Draft - Non-Official DTD Implementation DTD ...... -->
+<!-- file: hlink.dtd
+-->
+
+<!-- HLink First Working Draft - Non-Official DTD Implementation DTD
+
+
+
+     Copyright 2010 Wakaba <w@suika.fam.cx>, All Rights Reserved.
+
+     Permission to use, copy, modify and distribute this DTD and its
+     accompanying documentation for any purpose and without fee is hereby
+     granted in perpetuity, provided that the above copyright notice and
+     this paragraph appear in all copies.  The copyright holders make no
+     representation about the suitability of the DTD for any purpose.
+
+     It is provided "as is" without expressed or implied warranty.
+
+       Revision: 2010-06-20T04:52:29+00:00
+
+-->
+<!-- This is the driver file for the HLink First Working Draft - Non-Official DTD Implementation DTD.
+
+     This DTD is identified by the SYSTEM identifier:
+
+     SYSTEM "http://suika.fam.cx/gate/cvs/*checkout*/markup/hlink/schema/hlink.dtd"
+-->
+
+<!-- Switchers to include/ignore each vocabulary -->
+<!ENTITY % hlink.module "INCLUDE">
+
+<!-- Namespace names -->
+<!ENTITY % hlink.xmlns "http://www.w3.org/2002/06/hlink">
+
+<!-- Base URIs for the relavant DTD modules -->
+<!ENTITY % hlink.sysid.base "module/">
+
+<!-- Namespace prefix -->
+<!ENTITY % NS.prefixed "IGNORE">
+<!ENTITY % hlink.prefix "hlink">
+<!ENTITY % hlink.prefixed "%NS.prefixed;">
+
+<!-- a URI reference -->
+<!ENTITY % URI.datatype "CDATA">
+
+<!-- Placefolders for foreign namespace declarations -->
+<!ENTITY % hlink.xmlns.extra.attrib "">
+
+<!-- Namespace declarations -->
+<![%hlink.module;[
+<![%hlink.prefixed;[
+<!ENTITY % hlink.xmlns.decl.attrib
+	"xmlns:%hlink.prefix;	%URI.datatype;	#FIXED '%hlink.xmlns;'">
+]]>
+<!ENTITY % hlink.xmlns.decl.attrib
+	"xmlns	%URI.datatype;	#FIXED '%hlink.xmlns;'">
+]]>
+<!ENTITY % hlink.xmlns.decl.attrib "">
+
+<!-- Declare a parameter entity %XSI.prefix as a prefix to use for
+     XML Schema Instance attributes. -->
+<!ENTITY % XSI.prefix "xsi">
+
+<!ENTITY % XSI.pfx "%XSI.prefix;:">
+
+<!ENTITY % XSI.xmlns "http://www.w3.org/2001/XMLSchema-instance">
+
+<!-- Declare a parameter entity %XSI.xmlns.attrib as support for
+     the schemaLocation attribute. -->
+<!ENTITY % XSI.xmlns.attrib
+	"xmlns:%XSI.prefix;	%URI.datatype;	#FIXED '%XSI.xmlns;'">
+
+<!ENTITY % NS.decl.attrib
+	"%hlink.xmlns.decl.attrib;
+	%hlink.xmlns.extra.attrib;
+	%XSI.xmlns.attrib;">
+
+<!ENTITY % hlink.xmlns.attrib "%NS.decl.attrib;">
+
+
+<!-- QName Module -->
+<![%hlink.module;[
+<!ENTITY % hlink.qname.module "INCLUDE">
+<![%hlink.qname.module;[
+<!ENTITY % hlink.qname.decl
+	'SYSTEM "%hlink.sysid.base;hlink-qname.mod"'>
+<!ENTITY % hlink.qname.mod %hlink.qname.decl;>
+%hlink.qname.mod;]]>
+]]>
+
+<!-- Datatypes Module -->
+<![%hlink.module;[
+<!ENTITY % hlink.datatype.module "INCLUDE">
+<![%hlink.datatype.module;[
+<!ENTITY % hlink.datatype.decl
+	'SYSTEM "%hlink.sysid.base;hlink-datatype.mod"'>
+<!ENTITY % hlink.datatype.mod %hlink.datatype.decl;>
+%hlink.datatype.mod;]]>
+]]>
+
+<!-- Common Attributes Module -->
+<![%hlink.module;[
+<!ENTITY % hlink.attribs.module "INCLUDE">
+<![%hlink.attribs.module;[
+<!ENTITY % hlink.attribs.decl
+	'SYSTEM "%hlink.sysid.base;hlink-attribs.mod"'>
+<!ENTITY % hlink.attribs.mod %hlink.attribs.decl;>
+%hlink.attribs.mod;]]>
+]]>
+
+<!-- Core module -->
+<![%hlink.module;[
+<!ENTITY % hlink.core.module "INCLUDE">
+<![%hlink.core.module;[
+<!ENTITY % hlink.core.decl
+	'SYSTEM "%hlink.sysid.base;hlink-core.mod"'>
+<!ENTITY % hlink.core.mod %hlink.core.decl;>
+%hlink.core.mod;]]>
+]]>
+
+<!-- Referring module -->
+<![%hlink.module;[
+<!ENTITY % hlink.refer.module "IGNORE">
+<![%hlink.refer.module;[
+<!ENTITY % hlink.refer.decl
+	'SYSTEM "%hlink.sysid.base;hlink-refer.mod"'>
+<!ENTITY % hlink.refer.mod %hlink.refer.decl;>
+%hlink.refer.mod;]]>
+]]>
+
+
+<!-- end of hlink.dtd -->

@@ -1,0 +1,150 @@
+<!-- ....................................................................... -->
+<!-- XHTML 1.1 + HLink DTD ................................................ -->
+<!-- file: xhtml11-hlink.dtd
+-->
+
+<!-- XHTML 1.1 + HLink DTD
+
+
+
+     Copyright 2010 Wakaba <w@suika.fam.cx>, All Rights Reserved.
+
+     Permission to use, copy, modify and distribute this DTD and its
+     accompanying documentation for any purpose and without fee is hereby
+     granted in perpetuity, provided that the above copyright notice and
+     this paragraph appear in all copies.  The copyright holders make no
+     representation about the suitability of the DTD for any purpose.
+
+     It is provided "as is" without expressed or implied warranty.
+
+       Revision: 2010-06-20T04:52:29+00:00
+
+-->
+<!-- This is the driver file for the XHTML 1.1 + HLink DTD.
+
+     This DTD is identified by the SYSTEM identifier:
+
+     SYSTEM "http://suika.fam.cx/gate/cvs/*checkout*/markup/hlink/schema/xhtml11-hlink.dtd"
+-->
+
+<!-- Switchers to include/ignore each vocabulary -->
+<!ENTITY % XHTML.module "INCLUDE">
+<!ENTITY % hlink.module "INCLUDE">
+
+<!-- Namespace names -->
+<!ENTITY % XHTML.xmlns "http://www.w3.org/1999/xhtml">
+<!ENTITY % hlink.xmlns "http://www.w3.org/2002/06/hlink">
+
+<!-- Base URIs for the relavant DTD modules -->
+<!ENTITY % XHTML.sysid.base "http://www.w3.org/TR/xhtml-modularization/DTD/">
+<!ENTITY % hlink.sysid.base "module/">
+
+<!-- Namespace prefix -->
+<!ENTITY % NS.prefixed "INCLUDE">
+<!ENTITY % XHTML.prefix "xhtml1">
+<!ENTITY % XHTML.prefixed "IGNORE">
+<!ENTITY % hlink.prefix "hlink">
+<!ENTITY % hlink.prefixed "INCLUDE">
+
+<!-- a URI reference -->
+<!ENTITY % URI.datatype "CDATA">
+
+<!-- Placefolders for foreign namespace declarations -->
+<!ENTITY % XHTML.xmlns.extra.attrib "">
+<!ENTITY % hlink.xmlns.extra.attrib "">
+
+<!-- Namespace declarations -->
+<![%XHTML.module;[
+<![%XHTML.prefixed;[
+<!ENTITY % XHTML.xmlns.decl.attrib
+	"xmlns:%XHTML.prefix;	%URI.datatype;	#FIXED '%XHTML.xmlns;'">
+]]>
+<!ENTITY % XHTML.xmlns.decl.attrib
+	"xmlns	%URI.datatype;	#FIXED '%XHTML.xmlns;'">
+]]>
+<!ENTITY % XHTML.xmlns.decl.attrib "">
+
+<![%hlink.module;[
+<![%hlink.prefixed;[
+<!ENTITY % hlink.xmlns.decl.attrib
+	"xmlns:%hlink.prefix;	%URI.datatype;	#FIXED '%hlink.xmlns;'">
+]]>
+<!ENTITY % hlink.xmlns.decl.attrib
+	"xmlns	%URI.datatype;	#FIXED '%hlink.xmlns;'">
+]]>
+<!ENTITY % hlink.xmlns.decl.attrib "">
+
+<!-- Declare a parameter entity %XSI.prefix as a prefix to use for
+     XML Schema Instance attributes. -->
+<!ENTITY % XSI.prefix "xsi">
+
+<!ENTITY % XSI.pfx "%XSI.prefix;:">
+
+<!ENTITY % XSI.xmlns "http://www.w3.org/2001/XMLSchema-instance">
+
+<!-- Declare a parameter entity %XSI.xmlns.attrib as support for
+     the schemaLocation attribute. -->
+<!ENTITY % XSI.xmlns.attrib
+	"xmlns:%XSI.prefix;	%URI.datatype;	#FIXED '%XSI.xmlns;'">
+
+<!ENTITY % NS.decl.attrib
+	"%XHTML.xmlns.decl.attrib;
+	%hlink.xmlns.decl.attrib;
+	%XHTML.xmlns.extra.attrib;
+	%hlink.xmlns.extra.attrib;
+	%XSI.xmlns.attrib;">
+
+<!ENTITY % XHTML.xmlns.attrib "%NS.decl.attrib;">
+<!ENTITY % hlink.xmlns.attrib "%NS.decl.attrib;">
+
+
+<![%hlink.module;[
+<!ENTITY % hlink.refer.module "INCLUDE">
+<!ENTITY % hlink.dtd.sysid "hlink.dtd">
+<!ENTITY % hlink.dtd.fpi "">
+<!ENTITY % hlink.dtd.fpi.defined "IGNORE">
+
+<![%hlink.dtd.fpi.defined;[
+<!ENTITY % hlink.dtd.decl
+	'PUBLIC "%hlink.dtd.fpi;"
+	       "%hlink.dtd.sysid;"'>
+]]>
+<!ENTITY % hlink.dtd.decl
+	'SYSTEM "%hlink.dtd.sysid;"'>
+<!ENTITY % hlink.dtd %hlink.dtd.decl;>
+%hlink.dtd;]]>
+
+<![%XHTML.module;[
+<!-- %xhtml11-hlink.xhtml-special: Avoid xhtml-m12n DTD bug  -->
+<!ENTITY % xhtml11-hlink.xhtml-special.sysid "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
+<!ENTITY % xhtml11-hlink.xhtml-special.fpi "-//W3C//ENTITIES Special for XHTML//EN">
+<!ENTITY % xhtml11-hlink.xhtml-special.fpi.defined "INCLUDE">
+
+<![%xhtml11-hlink.xhtml-special.fpi.defined;[
+<!ENTITY % xhtml11-hlink.xhtml-special.decl
+	'PUBLIC "%xhtml11-hlink.xhtml-special.fpi;"
+		"%xhtml11-hlink.xhtml-special.sysid;"'>
+]]>
+<!ENTITY % xhtml11-hlink.xhtml-special.decl
+	'SYSTEM "%xhtml11-hlink.xhtml-special.sysid;"'>
+<!ENTITY % xhtml11-hlink.xhtml-special %xhtml11-hlink.xhtml-special.decl;>
+<!-- %xhtml11-hlink.xhtml-special ...................... -->
+<!ENTITY % xhtml11-hlink.xhtml-model.redecl "">
+<!ENTITY % xhtml-postfw-redecl.module "INCLUDE">
+<!ENTITY % xhtml11-hlink.xhtml-postfw-redecl.mod "">
+<!ENTITY % XHTML.dtd.sysid "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!ENTITY % XHTML.dtd.fpi "-//W3C//DTD XHTML 1.1//EN">
+<!ENTITY % XHTML.dtd.fpi.defined "INCLUDE">
+
+<![%XHTML.dtd.fpi.defined;[
+<!ENTITY % XHTML.dtd.decl
+	'PUBLIC "%XHTML.dtd.fpi;"
+	       "%XHTML.dtd.sysid;"'>
+]]>
+<!ENTITY % XHTML.dtd.decl
+	'SYSTEM "%XHTML.dtd.sysid;"'>
+<!ENTITY % XHTML.dtd %XHTML.dtd.decl;>
+%XHTML.dtd;]]>
+
+
+<!-- end of xhtml11-hlink.dtd -->

@@ -1,10 +1,9 @@
 BIN = ../../../tool/
-LIB = ../../../tool/
 
-PERL = perl -I$(LIB)
+PERL = perl 
 MKDTDS = $(BIN)mkdtds.pl
 
-all: rfc2629 rfc2629ja myns
+all: prezarc
 
 %: %.dms $(MKDTDS)
 	$(PERL) $(MKDTDS) $<
