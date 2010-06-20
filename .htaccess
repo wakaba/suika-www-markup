@@ -2,9 +2,20 @@
 AddType application/xml-dtd .dtd .mod
 AddCharset iso-2022-jp .dtd .mod
 
+AddType text/plain .dms .dds
+AddCharset iso-2022-jp .dms .dds
+
 ## ECMAScript scripts
-AddType application/x-javascript .js
+AddType text/javascript .js
 AddCharset iso-2022-jp .js
+
+## Perl script
+## Use of this MIME type is a willful violation to the spec.
+AddType text/perl .pl
+AddCharset iso-2022-jp .pl
+
+AddType application/xml .xml
+AddCharset iso-2022-jp .xml
 
 Redirect 301 /www/markup/selectors/ http://suika.fam.cx/www/markup/cssexts/selectors/
 
