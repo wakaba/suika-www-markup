@@ -1,0 +1,4 @@
+AddType text/xml .jdcm
+AddCharset iso-2022-jp .jdcm
+
+## License: Public Domain.
