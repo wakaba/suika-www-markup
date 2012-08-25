@@ -23,5 +23,9 @@ IndexIgnore *.tmp
 Redirect 301 /www/markup/suikawiki http://suika.fam.cx/www/markup/suikawiki/
 Redirect 301 /www/markup/selectors/ http://suika.fam.cx/www/markup/cssexts/selectors/
 Redirect 301 /www/markup/xml http://suika.fam.cx/www/markup/xml/
+Redirect 301 /www/markup/temma/macro https://github.com/wakaba/temma/blob/master/lib/Temma/Language.pod
+Redirect 301 /www/markup/temma/msg https://github.com/wakaba/temma/blob/master/lib/Temma/Language.pod
+Redirect 301 /www/markup/temma/perl https://github.com/wakaba/temma/blob/master/lib/Temma/Language.pod
+Redirect 301 /www/markup/temma https://github.com/wakaba/temma/blob/master/lib/Temma/Language.pod
 
 ## License: Public Domain.
