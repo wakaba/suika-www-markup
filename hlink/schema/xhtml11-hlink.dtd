@@ -7,7 +7,7 @@
 
 
 
-     Copyright 2010 Wakaba <w@suika.fam.cx>, All Rights Reserved.
+     Copyright 2010 Wakaba <wakaba@suikawiki.org>, All Rights Reserved.
 
      Permission to use, copy, modify and distribute this DTD and its
      accompanying documentation for any purpose and without fee is hereby
@@ -17,14 +17,16 @@
 
      It is provided "as is" without expressed or implied warranty.
 
-       Revision: 2010-06-20T04:52:29+00:00
+     Revision: 2010-06-20T04:52:29+00:00
+
+     R4.9.18  URLs updated.
 
 -->
 <!-- This is the driver file for the XHTML 1.1 + HLink DTD.
 
      This DTD is identified by the SYSTEM identifier:
 
-     SYSTEM "http://suika.fam.cx/gate/cvs/*checkout*/markup/hlink/schema/xhtml11-hlink.dtd"
+     SYSTEM "https://suika.suikawiki.org/gate/cvs/*checkout*/markup/hlink/schema/xhtml11-hlink.dtd"
 -->
 
 <!-- Switchers to include/ignore each vocabulary -->
@@ -36,7 +38,7 @@
 <!ENTITY % hlink.xmlns "http://www.w3.org/2002/06/hlink">
 
 <!-- Base URIs for the relavant DTD modules -->
-<!ENTITY % XHTML.sysid.base "http://www.w3.org/TR/xhtml-modularization/DTD/">
+<!ENTITY % XHTML.sysid.base "https://www.w3.org/TR/xhtml-modularization/DTD/">
 <!ENTITY % hlink.sysid.base "module/">
 
 <!-- Namespace prefix -->
@@ -116,7 +118,7 @@
 
 <![%XHTML.module;[
 <!-- %xhtml11-hlink.xhtml-special: Avoid xhtml-m12n DTD bug  -->
-<!ENTITY % xhtml11-hlink.xhtml-special.sysid "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
+<!ENTITY % xhtml11-hlink.xhtml-special.sysid "https://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
 <!ENTITY % xhtml11-hlink.xhtml-special.fpi "-//W3C//ENTITIES Special for XHTML//EN">
 <!ENTITY % xhtml11-hlink.xhtml-special.fpi.defined "INCLUDE">
 
@@ -132,7 +134,7 @@
 <!ENTITY % xhtml11-hlink.xhtml-model.redecl "">
 <!ENTITY % xhtml-postfw-redecl.module "INCLUDE">
 <!ENTITY % xhtml11-hlink.xhtml-postfw-redecl.mod "">
-<!ENTITY % XHTML.dtd.sysid "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!ENTITY % XHTML.dtd.sysid "https://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <!ENTITY % XHTML.dtd.fpi "-//W3C//DTD XHTML 1.1//EN">
 <!ENTITY % XHTML.dtd.fpi.defined "INCLUDE">
 
